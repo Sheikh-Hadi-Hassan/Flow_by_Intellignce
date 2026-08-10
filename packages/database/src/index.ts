@@ -17,6 +17,10 @@ export interface WorkspaceRecord {
   readonly id: string;
   readonly slug: string;
   readonly name: string;
+  readonly primaryOrganizationId?: string;
+  readonly defaultTimezone?: string;
+  readonly defaultLocale?: string;
+  readonly defaultCurrency?: string;
 }
 
 export interface WorkspaceMembershipRecord {
@@ -49,6 +53,69 @@ export interface RolePermissionRecord {
 export interface MembershipRoleRecord {
   readonly membershipId: string;
   readonly roleId: string;
+}
+
+export type OrganizationStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
+export type OrganizationClassificationSource =
+  "USER_CONFIRMED" | "AI_SUGGESTED" | "SYSTEM_TEMPLATE";
+export type OrganizationUnitStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
+export type OrganizationUnitType =
+  "DIVISION" | "DEPARTMENT" | "TEAM" | "BRANCH" | "OTHER";
+export type OrganizationLocationStatus = "ACTIVE" | "INACTIVE" | "ARCHIVED";
+
+export interface OrganizationRecord {
+  readonly id: string;
+  readonly workspaceId: string;
+  readonly name: string;
+  readonly displayName?: string;
+  readonly legalName?: string;
+  readonly slug?: string;
+  readonly status: OrganizationStatus;
+  readonly countryCode?: string;
+  readonly defaultCurrency?: string;
+  readonly timezone?: string;
+  readonly website?: string;
+  readonly description?: string;
+  readonly primaryIndustry?: string;
+  readonly classificationSource?: OrganizationClassificationSource;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export interface OrganizationUnitRecord {
+  readonly id: string;
+  readonly workspaceId: string;
+  readonly organizationId: string;
+  readonly parentUnitId?: string;
+  readonly name: string;
+  readonly type: OrganizationUnitType;
+  readonly status: OrganizationUnitStatus;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export interface OrganizationLocationRecord {
+  readonly id: string;
+  readonly workspaceId: string;
+  readonly organizationId: string;
+  readonly name: string;
+  readonly type?: string;
+  readonly countryCode: string;
+  readonly region?: string;
+  readonly city?: string;
+  readonly timezone?: string;
+  readonly status: OrganizationLocationStatus;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export interface OrganizationUnitMembershipRecord {
+  readonly workspaceMembershipId: string;
+  readonly organizationUnitId: string;
+  readonly relationshipType?: string;
+  readonly businessTitle?: string;
+  readonly isPrimary: boolean;
+  readonly createdAt: string;
 }
 
 export interface ResolvedMembershipAuthorization {
@@ -100,6 +167,10 @@ export class InMemoryIdentityAuthorizationRepository implements MutableIdentityA
     readonly permissions: readonly PermissionRecord[];
     readonly rolePermissions: readonly RolePermissionRecord[];
     readonly membershipRoles: readonly MembershipRoleRecord[];
+    readonly organizations?: readonly OrganizationRecord[];
+    readonly organizationUnits?: readonly OrganizationUnitRecord[];
+    readonly organizationLocations?: readonly OrganizationLocationRecord[];
+    readonly organizationUnitMemberships?: readonly OrganizationUnitMembershipRecord[];
   }) {
     for (const user of input.users) this.users.set(user.id, user);
     for (const workspace of input.workspaces) {
@@ -114,7 +185,30 @@ export class InMemoryIdentityAuthorizationRepository implements MutableIdentityA
     }
     this.rolePermissions = [...input.rolePermissions];
     this.membershipRoles = [...input.membershipRoles];
+    for (const organization of input.organizations ?? []) {
+      this.organizations.set(organization.id, organization);
+    }
+    for (const unit of input.organizationUnits ?? []) {
+      this.organizationUnits.set(unit.id, unit);
+    }
+    for (const location of input.organizationLocations ?? []) {
+      this.organizationLocations.set(location.id, location);
+    }
+    this.organizationUnitMemberships = [
+      ...(input.organizationUnitMemberships ?? []),
+    ];
   }
+
+  private readonly organizations = new Map<string, OrganizationRecord>();
+  private readonly organizationUnits = new Map<
+    string,
+    OrganizationUnitRecord
+  >();
+  private readonly organizationLocations = new Map<
+    string,
+    OrganizationLocationRecord
+  >();
+  private organizationUnitMemberships: OrganizationUnitMembershipRecord[] = [];
 
   findUserByProviderSubject(input: {
     readonly authProvider: "supabase";
@@ -196,6 +290,203 @@ export class InMemoryIdentityAuthorizationRepository implements MutableIdentityA
       updatedAt: new Date(0).toISOString(),
     });
   }
+
+  getPrimaryOrganization(
+    workspaceId: string,
+  ): Promise<OrganizationRecord | undefined> {
+    const workspace = this.workspaces.get(workspaceId);
+    if (!workspace?.primaryOrganizationId) {
+      return Promise.resolve(undefined);
+    }
+
+    const organization = this.organizations.get(
+      workspace.primaryOrganizationId,
+    );
+    if (organization?.workspaceId !== workspaceId) {
+      return Promise.resolve(undefined);
+    }
+
+    return Promise.resolve(organization);
+  }
+
+  getOrganization(input: {
+    readonly workspaceId: string;
+    readonly organizationId: string;
+  }): Promise<OrganizationRecord | undefined> {
+    const organization = this.organizations.get(input.organizationId);
+    if (organization?.workspaceId !== input.workspaceId) {
+      return Promise.resolve(undefined);
+    }
+
+    return Promise.resolve(organization);
+  }
+
+  updateOrganizationProfile(input: {
+    readonly workspaceId: string;
+    readonly organizationId: string;
+    readonly displayName?: string;
+    readonly website?: string;
+    readonly description?: string;
+  }): Promise<OrganizationRecord> {
+    const organization = this.organizations.get(input.organizationId);
+    if (!organization || organization.workspaceId !== input.workspaceId) {
+      return Promise.reject(
+        new Error("Organization is outside the requested workspace."),
+      );
+    }
+
+    const updated = {
+      ...organization,
+      ...(input.displayName !== undefined
+        ? { displayName: input.displayName }
+        : {}),
+      ...(input.website !== undefined ? { website: input.website } : {}),
+      ...(input.description !== undefined
+        ? { description: input.description }
+        : {}),
+      updatedAt: new Date(0).toISOString(),
+    };
+    this.organizations.set(updated.id, updated);
+    return Promise.resolve(updated);
+  }
+
+  archiveOrganization(input: {
+    readonly workspaceId: string;
+    readonly organizationId: string;
+  }): Promise<OrganizationRecord> {
+    const organization = this.organizations.get(input.organizationId);
+    if (!organization || organization.workspaceId !== input.workspaceId) {
+      return Promise.reject(
+        new Error("Organization is outside the requested workspace."),
+      );
+    }
+
+    const archived = {
+      ...organization,
+      status: "ARCHIVED" as const,
+      updatedAt: new Date(0).toISOString(),
+    };
+    this.organizations.set(archived.id, archived);
+    return Promise.resolve(archived);
+  }
+
+  createOrganizationUnit(
+    unit: OrganizationUnitRecord,
+  ): Promise<OrganizationUnitRecord> {
+    const organization = this.organizations.get(unit.organizationId);
+    if (!organization || organization.workspaceId !== unit.workspaceId) {
+      return Promise.reject(
+        new Error(
+          "Organization unit must belong to its organization workspace.",
+        ),
+      );
+    }
+
+    if (unit.parentUnitId) {
+      const parent = this.organizationUnits.get(unit.parentUnitId);
+      if (
+        !parent ||
+        parent.workspaceId !== unit.workspaceId ||
+        parent.organizationId !== unit.organizationId
+      ) {
+        return Promise.reject(
+          new Error("Parent unit must belong to the same organization."),
+        );
+      }
+    }
+
+    this.organizationUnits.set(unit.id, unit);
+    return Promise.resolve(unit);
+  }
+
+  moveOrganizationUnit(input: {
+    readonly workspaceId: string;
+    readonly organizationId: string;
+    readonly organizationUnitId: string;
+    readonly parentUnitId?: string;
+  }): Promise<OrganizationUnitRecord> {
+    const unit = this.organizationUnits.get(input.organizationUnitId);
+    if (
+      !unit ||
+      unit.workspaceId !== input.workspaceId ||
+      unit.organizationId !== input.organizationId
+    ) {
+      return Promise.reject(
+        new Error("Organization unit is outside the requested organization."),
+      );
+    }
+
+    if (input.parentUnitId) {
+      const parent = this.organizationUnits.get(input.parentUnitId);
+      if (
+        !parent ||
+        parent.workspaceId !== input.workspaceId ||
+        parent.organizationId !== input.organizationId
+      ) {
+        return Promise.reject(
+          new Error("Parent unit must belong to the same organization."),
+        );
+      }
+
+      let cursor: OrganizationUnitRecord | undefined = parent;
+      while (cursor) {
+        if (cursor.id === unit.id) {
+          return Promise.reject(
+            new Error("Organization unit hierarchy cycle rejected."),
+          );
+        }
+        cursor = cursor.parentUnitId
+          ? this.organizationUnits.get(cursor.parentUnitId)
+          : undefined;
+      }
+    }
+
+    const updated = {
+      ...unit,
+      ...(input.parentUnitId ? { parentUnitId: input.parentUnitId } : {}),
+      updatedAt: new Date(0).toISOString(),
+    };
+    this.organizationUnits.set(updated.id, updated);
+    return Promise.resolve(updated);
+  }
+
+  createOrganizationLocation(
+    location: OrganizationLocationRecord,
+  ): Promise<OrganizationLocationRecord> {
+    const organization = this.organizations.get(location.organizationId);
+    if (!organization || organization.workspaceId !== location.workspaceId) {
+      return Promise.reject(
+        new Error("Location must belong to its organization workspace."),
+      );
+    }
+
+    this.organizationLocations.set(location.id, location);
+    return Promise.resolve(location);
+  }
+
+  addOrganizationUnitMembership(
+    membership: OrganizationUnitMembershipRecord,
+  ): Promise<OrganizationUnitMembershipRecord> {
+    const workspaceMembership = this.memberships.get(
+      membership.workspaceMembershipId,
+    );
+    const unit = this.organizationUnits.get(membership.organizationUnitId);
+    if (!workspaceMembership || !unit) {
+      return Promise.reject(
+        new Error(
+          "Organization unit membership requires existing workspace membership and unit.",
+        ),
+      );
+    }
+    if (workspaceMembership.workspaceId !== unit.workspaceId) {
+      return Promise.reject(
+        new Error("Organization unit membership cannot cross workspaces."),
+      );
+    }
+
+    this.organizationUnitMemberships.push(membership);
+    return Promise.resolve(membership);
+  }
 }
 
 export function createFlowIdentityTestRepository(): InMemoryIdentityAuthorizationRepository {
@@ -216,8 +507,24 @@ export function createFlowIdentityTestRepository(): InMemoryIdentityAuthorizatio
       },
     ],
     workspaces: [
-      { id: "workspace-alpha", slug: "alpha", name: "Workspace Alpha" },
-      { id: "workspace-beta", slug: "beta", name: "Workspace Beta" },
+      {
+        id: "workspace-alpha",
+        slug: "alpha",
+        name: "Workspace Alpha",
+        primaryOrganizationId: "organization-alpha-primary",
+        defaultTimezone: "UTC",
+        defaultLocale: "en",
+        defaultCurrency: "USD",
+      },
+      {
+        id: "workspace-beta",
+        slug: "beta",
+        name: "Workspace Beta",
+        primaryOrganizationId: "organization-beta-primary",
+        defaultTimezone: "UTC",
+        defaultLocale: "en",
+        defaultCurrency: "USD",
+      },
     ],
     memberships: [
       {
@@ -276,6 +583,21 @@ export function createFlowIdentityTestRepository(): InMemoryIdentityAuthorizatio
         key: "system.highRisk",
         description: "Initiate a high-risk proof action.",
       },
+      {
+        id: "permission-organization-read",
+        key: "organization.read",
+        description: "Read organization context.",
+      },
+      {
+        id: "permission-organization-update-profile",
+        key: "organization.update_profile",
+        description: "Update safe organization profile fields.",
+      },
+      {
+        id: "permission-organization-unit-create",
+        key: "organization_unit.create",
+        description: "Create organization units.",
+      },
     ],
     rolePermissions: [
       { roleId: "role-alpha-owner", permissionId: "permission-system-echo" },
@@ -283,12 +605,119 @@ export function createFlowIdentityTestRepository(): InMemoryIdentityAuthorizatio
         roleId: "role-alpha-owner",
         permissionId: "permission-system-high-risk",
       },
+      {
+        roleId: "role-alpha-owner",
+        permissionId: "permission-organization-read",
+      },
+      {
+        roleId: "role-alpha-owner",
+        permissionId: "permission-organization-update-profile",
+      },
+      {
+        roleId: "role-alpha-owner",
+        permissionId: "permission-organization-unit-create",
+      },
       { roleId: "role-alpha-member", permissionId: "permission-system-echo" },
+      {
+        roleId: "role-alpha-member",
+        permissionId: "permission-organization-read",
+      },
     ],
     membershipRoles: [
       { membershipId: "membership-alice-alpha", roleId: "role-alpha-member" },
       { membershipId: "membership-alice-beta", roleId: "role-beta-member" },
       { membershipId: "membership-bob-beta", roleId: "role-beta-member" },
+    ],
+    organizations: [
+      {
+        id: "organization-alpha-primary",
+        workspaceId: "workspace-alpha",
+        name: "Alpha LLC",
+        displayName: "Alpha",
+        legalName: "Alpha LLC",
+        slug: "alpha-primary",
+        status: "ACTIVE",
+        countryCode: "US",
+        defaultCurrency: "USD",
+        timezone: "UTC",
+        website: "https://alpha.example.test",
+        primaryIndustry: "software",
+        classificationSource: "USER_CONFIRMED",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "organization-beta-primary",
+        workspaceId: "workspace-beta",
+        name: "Beta LLC",
+        displayName: "Beta",
+        slug: "beta-primary",
+        status: "ACTIVE",
+        countryCode: "US",
+        defaultCurrency: "USD",
+        timezone: "UTC",
+        classificationSource: "SYSTEM_TEMPLATE",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
+    organizationUnits: [
+      {
+        id: "unit-alpha-technology",
+        workspaceId: "workspace-alpha",
+        organizationId: "organization-alpha-primary",
+        name: "Technology",
+        type: "DEPARTMENT",
+        status: "ACTIVE",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "unit-alpha-backend",
+        workspaceId: "workspace-alpha",
+        organizationId: "organization-alpha-primary",
+        parentUnitId: "unit-alpha-technology",
+        name: "Backend",
+        type: "TEAM",
+        status: "ACTIVE",
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: "unit-beta-operations",
+        workspaceId: "workspace-beta",
+        organizationId: "organization-beta-primary",
+        name: "Operations",
+        type: "DEPARTMENT",
+        status: "ACTIVE",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
+    organizationLocations: [
+      {
+        id: "location-alpha-hq",
+        workspaceId: "workspace-alpha",
+        organizationId: "organization-alpha-primary",
+        name: "Alpha HQ",
+        type: "office",
+        countryCode: "US",
+        city: "New York",
+        timezone: "America/New_York",
+        status: "ACTIVE",
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
+    organizationUnitMemberships: [
+      {
+        workspaceMembershipId: "membership-alice-alpha",
+        organizationUnitId: "unit-alpha-technology",
+        relationshipType: "member",
+        businessTitle: "Founder",
+        isPrimary: true,
+        createdAt: now,
+      },
     ],
   });
 }

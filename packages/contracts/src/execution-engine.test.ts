@@ -15,6 +15,7 @@ import type {
 } from "./identity.js";
 import { InMemoryAuditSink } from "./audit.js";
 import { ActionExecutionEngine } from "./execution-engine.js";
+import { createOrganizationUpdateProfileTool } from "./organization-tools.js";
 import type { ToolDefinition } from "./tool-registry.js";
 import { systemEchoTool, ToolRegistry } from "./tool-registry.js";
 
@@ -336,5 +337,93 @@ describe("ActionExecutionEngine", () => {
 
     expect(result.status).toBe("DENIED");
     expect(result.authorization?.reason).toContain("does not hold");
+  });
+
+  it("M. executes an authorized organization profile mutation through the spine and audits it", async () => {
+    const organizationTool = createOrganizationUpdateProfileTool((input) =>
+      Promise.resolve({
+        organizationId: input.organizationId,
+        workspaceId: input.workspaceId,
+        ...(input.displayName ? { displayName: input.displayName } : {}),
+        ...(input.website ? { website: input.website } : {}),
+      }),
+    );
+    const auditSink = new InMemoryAuditSink();
+    const result = await new ActionExecutionEngine(
+      buildRegistry([organizationTool]),
+      new StaticActionWall(),
+      auditSink,
+    ).execute(
+      request({
+        action: "organization.update_profile",
+        requestedToolId: "organization.update_profile",
+        actor: {
+          ...request().actor,
+          permissionIds: ["organization.update_profile"],
+        },
+        resource: {
+          resourceType: "organization",
+          resourceId: "organization-alpha-primary",
+          workspaceId: workspaceA,
+        },
+        input: {
+          workspaceId: workspaceA,
+          organizationId: "organization-alpha-primary",
+          displayName: "Alpha Studio",
+          website: "https://studio.example.test",
+        } as unknown as { readonly message: string },
+      }),
+    );
+
+    expect(result.status).toBe("EXECUTED");
+    expect(result.output).toMatchObject({
+      organizationId: "organization-alpha-primary",
+      workspaceId: workspaceA,
+      displayName: "Alpha Studio",
+    });
+    expect(auditSink.list()[0]).toMatchObject({
+      action: "organization.update_profile",
+      resultStatus: "EXECUTED",
+      resourceType: "organization",
+      resourceId: "organization-alpha-primary",
+    });
+  });
+
+  it("N. denies organization mutation when the actor lacks permission, including AI source", async () => {
+    const organizationTool = createOrganizationUpdateProfileTool((input) =>
+      Promise.resolve({
+        organizationId: input.organizationId,
+        workspaceId: input.workspaceId,
+      }),
+    );
+    const result = await new ActionExecutionEngine(
+      buildRegistry([organizationTool]),
+      new StaticActionWall(),
+    ).execute(
+      request(
+        {
+          action: "organization.update_profile",
+          requestedToolId: "organization.update_profile",
+          actor: {
+            ...request().actor,
+            permissionIds: [],
+            requestSource: "AI",
+          },
+          resource: {
+            resourceType: "organization",
+            resourceId: "organization-alpha-primary",
+            workspaceId: workspaceA,
+          },
+          input: {
+            workspaceId: workspaceA,
+            organizationId: "organization-alpha-primary",
+            displayName: "Escalated",
+          } as unknown as { readonly message: string },
+        },
+        "AI",
+      ),
+    );
+
+    expect(result.status).toBe("DENIED");
   });
 });

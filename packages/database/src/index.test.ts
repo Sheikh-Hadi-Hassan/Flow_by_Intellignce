@@ -331,3 +331,76 @@ describe("workspace organization migration", () => {
     expect(migration).not.toContain("leave_balance");
   });
 });
+
+describe("module registry and entity system migration", () => {
+  const migration = readFileSync(
+    resolve(
+      process.cwd(),
+      "../../supabase/migrations/20260810000400_module_registry_universal_entity_system.sql",
+    ),
+    "utf8",
+  );
+
+  it("creates registry metadata tables with RLS enabled", () => {
+    for (const tableName of [
+      "module_definitions",
+      "workspace_module_activations",
+      "entity_type_definitions",
+      "field_definitions",
+      "relationship_definitions",
+    ]) {
+      expect(migration).toContain(`create table public.${tableName}`);
+      expect(migration).toContain(
+        `alter table public.${tableName} enable row level security;`,
+      );
+    }
+  });
+
+  it("keeps module metadata descriptive rather than executable", () => {
+    expect(migration).toContain("module_definitions_no_executable_metadata");
+    expect(migration).not.toContain("javascript_code");
+    expect(migration).not.toContain("shell_command");
+    expect(migration).not.toContain("sql_body");
+    expect(migration).not.toContain("implementation_url");
+  });
+
+  it("isolates workspace-owned registry configuration by workspace", () => {
+    expect(migration).toContain("workspace_id uuid not null");
+    expect(migration).toContain(
+      "flow_private.has_active_membership(workspace_id)",
+    );
+    expect(migration).toContain(
+      "flow_private.has_workspace_permission(workspace_id, 'module.enable')",
+    );
+    expect(migration).toContain(
+      "flow_private.has_workspace_permission(workspace_id, 'custom_field.manage')",
+    );
+  });
+
+  it("preserves system versus custom definition separation", () => {
+    expect(migration).toContain("kind = 'SYSTEM' and workspace_id is null");
+    expect(migration).toContain("kind = 'CUSTOM' and workspace_id is not null");
+    expect(migration).toContain("source = 'CUSTOM'");
+  });
+
+  it("adds minimal registry permissions without wildcard grants", () => {
+    for (const permission of [
+      "module.read",
+      "module.enable",
+      "module.disable",
+      "module.configure",
+      "entity_definition.create",
+      "custom_field.manage",
+    ]) {
+      expect(migration).toContain(permission);
+    }
+    expect(migration).not.toContain("full_access");
+    expect(migration).not.toContain("'*'");
+  });
+
+  it("does not create a universal EAV business-record store", () => {
+    expect(migration).not.toContain("entity_records");
+    expect(migration).not.toContain("entity_field_values");
+    expect(migration).not.toContain("field_value");
+  });
+});

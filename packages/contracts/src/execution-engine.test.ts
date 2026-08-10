@@ -15,6 +15,8 @@ import type {
 } from "./identity.js";
 import { InMemoryAuditSink } from "./audit.js";
 import { ActionExecutionEngine } from "./execution-engine.js";
+import { createModuleEnableTool } from "./module-tools.js";
+import { coreOrganizationModule, ModuleRegistry } from "./module-registry.js";
 import { createOrganizationUpdateProfileTool } from "./organization-tools.js";
 import type { ToolDefinition } from "./tool-registry.js";
 import { systemEchoTool, ToolRegistry } from "./tool-registry.js";
@@ -418,6 +420,91 @@ describe("ActionExecutionEngine", () => {
             workspaceId: workspaceA,
             organizationId: "organization-alpha-primary",
             displayName: "Escalated",
+          } as unknown as { readonly message: string },
+        },
+        "AI",
+      ),
+    );
+
+    expect(result.status).toBe("DENIED");
+  });
+
+  it("O. enables a trusted module through the spine and emits an audit event", async () => {
+    const moduleRegistry = new ModuleRegistry([coreOrganizationModule]);
+    const moduleTool = createModuleEnableTool((input) =>
+      Promise.resolve(moduleRegistry.enableModule(input)),
+    );
+    const auditSink = new InMemoryAuditSink();
+    const result = await new ActionExecutionEngine(
+      buildRegistry([moduleTool]),
+      new StaticActionWall(),
+      auditSink,
+    ).execute(
+      request({
+        action: "module.enable",
+        requestedToolId: "module.enable",
+        actor: {
+          ...request().actor,
+          permissionIds: ["module.enable"],
+        },
+        resource: {
+          resourceType: "module",
+          resourceId: "core.organization",
+          workspaceId: workspaceA,
+        },
+        input: {
+          workspaceId: workspaceA,
+          moduleKey: "core.organization",
+          version: "1.0.0",
+          enabledBy: "user-a",
+          configuration: { profileEditing: true },
+        } as unknown as { readonly message: string },
+      }),
+    );
+
+    expect(result.status).toBe("EXECUTED");
+    expect(result.output).toMatchObject({
+      workspaceId: workspaceA,
+      moduleKey: "core.organization",
+      status: "ENABLED",
+    });
+    expect(auditSink.list()[0]).toMatchObject({
+      action: "module.enable",
+      resultStatus: "EXECUTED",
+      resourceType: "module",
+      resourceId: "core.organization",
+    });
+  });
+
+  it("P. denies AI-originated module activation without user permission", async () => {
+    const moduleRegistry = new ModuleRegistry([coreOrganizationModule]);
+    const moduleTool = createModuleEnableTool((input) =>
+      Promise.resolve(moduleRegistry.enableModule(input)),
+    );
+    const result = await new ActionExecutionEngine(
+      buildRegistry([moduleTool]),
+      new StaticActionWall(),
+    ).execute(
+      request(
+        {
+          action: "module.enable",
+          requestedToolId: "module.enable",
+          actor: {
+            ...request().actor,
+            permissionIds: [],
+            requestSource: "AI",
+          },
+          resource: {
+            resourceType: "module",
+            resourceId: "core.organization",
+            workspaceId: workspaceA,
+          },
+          input: {
+            workspaceId: workspaceA,
+            moduleKey: "core.organization",
+            version: "1.0.0",
+            enabledBy: "user-a",
+            configuration: { profileEditing: true },
           } as unknown as { readonly message: string },
         },
         "AI",

@@ -7,3 +7,6 @@ export * from "./tool-registry.js";
 export * from "./execution-engine.js";
 export * from "./business-context.js";
 export * from "./organization-tools.js";
+export * from "./module-registry.js";
+export * from "./module-tools.js";
+export * from "./entity-registry.js";

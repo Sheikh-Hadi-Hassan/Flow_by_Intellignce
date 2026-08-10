@@ -1,16 +1,18 @@
 import { Body, Controller, Headers, Post } from "@nestjs/common";
 import {
   ActionExecutionEngine,
-  StaticActionWall,
+  ProviderBackedActionWall,
   systemEchoTool,
   ToolRegistry,
 } from "../../../packages/contracts/src/index.js";
 import type {
   ActionRequest,
   CorrelationId,
-  UserId,
-  WorkspaceId,
 } from "../../../packages/contracts/src/index.js";
+import {
+  createDevelopmentAuthenticationStack,
+  parseRequestSource,
+} from "./security/flow-auth-context.js";
 
 interface ExecuteEchoBody {
   readonly message?: unknown;
@@ -18,39 +20,54 @@ interface ExecuteEchoBody {
 
 @Controller("internal/actions")
 export class InternalActionsController {
+  private readonly authenticationStack = createDevelopmentAuthenticationStack();
   private readonly engine: ActionExecutionEngine;
+  private readonly identityResolver = this.authenticationStack.identityResolver;
 
   constructor() {
     const registry = new ToolRegistry();
     registry.register(systemEchoTool);
-    this.engine = new ActionExecutionEngine(registry, new StaticActionWall());
+    this.engine = new ActionExecutionEngine(
+      registry,
+      new ProviderBackedActionWall(
+        this.authenticationStack.authorizationProvider,
+      ),
+    );
   }
 
   @Post("execute")
   async executeSystemEcho(
     @Body() body: ExecuteEchoBody,
+    @Headers("authorization") authorizationHeader?: string,
+    @Headers("x-flow-workspace-id") workspaceIdHeader?: string,
+    @Headers("x-flow-request-source") requestSourceHeader?: string,
     @Headers("x-correlation-id") correlationIdHeader?: string,
   ) {
     const correlationId = (correlationIdHeader ??
       "internal-api-proof") as CorrelationId;
-    const workspaceId = "internal-dev-workspace" as WorkspaceId;
+    const context = await this.identityResolver.resolve({
+      authorizationHeader,
+      workspaceIdHeader,
+    });
 
     const request: ActionRequest<{ readonly message: unknown }> = {
       action: "system.echo",
       requestedToolId: "system.echo",
       actor: {
-        actorId: "internal-dev-user" as UserId,
+        actorId: context.actorId,
+        userId: context.userId,
+        membershipId: context.membershipId,
         actorKind: "user",
-        workspace: { workspaceId },
-        roleIds: ["developer"],
-        permissionIds: ["system.echo"],
-        requestSource: "API",
+        workspace: { workspaceId: context.workspaceId },
+        roleIds: context.roleIds,
+        permissionIds: context.permissionIds,
+        requestSource: parseRequestSource(requestSourceHeader),
         correlationId,
       },
-      workspace: { workspaceId },
+      workspace: { workspaceId: context.workspaceId },
       resource: {
         resourceType: "system",
-        workspaceId,
+        workspaceId: context.workspaceId,
       },
       input: {
         message: body.message,

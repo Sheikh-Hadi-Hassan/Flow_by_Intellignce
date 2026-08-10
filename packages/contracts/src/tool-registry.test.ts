@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { StaticActionWall } from "./action-wall.js";
 import type { ActionRequest } from "./action-wall.js";
-import type { CorrelationId, WorkspaceId, UserId } from "./identity.js";
+import type {
+  CorrelationId,
+  MembershipId,
+  WorkspaceId,
+  UserId,
+} from "./identity.js";
 import { systemEchoTool, ToolRegistry } from "./tool-registry.js";
 
 const workspaceId = "workspace-a" as WorkspaceId;
@@ -15,6 +20,8 @@ describe("ToolRegistry architecture proof", () => {
       action: "system.echo",
       actor: {
         actorId: "user-a" as UserId,
+        userId: "user-a" as UserId,
+        membershipId: "membership-a" as MembershipId,
         actorKind: "user",
         workspace: { workspaceId },
         roleIds: [],
@@ -51,6 +58,8 @@ describe("ToolRegistry architecture proof", () => {
       action: "system.echo",
       actor: {
         actorId: "user-a" as UserId,
+        userId: "user-a" as UserId,
+        membershipId: "membership-a" as MembershipId,
         actorKind: "user",
         workspace: { workspaceId },
         roleIds: [],

@@ -1,9 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { StaticActionWall } from "./action-wall.js";
+import { describe, expect, it, vi } from "vitest";
+import { ProviderBackedActionWall, StaticActionWall } from "./action-wall.js";
 import type { ActionRequest } from "./action-wall.js";
 import type {
   ActorContext,
   CorrelationId,
+  MembershipId,
   WorkspaceId,
   UserId,
 } from "./identity.js";
@@ -18,6 +19,8 @@ function actor(
 ): ActorContext {
   return {
     actorId,
+    userId: actorId,
+    membershipId: "membership-a" as MembershipId,
     actorKind: "user",
     workspace: { workspaceId },
     roleIds: [],
@@ -76,5 +79,30 @@ describe("StaticActionWall", () => {
 
     expect(decision.outcome).toBe("REQUIRES_APPROVAL");
     expect(decision.approval?.mode).toBe("always-ask");
+  });
+
+  it("uses provider-backed authorization without letting request source add privilege", async () => {
+    const provider = {
+      authorize: vi.fn((input: { readonly action: string }) =>
+        Promise.resolve({
+          allowed: input.action === "system.echo",
+          reason: "Persisted permission matched the current membership.",
+          requiredPermission: input.action,
+          membershipStatus: "ACTIVE" as const,
+          roleIds: ["member"],
+          permissionIds: ["system.echo"],
+        }),
+      ),
+    };
+
+    const uiDecision = await new ProviderBackedActionWall(provider).authorize(
+      request({ actor: { ...actor(["system.echo"]), requestSource: "UI" } }),
+    );
+    const aiDecision = await new ProviderBackedActionWall(provider).authorize(
+      request({ actor: { ...actor(["system.echo"]), requestSource: "AI" } }),
+    );
+
+    expect(uiDecision.outcome).toBe("ALLOW");
+    expect(aiDecision.outcome).toBe(uiDecision.outcome);
   });
 });

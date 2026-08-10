@@ -8,6 +8,7 @@ import type {
 import { StaticActionWall } from "./action-wall.js";
 import type {
   CorrelationId,
+  MembershipId,
   RequestSource,
   UserId,
   WorkspaceId,
@@ -42,6 +43,8 @@ function request(
     requestedToolId: "system.echo",
     actor: {
       actorId: "user-a" as UserId,
+      userId: "user-a" as UserId,
+      membershipId: "membership-a" as MembershipId,
       actorKind: "user",
       workspace: { workspaceId: workspaceA },
       roleIds: ["member"],

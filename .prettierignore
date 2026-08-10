@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.next
+coverage
+.codex
+.codex-reports
+pnpm-lock.yaml

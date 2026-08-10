@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@flow/contracts": ["packages/contracts/src/index.ts"],
+      "@flow/config": ["packages/config/src/index.ts"],
+      "@flow/database": ["packages/database/src/index.ts"],
+      "@flow/domain": ["packages/domain/src/index.ts"],
+      "@flow/auth": ["packages/auth/src/index.ts"],
+      "@flow/observability": ["packages/observability/src/index.ts"],
+      "@flow/testing": ["packages/testing/src/index.ts"]
+    }
+  }
+}

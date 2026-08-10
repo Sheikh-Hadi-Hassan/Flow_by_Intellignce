@@ -1,0 +1,13 @@
+{
+  "original_core_candidates": 29,
+  "final_true_core": 12,
+  "security_gates": 12,
+  "task_triggered_task_classes": 38,
+  "removed_from_core": 17,
+  "custom_flow_skills_recommended_yes": 5,
+  "custom_flow_skills_later": 1,
+  "p0_security_reviews": 8,
+  "p1_security_reviews": 8,
+  "recommended_next_step": "A. Create Flow-specific Codex skills",
+  "why": "The current installed set has useful generic/provider skills, but Flow lacks an authoritative project-specific architecture layer. Creating a small Flow skill set first will reduce repeated context, prevent provider bias, and encode the action wall/security rules before app scaffolding or architecture expansion."
+}

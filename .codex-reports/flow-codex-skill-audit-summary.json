@@ -1,0 +1,31 @@
+{
+  "total_recursive": 932,
+  "top_level": 887,
+  "category_counts": {
+    "E - INFRASTRUCTURE / DEPLOYMENT": 311,
+    "F - DOMAIN-SPECIFIC / FUTURE": 321,
+    "D - UI/UX": 105,
+    "B - TASK-TRIGGERED": 15,
+    "C - SECURITY GATE": 26,
+    "A - CORE / FREQUENT": 29,
+    "H - IRRELEVANT TO FLOW": 85,
+    "G - DUPLICATE / OVERLAPPING": 40
+  },
+  "risk_counts": {
+    "LOW-MEDIUM": 372,
+    "MEDIUM": 507,
+    "LOW": 53
+  },
+  "relevant_now": 471,
+  "core_candidates": 29,
+  "on_demand_candidates": 431,
+  "security_gate_candidates": 26,
+  "future_candidates": 321,
+  "disable_candidates": 125,
+  "uninstall_candidates": 0,
+  "manual_security_review_candidates": 507,
+  "missing_flow_specific_skills": 6,
+  "report": "/Users/sheikhhadihassan/Documents/Flow by Intellignce/.codex-reports/flow-codex-skill-audit.md",
+  "inventory_md": "/Users/sheikhhadihassan/Documents/Flow by Intellignce/.codex-reports/flow-codex-skill-audit-inventory.md",
+  "inventory_csv": "/Users/sheikhhadihassan/Documents/Flow by Intellignce/.codex-reports/flow-codex-skill-audit-inventory.csv"
+}

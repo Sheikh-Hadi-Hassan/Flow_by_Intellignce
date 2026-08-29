@@ -260,10 +260,10 @@ describe("service-role exposure guardrail", () => {
         ),
     );
 
-    expect(envExample).toContain("SUPABASE_SERVICE_ROLE_KEY=");
-    expect(envExample).not.toContain("NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY");
+    expect(envExample).toContain("SUPABASE_SECRET_KEY=");
+    expect(envExample).not.toContain("NEXT_PUBLIC_SUPABASE_SECRET_KEY");
     for (const source of webSourceFiles) {
-      expect(source).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
+      expect(source).not.toContain("SUPABASE_SECRET_KEY");
     }
   });
 });

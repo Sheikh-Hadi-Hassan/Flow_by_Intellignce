@@ -48,18 +48,29 @@ logs/
 .cache/
 .eslintcache
 .vitest/
+.pytest_cache/
 playwright-report/
 test-results/
+artifacts/blm-evals/
+packages/blm-evaluation/artifacts/blm-evals/
 
 # Python helper services, if introduced later
 __pycache__/
 *.py[cod]
 .venv/
+services/blm-semantic-kernel/.venv311/
 venv/
+experiments/blm/semantica-wheel/
+experiments/blm/python-build-standalone/
+experiments/blm/reference-sources/
 
 # Supabase local state
 supabase/.branches/
 supabase/.temp/
 supabase/.env
 supabase/.env.*
-
+supabase/**/*.dump
+supabase/**/*.backup
+*.sql.dump
+*.pgdump
+local-db-artifacts/

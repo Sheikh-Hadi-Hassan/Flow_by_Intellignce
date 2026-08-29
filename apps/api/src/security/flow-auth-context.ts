@@ -6,15 +6,16 @@ import {
 import {
   extractBearerToken,
   StaticTokenAuthenticationAdapter,
-} from "../../../../packages/auth/src/index.js";
+} from "@flow/auth";
 import type {
   AuthenticatedIdentity,
   AuthenticationAdapter,
-} from "../../../../packages/auth/src/index.js";
+} from "@flow/auth";
 import {
   createFlowIdentityTestRepository,
   type IdentityAuthorizationRepository,
-} from "../../../../packages/database/src/index.js";
+  type InMemoryIdentityAuthorizationRepository,
+} from "@flow/database";
 import type {
   AuthorizationProvider,
   AuthorizationProviderDecision,
@@ -22,7 +23,7 @@ import type {
   RequestSource,
   UserId,
   WorkspaceId,
-} from "../../../../packages/contracts/src/index.js";
+} from "@flow/contracts";
 
 export interface TrustedExecutionContext {
   readonly actorId: UserId;
@@ -87,6 +88,28 @@ export class FlowRequestIdentityResolver {
     private readonly authenticationAdapter: AuthenticationAdapter,
     private readonly repository: IdentityAuthorizationRepository,
   ) {}
+
+  async authenticate(input: {
+    readonly authorizationHeader: string | undefined;
+  }): Promise<AuthenticatedIdentity & { readonly userId: string }> {
+    const authentication =
+      await this.authenticationAdapter.authenticateBearerToken(
+        extractBearerToken(input.authorizationHeader),
+      );
+    if (!authentication.authenticated) {
+      throw new UnauthorizedException(authentication.reason);
+    }
+
+    const user = await this.repository.findUserByProviderSubject({
+      authProvider: authentication.identity.provider,
+      authSubjectId: authentication.identity.subjectId,
+    });
+
+    return {
+      ...authentication.identity,
+      userId: user?.id ?? authentication.identity.subjectId,
+    };
+  }
 
   async resolve(input: {
     readonly authorizationHeader: string | undefined;
@@ -154,6 +177,7 @@ export function parseRequestSource(value: string | undefined): RequestSource {
 export function createDevelopmentAuthenticationStack(): {
   readonly authorizationProvider: RepositoryAuthorizationProvider;
   readonly identityResolver: FlowRequestIdentityResolver;
+  readonly repository: InMemoryIdentityAuthorizationRepository;
 } {
   const repository = createFlowIdentityTestRepository();
   const aliceIdentity: AuthenticatedIdentity = {
@@ -188,5 +212,6 @@ export function createDevelopmentAuthenticationStack(): {
       authenticationAdapter,
       repository,
     ),
+    repository,
   };
 }

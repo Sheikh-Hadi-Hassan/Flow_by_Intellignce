@@ -6,3 +6,11 @@ coverage
 .codex
 .codex-reports
 pnpm-lock.yaml
+.venv
+services/blm-semantic-kernel/.venv311
+venv
+.pytest_cache
+__pycache__
+experiments/blm/semantica-wheel
+experiments/blm/python-build-standalone
+knowledge/blm/sources

@@ -4,11 +4,11 @@ import {
   ProviderBackedActionWall,
   systemEchoTool,
   ToolRegistry,
-} from "../../../packages/contracts/src/index.js";
+} from "@flow/contracts";
 import type {
   ActionRequest,
   CorrelationId,
-} from "../../../packages/contracts/src/index.js";
+} from "@flow/contracts";
 import {
   createDevelopmentAuthenticationStack,
   parseRequestSource,

@@ -1,0 +1,227 @@
+{
+  "results": [
+    {
+      "route": "/",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/sign-up",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/onboarding/business",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/twin",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "light-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "dark-default",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "light-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "dark-custom",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "no-theme-invalid",
+      "errors": [],
+      "accent": "#1a56db"
+    },
+    {
+      "route": "/northstar-creative/admin/settings",
+      "case": "corrupted-session",
+      "errors": [],
+      "theme": "light",
+      "accent": "#1a56db"
+    }
+  ],
+  "failures": []
+}

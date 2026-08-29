@@ -1,0 +1,4 @@
+import { SESSION_STORAGE_KEY, THEME_STORAGE_KEY } from "./preferences";
+
+/** Blocking inline script — must stay free of imports that do not stringify. */
+export const PREFERENCE_INIT_SCRIPT = `(function(){try{var tk='${THEME_STORAGE_KEY}';var sk='${SESSION_STORAGE_KEY}';var t=localStorage.getItem(tk);if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var raw=localStorage.getItem(sk);var accent='#1a56db';if(raw){try{var s=JSON.parse(raw);if(typeof s.accentColor==='string'&&/^#[0-9a-fA-F]{6}$/.test(s.accentColor)){accent=s.accentColor;}}catch(e){}}document.documentElement.style.setProperty('--color-brand',accent);document.documentElement.style.setProperty('--color-brand-hover',accent);}catch(e){}})();`;

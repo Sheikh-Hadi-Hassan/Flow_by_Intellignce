@@ -4,6 +4,10 @@ export const databaseBoundary = {
   tenantIsolation: "workspace_id-required-for-tenant-owned-records",
 } as const;
 
+export * from "./business-persistence.js";
+export * from "./workspace-phase1.js";
+export * from "./workspace-provisioning.js";
+
 export type WorkspaceMembershipStatus = "ACTIVE" | "SUSPENDED";
 
 export interface FlowUserRecord {
@@ -486,6 +490,125 @@ export class InMemoryIdentityAuthorizationRepository implements MutableIdentityA
 
     this.organizationUnitMemberships.push(membership);
     return Promise.resolve(membership);
+  }
+
+  createUser(input: {
+    readonly authProvider: "supabase";
+    readonly authSubjectId: string;
+    readonly email?: string;
+  }): FlowUserRecord {
+    const user: FlowUserRecord = {
+      id: crypto.randomUUID(),
+      authProvider: input.authProvider,
+      authSubjectId: input.authSubjectId,
+      ...(input.email ? { email: input.email } : {}),
+    };
+    this.users.set(user.id, user);
+    return user;
+  }
+
+  findWorkspaceBySlug(slug: string): WorkspaceRecord | undefined {
+    return [...this.workspaces.values()].find(
+      (workspace) => workspace.slug === slug,
+    );
+  }
+
+  findWorkspaceById(workspaceId: string): WorkspaceRecord | undefined {
+    return this.workspaces.get(workspaceId);
+  }
+
+  listWorkspacesForUser(userId: string): readonly WorkspaceRecord[] {
+    const workspaceIds = new Set(
+      [...this.memberships.values()]
+        .filter(
+          (membership) =>
+            membership.userId === userId && membership.status === "ACTIVE",
+        )
+        .map((membership) => membership.workspaceId),
+    );
+    return [...this.workspaces.values()].filter((workspace) =>
+      workspaceIds.has(workspace.id),
+    );
+  }
+
+  createWorkspace(input: {
+    readonly name: string;
+    readonly slug: string;
+  }): WorkspaceRecord {
+    const workspace: WorkspaceRecord = {
+      id: crypto.randomUUID(),
+      name: input.name,
+      slug: input.slug,
+    };
+    this.workspaces.set(workspace.id, workspace);
+    return workspace;
+  }
+
+  createRole(input: {
+    readonly workspaceId: string;
+    readonly key: string;
+    readonly name: string;
+    readonly permissionKeys: readonly string[];
+  }): RoleRecord {
+    const role: RoleRecord = {
+      id: crypto.randomUUID(),
+      workspaceId: input.workspaceId,
+      key: input.key,
+      name: input.name,
+    };
+    this.roles.set(role.id, role);
+    for (const permissionKey of input.permissionKeys) {
+      let permission = [...this.permissions.values()].find(
+        (candidate) => candidate.key === permissionKey,
+      );
+      if (!permission) {
+        permission = {
+          id: crypto.randomUUID(),
+          key: permissionKey,
+          description: permissionKey,
+        };
+        this.permissions.set(permission.id, permission);
+      }
+      this.rolePermissions.push({
+        roleId: role.id,
+        permissionId: permission.id,
+      });
+    }
+    return role;
+  }
+
+  createMembership(input: {
+    readonly workspaceId: string;
+    readonly userId: string;
+    readonly roleIds: readonly string[];
+  }): WorkspaceMembershipRecord {
+    const now = new Date().toISOString();
+    const membership: WorkspaceMembershipRecord = {
+      id: crypto.randomUUID(),
+      workspaceId: input.workspaceId,
+      userId: input.userId,
+      status: "ACTIVE",
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.memberships.set(membership.id, membership);
+    this.membershipRoles.push(
+      ...input.roleIds.map((roleId) => ({
+        membershipId: membership.id,
+        roleId,
+      })),
+    );
+    return membership;
+  }
+
+  updateWorkspaceName(workspaceId: string, name: string): WorkspaceRecord {
+    const workspace = this.workspaces.get(workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found.");
+    }
+    const updated = { ...workspace, name };
+    this.workspaces.set(workspaceId, updated);
+    return updated;
   }
 }
 

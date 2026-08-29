@@ -11,6 +11,11 @@
     "lint": "eslint .",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@flow/blm-contracts": "workspace:*",
+    "@flow/blm-core": "workspace:*",
+    "@flow/contracts": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"

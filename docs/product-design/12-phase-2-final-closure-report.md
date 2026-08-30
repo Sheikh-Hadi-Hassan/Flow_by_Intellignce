@@ -7,7 +7,7 @@
 ## 2. Environment verified
 
 * **Supabase project reference:** `zuvtnmmnwohrapaecsuj` (Flow by Intellignce)
-* **Branch:** `main` (uncommitted working tree on top of `f580816`)
+* **Branch:** `main` at `8c08337`
 * **Base commit:** `f580816` (`feat(intelligence): add evidence-linked discovery extraction`)
 * **Web/API ports:** Web `3000`, API `4000`
 * **Cold start:** Killed ports 3000/4000, rebuilt `@flow/commercial` + `@flow/database` + `@flow/api`, `next build`, then `node apps/api/dist/main.js` + `next start --port 3000`
@@ -145,9 +145,9 @@ Migration head: `20260831000100` (extraction runs) + `20260830000200` (RLS write
 
 ## 13. Git checkpoint
 
-* **Commit hash:** `bea7350`
+* **Commit hash:** `8c08337` (`fix(commercial): close Phase 2 authenticated browser golden path`)
 * **Branch:** `main`
-* **Push status:** **Blocked** — `git@github.com: Permission denied (publickey)`
+* **Push status:** pending re-attempt after lint-closure verification
 
 ## 14. Known limitations
 

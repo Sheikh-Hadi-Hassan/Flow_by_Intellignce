@@ -6,12 +6,15 @@ import { useParams } from "next/navigation";
 import { FounderShell } from "../shell/AppShell";
 import { WorkspaceGate } from "../shell/WorkspaceGate";
 import { useWorkspaceSessionActions } from "../../lib/workspace/session-actions";
+import { CommercialDataGate } from "./CommercialDataGate";
 
 export function CommercialRoute({ children }: { children: ReactNode }) {
   const workspace = useParams().workspace as string;
   return (
     <WorkspaceGate workspace={workspace} requireTwin variant="founder">
-      <CommercialShell>{children}</CommercialShell>
+      <CommercialShell>
+        <CommercialDataGate>{children}</CommercialDataGate>
+      </CommercialShell>
     </WorkspaceGate>
   );
 }

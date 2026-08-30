@@ -1,8 +1,8 @@
 {
-  "runId": "cc19d37b",
-  "workspaceId": "936c24f9-2d36-47b8-b9e0-54c1d27c9622",
-  "workspaceSlug": "golden-cc19d37b",
-  "opportunityId": "e723f212-2bd2-408a-846c-a3e076de5c42",
+  "runId": "fe0d7f3f",
+  "workspaceId": "f0e6e94c-da49-479a-bfe2-f722b216ef72",
+  "workspaceSlug": "golden-fe0d7f3f",
+  "opportunityId": "f3c93747-5400-4928-9e15-963357bb9591",
   "journeyStatus": "approved",
   "approvedVersion": 2,
   "approvedStatus": "approved",
@@ -18,9 +18,9 @@
   },
   "counts": {
     "facts": 4,
-    "requirements": 2,
+    "requirements": 3,
     "deliverables": 1,
-    "risks": 2,
+    "risks": 1,
     "briefs": 2,
     "guards": 3
   },

@@ -52,7 +52,11 @@ export function createPersistenceStack(): PersistenceStack {
     };
   }
 
-  const pool = new Pool({ connectionString: databaseUrl });
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    // ponytail: Node's local TZ (e.g. GMT+0500) is not a valid Postgres zone name.
+    options: "-c timezone=UTC",
+  });
   const sql = createPostgresSqlExecutor(pool);
   return {
     identityRepository: new PostgresFlowIdentityRepository(sql),

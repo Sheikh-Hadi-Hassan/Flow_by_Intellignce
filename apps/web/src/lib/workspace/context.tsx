@@ -118,6 +118,7 @@ export function WorkspaceApiProvider({ children }: { children: ReactNode }) {
         const token = (await syncAccessToken()) ?? undefined;
         if (!token) {
           setApiSession(null);
+          setError("Unable to establish authenticated session.");
           return null;
         }
         const bundle = await fetchWorkspaceBundle({
@@ -382,11 +383,14 @@ export function useUnifiedWorkspaceSession(workspaceSlug: string): {
     prototype.session?.mode === "demo" &&
     prototype.session.workspaceSlug === workspaceSlug;
 
+  const awaitingApiSession =
+    !isDemoWorkspaceSlug(workspaceSlug) &&
+    api.apiSession?.workspaceSlug !== workspaceSlug;
+
   useEffect(() => {
-    if (isDemoWorkspaceSlug(workspaceSlug)) return;
-    if (api.apiSession?.workspaceSlug === workspaceSlug) return;
+    if (!awaitingApiSession) return;
     void api.loadWorkspace(workspaceSlug);
-  }, [api, workspaceSlug]);
+  }, [api, awaitingApiSession, workspaceSlug]);
 
   if (isDemoWorkspaceSlug(workspaceSlug)) {
     if (isDemo) {
@@ -409,15 +413,17 @@ export function useUnifiedWorkspaceSession(workspaceSlug: string): {
     };
   }
 
-  if (api.loading && !api.apiSession) {
-    return {
-      session: null,
-      mismatch: false,
-      isResolving: true,
-      isDemo: false,
-      isApiBacked: true,
-      error: null,
-    };
+  if (awaitingApiSession) {
+    if (api.loading || (!api.apiSession && !api.error)) {
+      return {
+        session: null,
+        mismatch: false,
+        isResolving: true,
+        isDemo: false,
+        isApiBacked: true,
+        error: null,
+      };
+    }
   }
 
   if (!api.apiSession) {

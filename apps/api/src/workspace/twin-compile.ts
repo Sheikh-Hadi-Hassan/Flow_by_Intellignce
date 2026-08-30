@@ -1,11 +1,4 @@
-import type {
-  OnboardingBusinessData,
-  OnboardingOperationsData,
-  OnboardingPoliciesData,
-  OnboardingServiceData,
-  WorkspaceOnboardingState,
-  TwinSnapshotData,
-} from "@flow/database";
+import type { WorkspaceOnboardingState, TwinSnapshotData } from "@flow/database";
 
 export function compileTwinFromOnboarding(
   state: WorkspaceOnboardingState,

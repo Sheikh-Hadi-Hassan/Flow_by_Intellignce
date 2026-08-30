@@ -80,10 +80,12 @@ try {
     method: "PATCH",
     headers: auth,
     body: JSON.stringify({
-      countryCode: "US",
-      currencyCode: "USD",
-      businessName: "Golden Path Agency",
-      businessType: "creative_marketing_agency",
+      business: {
+        businessName: "Golden Path Agency",
+        businessType: "creative_marketing_agency",
+        country: "US",
+        currency: "USD",
+      },
     }),
   });
   await fetch(`${apiBase}/api/v1/workspaces/${workspace.id}/onboarding/complete`, {

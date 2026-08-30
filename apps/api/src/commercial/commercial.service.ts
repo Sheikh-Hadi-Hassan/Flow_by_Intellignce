@@ -586,7 +586,7 @@ export class CommercialService {
         identity.workspaceId,
         idempotencyKey,
       );
-      if (existing) {
+      if (existing?.status === "succeeded" || existing?.status === "reviewed") {
         return this.getOpportunityBundle(identity, opportunityId);
       }
     }

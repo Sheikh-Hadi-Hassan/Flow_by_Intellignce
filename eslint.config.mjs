@@ -13,6 +13,12 @@ export default [
       "packages/auth/src/**/*.js",
       "packages/auth/src/**/*.d.ts",
       "packages/auth/src/**/*.map",
+      "packages/database/src/**/*.js",
+      "packages/database/src/**/*.d.ts",
+      "packages/database/src/**/*.map",
+      "packages/commercial/src/**/*.js",
+      "packages/commercial/src/**/*.d.ts",
+      "packages/commercial/src/**/*.map",
     ],
   },
   js.configs.recommended,
@@ -34,6 +40,30 @@ export default [
     files: ["**/*.config.*", "**/next.config.ts"],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+  },
+  {
+    files: ["apps/api/test/**/*.ts", "apps/api/vitest.config.ts"],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        project: ["apps/api/tsconfig.eslint.json"],
+        projectService: false,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    files: ["packages/commercial/scripts/**/*.mjs"],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+      },
+      globals: {
+        console: "readonly",
+        process: "readonly",
+      },
     },
   },
 ];

@@ -21,7 +21,7 @@ export class FixtureDiscoveryExtractionProvider
 {
   readonly providerId = "fixture";
 
-  async extract(
+  extract(
     context: DiscoveryExtractionContext,
   ): Promise<DiscoveryExtractionProviderResult> {
     const started = Date.now();
@@ -78,7 +78,7 @@ export class FixtureDiscoveryExtractionProvider
       });
     }
 
-    return {
+    return Promise.resolve({
       output: {
         schemaVersion: DISCOVERY_EXTRACTION_SCHEMA_VERSION,
         candidates,
@@ -89,6 +89,6 @@ export class FixtureDiscoveryExtractionProvider
       promptVersion: DISCOVERY_EXTRACTION_PROMPT_VERSION,
       schemaVersion: DISCOVERY_EXTRACTION_SCHEMA_VERSION,
       latencyMs: Date.now() - started,
-    };
+    });
   }
 }

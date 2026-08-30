@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run build --prefix ../../packages/commercial",
+    "prebuild": "npm run build --prefix ../../packages/commercial",
     "dev": "next dev --port 3000",
     "build": "next build",
     "typecheck": "tsc -p tsconfig.json --noEmit",

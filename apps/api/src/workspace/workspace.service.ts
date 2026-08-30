@@ -174,17 +174,19 @@ export class WorkspaceService {
       policies?: Partial<WorkspaceOnboardingState["policies"]>;
     };
   }) {
-    await this.assertPermission(input.identity, "onboarding.manage");
+    this.assertPermission(input.identity, "onboarding.manage");
     const current =
       (await this.phase1Repository.getOnboarding(input.workspaceId)) ??
       emptyOnboardingState(input.workspaceId);
     const next: WorkspaceOnboardingState = {
       ...current,
-      ...input.patch,
       workspaceId: input.workspaceId,
-      business: { ...current.business, ...input.patch.business },
-      operations: { ...current.operations, ...input.patch.operations },
-      policies: { ...current.policies, ...input.patch.policies },
+      ...(input.patch.currentStep
+        ? { currentStep: input.patch.currentStep }
+        : {}),
+      business: { ...current.business, ...(input.patch.business ?? {}) },
+      operations: { ...current.operations, ...(input.patch.operations ?? {}) },
+      policies: { ...current.policies, ...(input.patch.policies ?? {}) },
       services: input.patch.services ?? current.services,
       version: current.version + 1,
       updatedAt: new Date().toISOString(),
@@ -200,7 +202,7 @@ export class WorkspaceService {
     readonly identity: TrustedExecutionContext;
     readonly workspaceId: string;
   }) {
-    await this.assertPermission(input.identity, "twin.compile");
+    this.assertPermission(input.identity, "twin.compile");
     const current = await this.phase1Repository.getOnboarding(
       input.workspaceId,
     );
@@ -240,7 +242,7 @@ export class WorkspaceService {
     readonly identity: TrustedExecutionContext;
     readonly workspaceId: string;
   }) {
-    await this.assertPermission(input.identity, "twin.read");
+    this.assertPermission(input.identity, "twin.read");
     const twin = await this.phase1Repository.getTwin(input.workspaceId);
     if (!twin) {
       throw new NotFoundException("Business Twin has not been compiled.");
@@ -254,7 +256,7 @@ export class WorkspaceService {
     readonly workspaceName?: string;
     readonly preferences?: Partial<WorkspacePreferencesRecord>;
   }) {
-    await this.assertPermission(input.identity, "workspace.manage");
+    this.assertPermission(input.identity, "workspace.manage");
     const resolved = await this.identityRepository.resolveMembership({
       userId: input.identity.userId,
       workspaceId: input.workspaceId,
@@ -287,10 +289,10 @@ export class WorkspaceService {
     return this.phase1Repository.getPreferences(input.workspaceId);
   }
 
-  private async assertPermission(
+  private assertPermission(
     identity: TrustedExecutionContext,
     permission: string,
-  ): Promise<void> {
+  ): void {
     if (!identity.permissionIds.includes(permission)) {
       throw new ForbiddenException("Missing required permission.");
     }

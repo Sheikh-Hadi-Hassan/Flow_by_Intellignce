@@ -31,6 +31,9 @@ function OpportunitiesList() {
   const [clientId, setClientId] = useState("");
   const [serviceId, setServiceId] = useState("");
   const [name, setName] = useState("Acme Robotics brand system");
+  const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const ready = Boolean(api && clientId && serviceId);
 
   useEffect(() => {
     if (!api) return;
@@ -56,6 +59,11 @@ function OpportunitiesList() {
       />
       <section className="flow-panel">
         <h2>Create opportunity</h2>
+        {error ? (
+          <p className="flow-error" role="alert">
+            {error}
+          </p>
+        ) : null}
         <FormField label="Name" htmlFor="opp-name">
           <TextInput
             id="opp-name"
@@ -90,19 +98,32 @@ function OpportunitiesList() {
           </Select>
         </FormField>
         <Button
+          disabled={!ready || creating}
           onClick={async () => {
             if (!api || !clientId || !serviceId) return;
-            const created = await api.createOpportunity({
-              clientId,
-              serviceId,
-              name,
-              budgetMinMinor: "7000000",
-              budgetMaxMinor: "9000000",
-            });
-            router.push(`/${workspace}/admin/opportunities/${created.id}`);
+            setCreating(true);
+            setError(null);
+            try {
+              const created = await api.createOpportunity({
+                clientId,
+                serviceId,
+                name,
+                budgetMinMinor: "7000000",
+                budgetMaxMinor: "9000000",
+              });
+              router.push(`/${workspace}/admin/opportunities/${created.id}`);
+            } catch (createError) {
+              setError(
+                createError instanceof Error
+                  ? createError.message
+                  : "Unable to create opportunity.",
+              );
+            } finally {
+              setCreating(false);
+            }
           }}
         >
-          Create opportunity
+          {creating ? "Creating…" : "Create opportunity"}
         </Button>
       </section>
       <ul className="flow-compact-list">

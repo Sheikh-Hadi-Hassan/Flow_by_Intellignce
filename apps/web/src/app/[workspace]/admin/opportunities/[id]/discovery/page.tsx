@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CommercialRoute } from "../../../../../../components/commercial/CommercialRoute";
 import {
@@ -34,7 +34,6 @@ function Discovery() {
     start: number;
     end: number;
   } | null>(null);
-  const notesRef = useRef<HTMLTextAreaElement>(null);
   const isDemo = isDemoWorkspaceSlug(workspace);
 
   useEffect(() => {
@@ -69,7 +68,6 @@ function Discovery() {
       <FormField label="Meeting notes" htmlFor="notes">
         <TextArea
           id="notes"
-          ref={notesRef}
           rows={10}
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
@@ -165,7 +163,7 @@ function Discovery() {
                     start: fact.characterStart!,
                     end: fact.characterEnd!,
                   });
-                  notesRef.current?.focus();
+                  document.getElementById("notes")?.focus();
                 }}
               >
                 Show evidence

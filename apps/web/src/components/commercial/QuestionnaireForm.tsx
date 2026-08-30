@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "@rjsf/core";
-import type { RJSFSchema, UiSchema } from "@rjsf/utils";
+import type { UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 
 interface QuestionnaireFormProps {
@@ -21,7 +21,7 @@ export function QuestionnaireForm({
 }: QuestionnaireFormProps) {
   return (
     <Form
-      schema={schema as RJSFSchema}
+      schema={schema}
       formData={formData}
       validator={validator}
       liveValidate

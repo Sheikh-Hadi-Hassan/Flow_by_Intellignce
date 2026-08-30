@@ -25,9 +25,7 @@ export async function prepareAuthenticatedPage(
   { supabaseUrl, appUrl, apiBase, apiAuth },
 ) {
   const cookie = buildSupabaseAuthCookie(session, supabaseUrl, appUrl);
-  await page.context().setExtraHTTPHeaders({
-    Cookie: `${cookie.name}=${cookie.value}`,
-  });
+  await page.context().addCookies([cookie]);
   await page.route(`${apiBase}/api/v1/**`, async (route) => {
     const headers = {
       ...route.request().headers(),

@@ -217,8 +217,12 @@ export function createNorthstarCommercialApi() {
     },
     listOpportunities: async () => [load().opportunity],
     createOpportunity: async () => load().opportunity,
-    getOpportunity: async (_id?: string) => bundle(load()),
-    saveAnswers: async (_id: string, answers: Record<string, unknown>) => {
+    getOpportunity: async (id?: string) => {
+      void id;
+      return bundle(load());
+    },
+    saveAnswers: async (id: string, answers: Record<string, unknown>) => {
+      void id;
       const state = load();
       const validated = validateQuestionnaireResponse(
         brandStrategyQuestionnaireV1,
@@ -232,13 +236,15 @@ export function createNorthstarCommercialApi() {
       save(state);
       return bundle(state);
     },
-    addNotes: async (_id: string, notes: string) => {
+    addNotes: async (id: string, notes: string) => {
+      void id;
       const state = load();
       state.sources = [{ originalText: notes || NORTHSTAR_ACME_NOTES }];
       save(state);
       return bundle(state);
     },
-    analyzeNotes: async (_id: string) => {
+    analyzeNotes: async (id: string) => {
+      void id;
       const state = load();
       const notes = state.sources[0]?.originalText ?? NORTHSTAR_ACME_NOTES;
       const drafts = await extractor.extract({
@@ -312,7 +318,8 @@ export function createNorthstarCommercialApi() {
       );
       save(state);
     },
-    calculate: async (_id?: string) => {
+    calculate: async (id?: string) => {
+      void id;
       const state = load();
       const calculation = calculateScope({
         currency: "USD",
@@ -341,7 +348,8 @@ export function createNorthstarCommercialApi() {
       save(state);
       return bundle(state);
     },
-    generateBrief: async (_id?: string) => {
+    generateBrief: async (id?: string) => {
+      void id;
       const state = load();
       if (state.briefs.some((row) => row.status === "approved")) {
         throw new Error("Approved brief already exists.");
@@ -393,7 +401,8 @@ export function createNorthstarCommercialApi() {
       save(state);
       return version;
     },
-    submitReview: async (versionId: string, _expectedVersion?: number) => {
+    submitReview: async (versionId: string, expectedVersion?: number) => {
+      void expectedVersion;
       const state = load();
       state.briefs = state.briefs.map((row) =>
         row.id === versionId ? { ...row, status: "in_review" } : row,
@@ -424,7 +433,8 @@ export function createNorthstarCommercialApi() {
       save(state);
       return state.briefs.find((row) => row.id === versionId)!;
     },
-    approve: async (versionId: string, _expectedVersion?: number) => {
+    approve: async (versionId: string, expectedVersion?: number) => {
+      void expectedVersion;
       const state = load();
       const current = state.briefs.find((row) => row.id === versionId);
       if (current?.status === "approved") return current;

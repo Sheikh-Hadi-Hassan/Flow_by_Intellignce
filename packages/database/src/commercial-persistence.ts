@@ -8,6 +8,24 @@ import type {
 } from "@flow/commercial";
 import type { SqlExecutor } from "./business-persistence.js";
 
+function pgCellString(value: unknown): string {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "string") return value;
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  ) {
+    return String(value);
+  }
+  if (value == null) return "";
+  return JSON.stringify(value);
+}
+
+function postgresTimestamp(value: unknown): string {
+  return pgCellString(value);
+}
+
 export interface CatalogServiceRecord {
   readonly id: string;
   readonly workspaceId: string;
@@ -491,14 +509,14 @@ function mapExtractionRun(row: Record<string, unknown>): DiscoveryExtractionRunR
     status: row.status as ExtractionRunStatus,
     attemptCount: Number(row.attempt_count),
     idempotencyKey: String(row.idempotency_key),
-    ...(row.started_at ? { startedAt: String(row.started_at) } : {}),
-    ...(row.completed_at ? { completedAt: String(row.completed_at) } : {}),
-    ...(row.error_code ? { errorCode: String(row.error_code) } : {}),
+    ...(row.started_at ? { startedAt: postgresTimestamp(row.started_at) } : {}),
+    ...(row.completed_at ? { completedAt: postgresTimestamp(row.completed_at) } : {}),
+    ...(row.error_code ? { errorCode: pgCellString(row.error_code) } : {}),
     usageMetadata: (row.usage_metadata as Record<string, unknown>) ?? {},
     ...(row.latency_ms != null ? { latencyMs: Number(row.latency_ms) } : {}),
-    ...(row.created_by ? { createdBy: String(row.created_by) } : {}),
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at),
+    ...(row.created_by ? { createdBy: pgCellString(row.created_by) } : {}),
+    createdAt: postgresTimestamp(row.created_at),
+    updatedAt: postgresTimestamp(row.updated_at),
   };
 }
 
@@ -1168,7 +1186,7 @@ export class PostgresCommercialRepository implements CommercialRepository {
       workspaceId: String(row.workspace_id ?? row.workspaceId),
       name: String(row.name),
       slug: String(row.slug),
-      ...(row.description ? { description: String(row.description) } : {}),
+      ...(row.description ? { description: pgCellString(row.description) } : {}),
       pricingModel: (row.pricing_model ?? row.pricingModel) as PricingModel,
       currency: String(row.currency),
       defaultTargetMarginBps: Number(
@@ -1343,8 +1361,8 @@ export class PostgresCommercialRepository implements CommercialRepository {
       id: String(row.id),
       workspaceId: String(row.workspace_id),
       name: String(row.name),
-      ...(row.industry ? { industry: String(row.industry) } : {}),
-      ...(row.website ? { website: String(row.website) } : {}),
+      ...(row.industry ? { industry: pgCellString(row.industry) } : {}),
+      ...(row.website ? { website: pgCellString(row.website) } : {}),
       status: row.status as ClientRecord["status"],
       revision: Number(row.revision),
     };
@@ -1378,8 +1396,8 @@ export class PostgresCommercialRepository implements CommercialRepository {
       clientId: String(row.client_id),
       firstName: String(row.first_name),
       lastName: String(row.last_name),
-      ...(row.title ? { title: String(row.title) } : {}),
-      ...(row.email ? { email: String(row.email) } : {}),
+      ...(row.title ? { title: pgCellString(row.title) } : {}),
+      ...(row.email ? { email: pgCellString(row.email) } : {}),
       isPrimary: Boolean(row.is_primary),
     }));
   }
@@ -1429,17 +1447,17 @@ export class PostgresCommercialRepository implements CommercialRepository {
       workspaceId: String(row.workspace_id),
       clientId: String(row.client_id),
       ...(row.primary_contact_id
-        ? { primaryContactId: String(row.primary_contact_id) }
+        ? { primaryContactId: pgCellString(row.primary_contact_id) }
         : {}),
       serviceId: String(row.service_id),
       name: String(row.name),
       journeyStatus: row.journey_status as JourneyStatus,
       currency: String(row.currency),
       ...(row.budget_min_minor != null
-        ? { budgetMinMinor: String(row.budget_min_minor) }
+        ? { budgetMinMinor: pgCellString(row.budget_min_minor) }
         : {}),
       ...(row.budget_max_minor != null
-        ? { budgetMaxMinor: String(row.budget_max_minor) }
+        ? { budgetMaxMinor: pgCellString(row.budget_max_minor) }
         : {}),
       completeness: Number(row.completeness),
       ...(row.latest_calculation
@@ -1622,15 +1640,15 @@ export class PostgresCommercialRepository implements CommercialRepository {
       ...(row.character_end != null
         ? { characterEnd: Number(row.character_end) }
         : {}),
-      ...(row.candidate_id ? { candidateId: String(row.candidate_id) } : {}),
+      ...(row.candidate_id ? { candidateId: pgCellString(row.candidate_id) } : {}),
       ...(row.contradiction_ref
-        ? { contradictionRef: String(row.contradiction_ref) }
+        ? { contradictionRef: pgCellString(row.contradiction_ref) }
         : {}),
       ...(row.duplicate_of_candidate_id
-        ? { duplicateOfCandidateId: String(row.duplicate_of_candidate_id) }
+        ? { duplicateOfCandidateId: pgCellString(row.duplicate_of_candidate_id) }
         : {}),
-      ...(row.verified_by ? { verifiedBy: String(row.verified_by) } : {}),
-      ...(row.verified_at ? { verifiedAt: String(row.verified_at) } : {}),
+      ...(row.verified_by ? { verifiedBy: pgCellString(row.verified_by) } : {}),
+      ...(row.verified_at ? { verifiedAt: postgresTimestamp(row.verified_at) } : {}),
     }));
   }
   async verifyFact(input: {
@@ -1683,7 +1701,7 @@ export class PostgresCommercialRepository implements CommercialRepository {
       questionKey: String(row.question_key),
       prompt: String(row.prompt),
       required: Boolean(row.required),
-      ...(row.answer ? { answer: String(row.answer) } : {}),
+      ...(row.answer ? { answer: pgCellString(row.answer) } : {}),
     }));
   }
   async answerFollowUp(
@@ -2199,7 +2217,7 @@ export class PostgresCommercialRepository implements CommercialRepository {
       action: String(row.action),
       outcome: row.outcome as GuardDecisionRecord["outcome"],
       reason: String(row.reason),
-      createdAt: String(row.created_at),
+      createdAt: postgresTimestamp(row.created_at),
     }));
   }
   async recordAudit(record: CommercialAuditRecord) {
@@ -2228,7 +2246,7 @@ export class PostgresCommercialRepository implements CommercialRepository {
     return result.rows.map((row) => ({
       eventId: String(row.event_id),
       workspaceId: String(row.workspace_id),
-      actorId: String(row.actor_id ?? ""),
+      actorId: pgCellString(row.actor_id ?? ""),
       eventType: String(row.event_type),
       targetType: String(row.target_type),
       targetId: String(row.target_id),
@@ -2317,13 +2335,13 @@ export class PostgresCommercialRepository implements CommercialRepository {
       attemptCount: input.patch.attemptCount ?? Number(row.attempt_count),
       startedAt:
         input.patch.startedAt ??
-        (row.started_at ? String(row.started_at) : undefined),
+        (row.started_at ? postgresTimestamp(row.started_at) : undefined),
       completedAt:
         input.patch.completedAt ??
-        (row.completed_at ? String(row.completed_at) : undefined),
+        (row.completed_at ? postgresTimestamp(row.completed_at) : undefined),
       errorCode:
         input.patch.errorCode ??
-        (row.error_code ? String(row.error_code) : undefined),
+        (row.error_code ? pgCellString(row.error_code) : undefined),
       usageMetadata:
         input.patch.usageMetadata ??
         ((row.usage_metadata as Record<string, unknown>) ?? {}),

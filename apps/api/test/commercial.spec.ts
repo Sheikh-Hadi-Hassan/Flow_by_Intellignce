@@ -1,4 +1,5 @@
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { ValidationPipe } from "@nestjs/common";
+import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -147,7 +148,7 @@ describe("commercial API journey", () => {
       })
       .expect(201);
 
-    const notesRes = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(
         `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/notes`,
       )

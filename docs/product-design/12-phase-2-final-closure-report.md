@@ -147,7 +147,7 @@ Migration head: `20260831000100` (extraction runs) + `20260830000200` (RLS write
 
 * **Commit hash:** `8c08337` (`fix(commercial): close Phase 2 authenticated browser golden path`)
 * **Branch:** `main`
-* **Push status:** pending re-attempt after lint-closure verification
+* **Push status:** **Blocked** — `git@github.com: Permission denied (publickey)` (2026-08-31)
 
 ## 14. Known limitations
 

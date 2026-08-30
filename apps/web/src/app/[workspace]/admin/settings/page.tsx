@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { NORTHSTAR_WORKSPACE_NAME } from "../../../../content/demo/northstar";
 import { FounderShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
+import { Button } from "../../../../components/ui/Button";
 import { SectionHeader, StatusBadge } from "../../../../components/ui/Display";
 import { FormField, TextInput } from "../../../../components/ui/FormField";
 import { useTheme } from "../../../../lib/theme/context";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../lib/prototype/context";
+import { useWorkspaceApi } from "../../../../lib/workspace/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import { applyAccent } from "../../../../lib/prototype/storage";
 import styles from "../../../../components/shell/shell.module.css";
 
@@ -25,16 +25,33 @@ const ACCENTS = [
 
 function SettingsPage() {
   const params = useParams();
+  const router = useRouter();
   const workspace = params.workspace as string;
   const { theme, setTheme } = useTheme();
-  const { updateSession } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { signOut } = useWorkspaceApi();
+  const { updateSession, session, isApiBacked } =
+    useWorkspaceSessionActions(workspace);
+  const [workspaceNameDraft, setWorkspaceNameDraft] = useState<string | null>(
+    null,
+  );
   if (!session) return null;
 
   const isDemo = session.mode === "demo";
   const workspaceLabel = isDemo
     ? NORTHSTAR_WORKSPACE_NAME
     : session.workspaceName;
+  const workspaceNameValue = workspaceNameDraft ?? session.workspaceName;
+
+  const persistWorkspaceName = () => {
+    if (isDemo || workspaceNameValue === session.workspaceName) return;
+    updateSession({ workspaceName: workspaceNameValue });
+    setWorkspaceNameDraft(null);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace("/sign-in");
+  };
 
   return (
     <FounderShell workspace={workspace} session={session}>
@@ -60,10 +77,15 @@ function SettingsPage() {
               <TextInput
                 id="ws-name"
                 className="flow-input--editable"
-                value={session.workspaceName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  updateSession({ workspaceName: e.target.value })
-                }
+                value={workspaceNameValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  if (isApiBacked) setWorkspaceNameDraft(value);
+                  else updateSession({ workspaceName: value });
+                }}
+                onBlur={() => {
+                  if (isApiBacked) persistWorkspaceName();
+                }}
               />
             </FormField>
           )}
@@ -140,6 +162,19 @@ function SettingsPage() {
             View module recommendations
           </Link>
         </p>
+
+        {!isDemo && isApiBacked ? (
+          <section className="flow-settings-section">
+            <h2>Account</h2>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => void handleSignOut()}
+            >
+              Sign out
+            </Button>
+          </section>
+        ) : null}
       </div>
     </FounderShell>
   );

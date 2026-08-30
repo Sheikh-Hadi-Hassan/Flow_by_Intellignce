@@ -100,6 +100,8 @@ export interface PrototypeSession {
   twin?: TwinSnapshot;
   deferredModuleIds: string[];
   accentColor: string;
+  workspaceId?: string;
+  founderFirstName?: string;
 }
 
 export const ONBOARDING_STEPS = [

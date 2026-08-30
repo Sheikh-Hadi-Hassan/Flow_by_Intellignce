@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
   Inject,
   Param,
   Patch,
@@ -84,16 +85,19 @@ export class WorkspaceController {
   ) {}
 
   @Post("provision")
+  @HttpCode(201)
   async provision(
     @Headers("authorization") authorization: string | undefined,
     @Body() body: ProvisionWorkspaceDto,
   ) {
-    const auth = await this.identityResolver.authenticate({ authorizationHeader: authorization });
+    const auth = await this.identityResolver.authenticate({
+      authorizationHeader: authorization,
+    });
     return this.workspaceService.provision({
       authSubjectId: auth.subjectId,
       firstName: body.firstName,
       workspaceName: body.workspaceName,
-      ...(body.email ?? auth.email
+      ...((body.email ?? auth.email)
         ? { email: body.email ?? auth.email }
         : {}),
     });
@@ -102,11 +106,15 @@ export class WorkspaceController {
   @Get("by-slug/:slug")
   async getBySlug(
     @Headers("authorization") authorization: string | undefined,
-    @Headers("x-flow-workspace-id") workspaceId: string | undefined,
     @Param("slug") slug: string,
   ) {
-    const identity = await this.resolveIdentity(authorization, workspaceId);
-    return this.workspaceService.getWorkspaceBySlug({ identity, slug });
+    const auth = await this.identityResolver.authenticate({
+      authorizationHeader: authorization,
+    });
+    return this.workspaceService.getWorkspaceBySlugForSubject({
+      authSubjectId: auth.subjectId,
+      slug,
+    });
   }
 
   @Patch(":workspaceId/onboarding")

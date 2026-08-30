@@ -13,7 +13,7 @@ export function normalizeLoadedSession(
     return {
       ...canonical,
       deferredModuleIds:
-        stored.deferredModuleIds.length > 0
+        (stored.deferredModuleIds?.length ?? 0) > 0
           ? stored.deferredModuleIds
           : canonical.deferredModuleIds,
       accentColor: canonical.accentColor,

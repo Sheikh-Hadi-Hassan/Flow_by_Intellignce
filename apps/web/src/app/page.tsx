@@ -1,22 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { PublicShell } from "../components/shell/AppShell";
-import { Button } from "../components/ui/Button";
 import { usePrototype } from "../lib/prototype/context";
 import { NORTHSTAR_SLUG } from "../lib/prototype/defaults";
 import styles from "../components/shell/shell.module.css";
 
 export default function HomePage() {
-  const router = useRouter();
   const { startDemo } = usePrototype();
-
-  const handleDemo = () => {
-    const session = startDemo();
-    router.push(`/${session.workspaceSlug}/admin`);
-  };
 
   return (
     <PublicShell>
@@ -43,9 +35,15 @@ export default function HomePage() {
           >
             Sign in
           </Link>
-          <Button variant="ghost" size="lg" onClick={handleDemo}>
+          <Link
+            href={`/${NORTHSTAR_SLUG}/admin`}
+            className="flow-btn flow-btn--ghost flow-btn--lg"
+            onClick={() => {
+              startDemo();
+            }}
+          >
             Explore the Northstar demo
-          </Button>
+          </Link>
         </div>
         <p
           style={{

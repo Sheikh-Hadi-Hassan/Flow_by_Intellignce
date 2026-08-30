@@ -20,7 +20,65 @@ const routes = [
   "/northstar-creative/admin",
   "/northstar-creative/admin/twin",
   "/northstar-creative/admin/settings",
+  "/northstar-creative/admin/services",
+  "/northstar-creative/admin/clients",
+  "/northstar-creative/admin/opportunities",
+  "/northstar-creative/admin/opportunities/ns-opp-acme-brand",
+  "/northstar-creative/admin/opportunities/ns-opp-acme-brand/discovery",
+  "/northstar-creative/admin/opportunities/ns-opp-acme-brand/missing",
+  "/northstar-creative/admin/opportunities/ns-opp-acme-brand/brief",
+  "/northstar-creative/admin/opportunities/ns-opp-acme-brand/approvals",
 ];
+
+async function runHomeDemoClick(browser, testCase) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const errors = [];
+
+  page.on("console", (msg) => {
+    const text = msg.text();
+    if (
+      text.includes("Hydration") ||
+      text.includes("hydration") ||
+      msg.type() === "error"
+    ) {
+      errors.push(`[${msg.type()}] ${text}`);
+    }
+  });
+
+  await page.addInitScript(
+    ({ testCase: tc, slug }) => {
+      if (tc.corrupt) {
+        localStorage.setItem("flow-prototype-session-v1", "{not-json");
+        localStorage.removeItem("flow-theme-v1");
+        return;
+      }
+      if (tc.theme) localStorage.setItem("flow-theme-v1", tc.theme);
+      if (tc.accent) {
+        localStorage.setItem(
+          "flow-prototype-session-v1",
+          JSON.stringify({
+            mode: "demo",
+            workspaceSlug: slug,
+            accentColor: tc.accent,
+          }),
+        );
+      }
+    },
+    { testCase, slug: northstarSlug },
+  );
+
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "networkidle" });
+  await page.getByRole("link", { name: "Explore the Northstar demo" }).click();
+  await page.waitForURL(/\/northstar-creative\/admin\/?$/, {
+    timeout: 15000,
+  });
+  await page.waitForLoadState("domcontentloaded");
+
+  await context.close();
+  return { errors };
+}
 
 const northstarSlug = "northstar-creative";
 
@@ -106,6 +164,17 @@ async function main() {
       const result = await runCase(browser, testCase, route);
       results.push({ route, case: testCase.name, ...result });
     }
+  }
+
+  for (const testCase of cases) {
+    const result = await runHomeDemoClick(browser, testCase);
+    results.push({
+      route: "/ (northstar demo click)",
+      case: testCase.name,
+      ...result,
+      theme: undefined,
+      accent: undefined,
+    });
   }
 
   await browser.close();

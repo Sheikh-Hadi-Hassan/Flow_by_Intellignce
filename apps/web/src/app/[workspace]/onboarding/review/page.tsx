@@ -8,10 +8,7 @@ import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { ModuleRecommendationList } from "../../../../components/founder/ModuleRecommendationList";
 import { SectionHeader } from "../../../../components/ui/Display";
 import { Button } from "../../../../components/ui/Button";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import { compileTwin } from "../../../../lib/prototype/twin-compile";
 import styles from "../../../../components/shell/shell.module.css";
 
@@ -19,8 +16,8 @@ function ReviewStep() {
   const params = useParams();
   const workspace = params.workspace as string;
   const router = useRouter();
-  const { moduleRecommendations } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { moduleRecommendations, session } =
+    useWorkspaceSessionActions(workspace);
   if (!session) return null;
 
   const twinPreview = compileTwin(session);

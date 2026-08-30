@@ -13,17 +13,15 @@ import {
   StatusBadge,
 } from "../../../components/ui/Display";
 import { Button } from "../../../components/ui/Button";
-import {
-  getSetupChecklist,
-  getSetupProgress,
-} from "../../../lib/prototype/recommendations";
-import { useWorkspaceSession } from "../../../lib/prototype/context";
+import { getSetupProgress } from "../../../lib/prototype/recommendations";
+import { getSetupChecklist } from "../../../lib/prototype/setup-checklist";
+import { useWorkspaceSessionActions } from "../../../lib/workspace/session-actions";
 import styles from "../../../components/shell/shell.module.css";
 
 function FounderHome() {
   const params = useParams();
   const workspace = params.workspace as string;
-  const { session } = useWorkspaceSession(workspace);
+  const { session } = useWorkspaceSessionActions(workspace);
   const [greeting, setGreeting] = useState("there");
 
   useEffect(() => {
@@ -35,7 +33,9 @@ function FounderHome() {
   const progress = getSetupProgress(session);
   const checklist = getSetupChecklist(session);
   const founderName =
-    session.mode === "demo" ? DEMO_FOUNDER_FIRST_NAME : "founder";
+    session.mode === "demo"
+      ? DEMO_FOUNDER_FIRST_NAME
+      : session.founderFirstName || "founder";
   const serviceCount = session.twin.services.length;
 
   return (
@@ -71,6 +71,12 @@ function FounderHome() {
               className="flow-btn flow-btn--secondary flow-btn--sm"
             >
               View Twin
+            </Link>
+            <Link
+              href={`/${workspace}/admin/opportunities`}
+              className="flow-btn flow-btn--secondary flow-btn--sm"
+            >
+              Opportunities
             </Link>
           </div>
         </section>

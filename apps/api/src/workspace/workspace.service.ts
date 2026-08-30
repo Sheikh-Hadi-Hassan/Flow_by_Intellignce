@@ -7,14 +7,18 @@ import {
 } from "@nestjs/common";
 import {
   emptyOnboardingState,
-  InMemoryIdentityAuthorizationRepository,
-  InMemoryWorkspacePhase1Repository,
+  provisionWorkspaceForUser,
+  type FlowIdentityRepository,
   type WorkspaceOnboardingState,
+  type WorkspacePhase1Repository,
   type WorkspacePreferencesRecord,
   type WorkspaceTwinRecord,
-  provisionWorkspaceForUser,
 } from "@flow/database";
 import type { TrustedExecutionContext } from "../security/flow-auth-context.js";
+import {
+  IDENTITY_REPOSITORY,
+  WORKSPACE_PHASE1_REPOSITORY,
+} from "../database/persistence.providers.js";
 import {
   compileTwinFromOnboarding,
   slugifyWorkspaceName,
@@ -24,10 +28,10 @@ import {
 @Injectable()
 export class WorkspaceService {
   constructor(
-    @Inject(InMemoryIdentityAuthorizationRepository)
-    private readonly identityRepository: InMemoryIdentityAuthorizationRepository,
-    @Inject(InMemoryWorkspacePhase1Repository)
-    private readonly phase1Repository: InMemoryWorkspacePhase1Repository,
+    @Inject(IDENTITY_REPOSITORY)
+    private readonly identityRepository: FlowIdentityRepository,
+    @Inject(WORKSPACE_PHASE1_REPOSITORY)
+    private readonly phase1Repository: WorkspacePhase1Repository,
   ) {}
 
   async provision(input: {
@@ -101,12 +105,60 @@ export class WorkspaceService {
     readonly identity: TrustedExecutionContext;
     readonly slug: string;
   }) {
-    const workspace = this.identityRepository.findWorkspaceBySlug(input.slug);
+    const workspace = await this.identityRepository.findWorkspaceBySlug(
+      input.slug,
+    );
     if (!workspace) {
       throw new NotFoundException("Workspace not found.");
     }
+    if (input.identity.workspaceId !== workspace.id) {
+      throw new ForbiddenException("Workspace access denied.");
+    }
     return this.getWorkspaceForActor({
       identity: input.identity,
+      workspaceId: workspace.id,
+    });
+  }
+
+  async getWorkspaceBySlugForSubject(input: {
+    readonly authSubjectId: string;
+    readonly slug: string;
+  }) {
+    const user = await this.identityRepository.findUserByProviderSubject({
+      authProvider: "supabase",
+      authSubjectId: input.authSubjectId,
+    });
+    if (!user) {
+      throw new ForbiddenException(
+        "Authenticated identity is not a Flow user.",
+      );
+    }
+
+    const workspace = await this.identityRepository.findWorkspaceBySlug(
+      input.slug,
+    );
+    if (!workspace) {
+      throw new NotFoundException("Workspace not found.");
+    }
+
+    const resolved = await this.identityRepository.resolveMembership({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+    if (!resolved) {
+      throw new ForbiddenException("Workspace access denied.");
+    }
+
+    return this.getWorkspaceForActor({
+      identity: {
+        actorId: user.id as TrustedExecutionContext["actorId"],
+        userId: user.id as TrustedExecutionContext["userId"],
+        membershipId: resolved.membership
+          .id as TrustedExecutionContext["membershipId"],
+        workspaceId: workspace.id as TrustedExecutionContext["workspaceId"],
+        roleIds: resolved.roles.map((role) => role.id),
+        permissionIds: resolved.permissions.map((permission) => permission.key),
+      },
       workspaceId: workspace.id,
     });
   }
@@ -149,7 +201,9 @@ export class WorkspaceService {
     readonly workspaceId: string;
   }) {
     await this.assertPermission(input.identity, "twin.compile");
-    const current = await this.phase1Repository.getOnboarding(input.workspaceId);
+    const current = await this.phase1Repository.getOnboarding(
+      input.workspaceId,
+    );
     if (!current) {
       throw new NotFoundException("Onboarding has not started.");
     }
@@ -209,20 +263,21 @@ export class WorkspaceService {
       throw new ForbiddenException("Workspace access denied.");
     }
     if (input.workspaceName) {
-      const workspace = this.identityRepository.findWorkspaceById(
+      const workspace = await this.identityRepository.findWorkspaceById(
         input.workspaceId,
       );
       if (!workspace) throw new NotFoundException("Workspace not found.");
-      this.identityRepository.updateWorkspaceName(
+      await this.identityRepository.updateWorkspaceName(
         input.workspaceId,
         input.workspaceName.trim(),
       );
     }
     if (input.preferences) {
-      const current =
-        (await this.phase1Repository.getPreferences(input.workspaceId)) ?? {
-          workspaceId: input.workspaceId,
-        };
+      const current = (await this.phase1Repository.getPreferences(
+        input.workspaceId,
+      )) ?? {
+        workspaceId: input.workspaceId,
+      };
       return this.phase1Repository.upsertPreferences({
         ...current,
         ...input.preferences,

@@ -6,13 +6,19 @@ import {
 import {
   extractBearerToken,
   StaticTokenAuthenticationAdapter,
+  SupabaseAuthAdapter,
 } from "@flow/auth";
-import type {
-  AuthenticatedIdentity,
-  AuthenticationAdapter,
-} from "@flow/auth";
+import type { AuthenticatedIdentity, AuthenticationAdapter } from "@flow/auth";
 import {
+  assertProductionRuntimeConfig,
+  getSupabasePublishableKey,
+  getSupabaseUrl,
+  isDevOrTestRuntime,
+} from "../config/runtime-environment.js";
+import {
+  asFlowIdentityRepository,
   createFlowIdentityTestRepository,
+  type FlowIdentityRepository,
   type IdentityAuthorizationRepository,
   type InMemoryIdentityAuthorizationRepository,
 } from "@flow/database";
@@ -174,12 +180,61 @@ export function parseRequestSource(value: string | undefined): RequestSource {
   return "API";
 }
 
+export function createAuthenticationStack(
+  identityRepository: FlowIdentityRepository = asFlowIdentityRepository(
+    createFlowIdentityTestRepository(),
+  ),
+): {
+  readonly authorizationProvider: RepositoryAuthorizationProvider;
+  readonly identityResolver: FlowRequestIdentityResolver;
+  readonly repository: FlowIdentityRepository;
+} {
+  const authenticationAdapter = createAuthenticationAdapter();
+  return {
+    authorizationProvider: new RepositoryAuthorizationProvider(
+      identityRepository,
+    ),
+    identityResolver: new FlowRequestIdentityResolver(
+      authenticationAdapter,
+      identityRepository,
+    ),
+    repository: identityRepository,
+  };
+}
+
 export function createDevelopmentAuthenticationStack(): {
   readonly authorizationProvider: RepositoryAuthorizationProvider;
   readonly identityResolver: FlowRequestIdentityResolver;
   readonly repository: InMemoryIdentityAuthorizationRepository;
 } {
   const repository = createFlowIdentityTestRepository();
+  const stack = createAuthenticationStack(asFlowIdentityRepository(repository));
+  return {
+    authorizationProvider: stack.authorizationProvider,
+    identityResolver: stack.identityResolver,
+    repository,
+  };
+}
+
+function createAuthenticationAdapter(): AuthenticationAdapter {
+  assertProductionRuntimeConfig();
+
+  const supabaseUrl = getSupabaseUrl();
+  const anonKey = getSupabasePublishableKey();
+
+  if (process.env.VITEST !== "true" && supabaseUrl && anonKey) {
+    return new SupabaseAuthAdapter({
+      supabaseUrl,
+      anonKey,
+    });
+  }
+
+  if (!isDevOrTestRuntime()) {
+    throw new Error(
+      "Production startup blocked: Supabase authentication configuration is required.",
+    );
+  }
+
   const aliceIdentity: AuthenticatedIdentity = {
     subjectId: "supabase-auth-user-alice",
     provider: "supabase",
@@ -198,20 +253,12 @@ export function createDevelopmentAuthenticationStack(): {
     email: "unknown@example.test",
     claims: { aud: "authenticated" },
   };
-  const authenticationAdapter = new StaticTokenAuthenticationAdapter(
+
+  return new StaticTokenAuthenticationAdapter(
     new Map([
       ["valid-alice-token", aliceIdentity],
       ["valid-bob-token", bobIdentity],
       ["valid-unknown-token", unknownIdentity],
     ]),
   );
-
-  return {
-    authorizationProvider: new RepositoryAuthorizationProvider(repository),
-    identityResolver: new FlowRequestIdentityResolver(
-      authenticationAdapter,
-      repository,
-    ),
-    repository,
-  };
 }

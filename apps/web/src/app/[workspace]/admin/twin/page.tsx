@@ -5,12 +5,12 @@ import { useParams } from "next/navigation";
 import { FounderShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { TwinView } from "../../../../components/twin/TwinView";
-import { useWorkspaceSession } from "../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 
 function TwinPage() {
   const params = useParams();
   const workspace = params.workspace as string;
-  const { session } = useWorkspaceSession(workspace);
+  const { session } = useWorkspaceSessionActions(workspace);
   if (!session?.twin) return null;
 
   return (

@@ -129,6 +129,9 @@ export function FounderShell({
     { href: base, label: "Home", exact: true },
     { href: `${base}/twin`, label: "Twin" },
     { href: `${base}/setup`, label: "Setup" },
+    { href: `${base}/services`, label: "Services" },
+    { href: `${base}/clients`, label: "Clients" },
+    { href: `${base}/opportunities`, label: "Opportunities" },
     { href: `${base}/settings`, label: "Settings" },
   ];
 

@@ -1,66 +1,133 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 
 import { AuthShell } from "../../components/shell/AppShell";
 import { Button } from "../../components/ui/Button";
 import { FormField, TextInput } from "../../components/ui/FormField";
-import { usePrototype } from "../../lib/prototype/context";
+import { isSupabaseConfigured } from "../../lib/auth/config";
+import { sanitizeInternalRedirect } from "../../lib/auth/redirects";
+import { createBrowserSupabaseClient } from "../../lib/auth/supabase-browser";
+import { useWorkspaceApi } from "../../lib/workspace/context";
 import styles from "../../components/shell/shell.module.css";
 
 export default function SignInPage() {
+  return (
+    <Suspense fallback={<AuthShell title="Sign in">Loading…</AuthShell>}>
+      <SignInForm />
+    </Suspense>
+  );
+}
+
+function SignInForm() {
   const router = useRouter();
-  const { session, signInPrototype } = usePrototype();
+  const searchParams = useSearchParams();
+  const { ensureProvisioned } = useWorkspaceApi();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = signInPrototype(email.trim());
-    if (!result) {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+
+    if (!isSupabaseConfigured()) {
       setError(
-        "No prototype session for this email. Sign up or use the Northstar demo.",
+        "Supabase is not configured. Use the Northstar demo from the home page in local development.",
       );
       return;
     }
-    const dest = result.twinCompiled
-      ? `/${result.workspaceSlug}/admin`
-      : `/${result.workspaceSlug}/onboarding/business`;
-    router.push(dest);
-  };
 
-  useEffect(() => {
-    if (!session?.auth?.email) return;
-    router.replace(
+    const supabase = createBrowserSupabaseClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword(
+      {
+        email: email.trim(),
+        password,
+      },
+    );
+    setPassword("");
+
+    if (signInError) {
+      setError(signInError.message);
+      return;
+    }
+
+    const {
+      data: { session: activeSession },
+    } = await supabase.auth.getSession();
+    if (!activeSession) {
+      setError("Unable to establish session.");
+      return;
+    }
+
+    const metadata = activeSession.user.user_metadata ?? {};
+    const firstName =
+      typeof metadata.first_name === "string" ? metadata.first_name : "Founder";
+    const workspaceName =
+      typeof metadata.workspace_name === "string"
+        ? metadata.workspace_name
+        : "My Workspace";
+
+    const session = await ensureProvisioned({
+      firstName,
+      workspaceName,
+      email: email.trim(),
+    });
+
+    if (!session) {
+      setError("Signed in, but Flow could not load your workspace.");
+      return;
+    }
+
+    router.refresh();
+    const next = sanitizeInternalRedirect(
+      searchParams.get("next"),
       session.twinCompiled
         ? `/${session.workspaceSlug}/admin`
         : `/${session.workspaceSlug}/onboarding/business`,
     );
-  }, [session, router]);
+    router.replace(next);
+  };
 
   return (
     <AuthShell title="Sign in">
-      <form className={styles.formStack} onSubmit={handleSubmit} noValidate>
+      <form
+        className={styles.formStack}
+        onSubmit={(event) => {
+          void handleSubmit(event);
+        }}
+        noValidate
+      >
         <FormField label="Email" htmlFor="email">
           <TextInput
             id="email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
             required
           />
         </FormField>
-        {error && (
+        <FormField label="Password" htmlFor="password">
+          <TextInput
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            autoComplete="current-password"
+            required
+          />
+        </FormField>
+        {(error || searchParams.get("error")) && (
           <p className="flow-field__error" role="alert">
-            {error}
+            {error || "Unable to sign in."}
           </p>
         )}
         <div className={styles.formActions}>
           <Button type="submit" block>
-            Sign in (prototype)
+            Sign in
           </Button>
         </div>
       </form>

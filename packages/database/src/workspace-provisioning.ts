@@ -6,7 +6,7 @@ import type {
   WorkspaceMembershipRecord,
   WorkspaceRecord,
 } from "./index.js";
-import type { InMemoryIdentityAuthorizationRepository } from "./index.js";
+import type { FlowIdentityRepository } from "./identity-persistence.js";
 
 export interface ProvisionWorkspaceInput {
   readonly authProvider: "supabase";
@@ -35,10 +35,22 @@ const FOUNDER_PERMISSION_KEYS = [
   "twin.read",
   "twin.compile",
   "system.echo",
+  "catalog.read",
+  "catalog.manage",
+  "questionnaire.publish",
+  "client.read",
+  "client.manage",
+  "opportunity.read",
+  "opportunity.manage",
+  "discovery.manage",
+  "fact.verify",
+  "brief.manage",
+  "brief.approve",
+  "commercial.audit.read",
 ] as const;
 
 export async function provisionWorkspaceForUser(
-  repository: InMemoryIdentityAuthorizationRepository,
+  repository: FlowIdentityRepository,
   input: ProvisionWorkspaceInput,
 ): Promise<ProvisionWorkspaceResult> {
   const existingUser = await repository.findUserByProviderSubject({
@@ -48,13 +60,15 @@ export async function provisionWorkspaceForUser(
 
   const user =
     existingUser ??
-    repository.createUser({
+    (await repository.createUser({
       authProvider: input.authProvider,
       authSubjectId: input.authSubjectId,
       ...(input.email ? { email: input.email } : {}),
-    });
+    }));
 
-  const existingWorkspace = repository.findWorkspaceBySlug(input.workspaceSlug);
+  const existingWorkspace = await repository.findWorkspaceBySlug(
+    input.workspaceSlug,
+  );
   if (existingWorkspace) {
     const membership = await repository.resolveMembership({
       userId: user.id,
@@ -71,17 +85,17 @@ export async function provisionWorkspaceForUser(
     };
   }
 
-  const workspace = repository.createWorkspace({
+  const workspace = await repository.createWorkspace({
     name: input.workspaceName,
     slug: input.workspaceSlug,
   });
-  const founderRole = repository.createRole({
+  const founderRole = await repository.createRole({
     workspaceId: workspace.id,
     key: "FOUNDER",
     name: "Founder",
     permissionKeys: [...FOUNDER_PERMISSION_KEYS],
   });
-  const membership = repository.createMembership({
+  const membership = await repository.createMembership({
     workspaceId: workspace.id,
     userId: user.id,
     roleIds: [founderRole.id],

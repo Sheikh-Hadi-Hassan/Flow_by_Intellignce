@@ -10,6 +10,7 @@
   "references": [
     { "path": "../contracts" },
     { "path": "../blm-contracts" },
-    { "path": "../blm-core" }
+    { "path": "../blm-core" },
+    { "path": "../commercial" }
   ]
 }

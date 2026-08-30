@@ -4,9 +4,22 @@ import { CorrelationIdMiddleware } from "./common/correlation-id.middleware.js";
 import { HealthController } from "./health.controller.js";
 import { InternalActionsController } from "./internal-actions.controller.js";
 import { WorkspaceModule } from "./workspace/workspace.module.js";
+import { CommercialModule } from "./commercial/commercial.module.js";
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), WorkspaceModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [
+        "../../.env.local",
+        "../../.env",
+        ".env.local",
+        ".env",
+      ],
+    }),
+    WorkspaceModule,
+    CommercialModule,
+  ],
   controllers: [HealthController, InternalActionsController],
 })
 export class AppModule implements NestModule {

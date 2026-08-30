@@ -13,10 +13,7 @@ import {
   TextArea,
   TextInput,
 } from "../../../../components/ui/FormField";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import styles from "../../../../components/shell/shell.module.css";
 
 const BUSINESS_TYPES = [
@@ -31,8 +28,7 @@ function BusinessStep() {
   const params = useParams();
   const workspace = params.workspace as string;
   const router = useRouter();
-  const { updateSession } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { updateSession, session } = useWorkspaceSessionActions(workspace);
 
   if (!session) return null;
 

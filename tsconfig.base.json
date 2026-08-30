@@ -20,6 +20,12 @@
       "@flow/contracts": ["packages/contracts/src/index.ts"],
       "@flow/config": ["packages/config/src/index.ts"],
       "@flow/database": ["packages/database/src/index.ts"],
+      "@flow/blm-contracts": ["packages/blm-contracts/src/index.ts"],
+      "@flow/blm-core": ["packages/blm-core/src/index.ts"],
+      "@flow/blm-provider-openai": [
+        "packages/blm-provider-openai/src/index.ts"
+      ],
+      "@flow/blm-provider-groq": ["packages/blm-provider-groq/src/index.ts"],
       "@flow/domain": ["packages/domain/src/index.ts"],
       "@flow/auth": ["packages/auth/src/index.ts"],
       "@flow/observability": ["packages/observability/src/index.ts"],

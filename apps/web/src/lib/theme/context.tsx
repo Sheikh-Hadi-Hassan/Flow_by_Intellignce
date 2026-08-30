@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { useClientHydrated } from "../prototype/hydration";
 import { type ThemeMode } from "../prototype/preferences";
 import { getThemeSnapshot, setThemePreference, subscribeTheme } from "./store";
 
@@ -20,11 +21,13 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const theme = useSyncExternalStore(
+  const hydrated = useClientHydrated();
+  const storedTheme = useSyncExternalStore(
     subscribeTheme,
     getThemeSnapshot,
     (): ThemeMode => "light",
   );
+  const theme = hydrated ? storedTheme : "light";
 
   const setTheme = useCallback((next: ThemeMode) => {
     setThemePreference(next);

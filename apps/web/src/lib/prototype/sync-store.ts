@@ -69,7 +69,7 @@ export function clearPrototypeSnapshot(): void {
   ensurePrototypeStore();
   snapshot = null;
   if (typeof window !== "undefined") {
-    localStorage.removeItem("flow-prototype-session-v1");
+    window.localStorage.removeItem("flow-prototype-session-v1");
   }
   emit();
 }

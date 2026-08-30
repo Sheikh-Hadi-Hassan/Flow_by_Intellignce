@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { createUserSession } from "./defaults";
-import { loadSession, saveSession, sanitizeSessionForPersistence } from "./storage";
+import {
+  loadSession,
+  saveSession,
+  sanitizeSessionForPersistence,
+} from "./storage";
 
 const PASSWORD_KEYS = ["password", "passwordHash", "password_hash"];
 

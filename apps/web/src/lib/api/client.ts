@@ -17,6 +17,7 @@ export async function apiRequest<T>(
     token?: string;
     workspaceId?: string;
     body?: unknown;
+    idempotencyKey?: string;
   } = {},
 ): Promise<T> {
   const headers: Record<string, string> = {
@@ -31,11 +32,16 @@ export async function apiRequest<T>(
   if (options.workspaceId) {
     headers["x-flow-workspace-id"] = options.workspaceId;
   }
+  if (options.idempotencyKey) {
+    headers["Idempotency-Key"] = options.idempotencyKey;
+  }
 
   const response = await fetch(`${API_BASE}${path}`, {
     method: options.method ?? (options.body ? "POST" : "GET"),
     headers,
-    ...(options.body !== undefined ? { body: JSON.stringify(options.body) } : {}),
+    ...(options.body !== undefined
+      ? { body: JSON.stringify(options.body) }
+      : {}),
   });
 
   if (!response.ok) {

@@ -33,6 +33,10 @@ dist/
 build/
 coverage/
 *.tsbuildinfo
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts.map
 
 # Next.js
 .next/

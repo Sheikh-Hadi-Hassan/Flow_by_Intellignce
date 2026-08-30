@@ -6,16 +6,13 @@ import { FounderShell } from "../../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../../components/shell/WorkspaceGate";
 import { ModuleRecommendationList } from "../../../../../components/founder/ModuleRecommendationList";
 import { SectionHeader } from "../../../../../components/ui/Display";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../../lib/workspace/session-actions";
 
 function ModulesPage() {
   const params = useParams();
   const workspace = params.workspace as string;
-  const { moduleRecommendations, toggleDeferredModule } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { moduleRecommendations, toggleDeferredModule, session } =
+    useWorkspaceSessionActions(workspace);
   if (!session) return null;
 
   return (

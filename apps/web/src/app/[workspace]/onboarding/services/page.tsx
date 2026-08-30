@@ -15,18 +15,14 @@ import {
 } from "../../../../components/ui/FormField";
 import { suggestedServicesFixture } from "../../../../content/demo/suggested-services";
 import { mergeServices } from "../../../../lib/prototype/defaults";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import styles from "../../../../components/shell/shell.module.css";
 
 function ServicesStep() {
   const params = useParams();
   const workspace = params.workspace as string;
   const router = useRouter();
-  const { updateSession } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { updateSession, session } = useWorkspaceSessionActions(workspace);
 
   useEffect(() => {
     if (session && session.services.length === 0) {

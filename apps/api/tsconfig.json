@@ -11,7 +11,8 @@
     "paths": {
       "@flow/auth": ["../../packages/auth/dist/index.d.ts"],
       "@flow/contracts": ["../../packages/contracts/dist/index.d.ts"],
-      "@flow/database": ["../../packages/database/dist/index.d.ts"]
+      "@flow/database": ["../../packages/database/dist/index.d.ts"],
+      "@flow/commercial": ["../../packages/commercial/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*.ts"]

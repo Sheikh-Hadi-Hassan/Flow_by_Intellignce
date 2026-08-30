@@ -163,7 +163,7 @@ export function validateOnboardingPatch(
   }
   if (
     state.services.some(
-      (service) => service.selected && service.name.trim().length === 0,
+      (service) => service.selected && !(service.name?.trim()),
     )
   ) {
     errors.push("Selected services must have a name.");

@@ -94,11 +94,8 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   const signInPrototype = useCallback(
     (email: string) => {
       const stored = getPrototypeSnapshot();
-      if (stored?.auth?.email === email) {
+      if (stored?.auth?.email === email && stored.mode !== "demo") {
         return persist(stored);
-      }
-      if (email.includes("northstar") || email.includes("demo")) {
-        return persist(northstarDemoSession());
       }
       return null;
     },

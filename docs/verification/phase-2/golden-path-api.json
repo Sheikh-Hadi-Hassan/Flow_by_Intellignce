@@ -1,0 +1,30 @@
+{
+  "runId": "cc19d37b",
+  "workspaceId": "936c24f9-2d36-47b8-b9e0-54c1d27c9622",
+  "workspaceSlug": "golden-cc19d37b",
+  "opportunityId": "e723f212-2bd2-408a-846c-a3e076de5c42",
+  "journeyStatus": "approved",
+  "approvedVersion": 2,
+  "approvedStatus": "approved",
+  "calculation": {
+    "internalLabourCostMinor": "600000",
+    "vendorCostMinor": "50000",
+    "contingencyMinor": "65000",
+    "totalDeliveryCostMinor": "715000",
+    "recommendedPriceMinor": "1191667",
+    "grossProfitMinor": "476667",
+    "budgetFit": "under",
+    "timelineFeasibility": "feasible"
+  },
+  "counts": {
+    "facts": 4,
+    "requirements": 2,
+    "deliverables": 1,
+    "risks": 2,
+    "briefs": 2,
+    "guards": 3
+  },
+  "mutateAfterApproveStatus": 403,
+  "persistenceAfterRefresh": true,
+  "immutabilityRejected": true
+}

@@ -1,21 +1,35 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { AuthShell } from "../../components/shell/AppShell";
-import { InlineAlert } from "../../components/ui/Display";
 import styles from "../../components/shell/shell.module.css";
 
 export default function VerifyEmailPage() {
   return (
+    <Suspense
+      fallback={<AuthShell title="Verify your email">Loading…</AuthShell>}
+    >
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}
+
+function VerifyEmailContent() {
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
+  return (
     <AuthShell title="Verify your email">
-      <InlineAlert>
-        Prototype state only. In production, Flow will send a verification link
-        to your email address.
-      </InlineAlert>
+      <p>
+        {email
+          ? `We sent a verification link to ${email}.`
+          : "Check your inbox for a verification link."}
+      </p>
       <p style={{ margin: "var(--space-4) 0", fontSize: "var(--text-sm)" }}>
-        Check your inbox for a verification link, or continue onboarding if you
-        are in the prototype flow.
+        After confirming, Flow provisions your workspace and opens onboarding.
       </p>
       <div className={styles.formActions}>
         <Link

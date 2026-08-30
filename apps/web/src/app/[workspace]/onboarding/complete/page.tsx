@@ -6,29 +6,30 @@ import { useCallback } from "react";
 import { OnboardingShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { TwinCompilationSequence } from "../../../../components/onboarding/CompilationSequence";
-import {
-  usePrototype,
-  useWorkspaceSession,
-} from "../../../../lib/prototype/context";
+import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import { compileTwin } from "../../../../lib/prototype/twin-compile";
 
 function CompleteStep() {
   const params = useParams();
   const workspace = params.workspace as string;
-  const { updateSession } = usePrototype();
-  const { session } = useWorkspaceSession(workspace);
+  const { completeOnboarding, isApiBacked, session, updateSession } =
+    useWorkspaceSessionActions(workspace);
 
   const handleComplete = useCallback(() => {
-    updateSession((s) => {
-      const twin = compileTwin(s);
+    if (isApiBacked) {
+      void completeOnboarding();
+      return;
+    }
+    updateSession((current) => {
+      const twin = compileTwin(current);
       return {
-        ...s,
+        ...current,
         twin,
         twinCompiled: true,
         onboardingComplete: true,
       };
     });
-  }, [updateSession]);
+  }, [completeOnboarding, isApiBacked, updateSession]);
 
   if (!session) return null;
 

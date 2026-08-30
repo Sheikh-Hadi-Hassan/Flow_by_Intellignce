@@ -1,44 +1,53 @@
 import { Global, Module } from "@nestjs/common";
 import {
-  InMemoryIdentityAuthorizationRepository,
-  InMemoryWorkspacePhase1Repository,
-} from "@flow/database";
-import {
   FlowRequestIdentityResolver,
   RepositoryAuthorizationProvider,
-  createDevelopmentAuthenticationStack,
+  createAuthenticationStack,
 } from "../security/flow-auth-context.js";
 import { WorkspaceService } from "./workspace.service.js";
 import { WorkspaceController } from "./workspace.controller.js";
+import {
+  IDENTITY_REPOSITORY,
+  WORKSPACE_PHASE1_REPOSITORY,
+  COMMERCIAL_REPOSITORY,
+  createPersistenceStack,
+} from "../database/persistence.providers.js";
 
-const devStack = createDevelopmentAuthenticationStack();
-const phase1Repository = new InMemoryWorkspacePhase1Repository();
+const persistenceStack = createPersistenceStack();
+const authStack = createAuthenticationStack(
+  persistenceStack.identityRepository,
+);
 
 @Global()
 @Module({
   providers: [
     {
-      provide: InMemoryIdentityAuthorizationRepository,
-      useValue: devStack.repository,
+      provide: IDENTITY_REPOSITORY,
+      useValue: persistenceStack.identityRepository,
     },
     {
-      provide: InMemoryWorkspacePhase1Repository,
-      useValue: phase1Repository,
+      provide: WORKSPACE_PHASE1_REPOSITORY,
+      useValue: persistenceStack.phase1Repository,
+    },
+    {
+      provide: COMMERCIAL_REPOSITORY,
+      useValue: persistenceStack.commercialRepository,
     },
     {
       provide: FlowRequestIdentityResolver,
-      useValue: devStack.identityResolver,
+      useValue: authStack.identityResolver,
     },
     {
       provide: RepositoryAuthorizationProvider,
-      useValue: devStack.authorizationProvider,
+      useValue: authStack.authorizationProvider,
     },
     WorkspaceService,
   ],
   controllers: [WorkspaceController],
   exports: [
-    InMemoryIdentityAuthorizationRepository,
-    InMemoryWorkspacePhase1Repository,
+    IDENTITY_REPOSITORY,
+    WORKSPACE_PHASE1_REPOSITORY,
+    COMMERCIAL_REPOSITORY,
     FlowRequestIdentityResolver,
     RepositoryAuthorizationProvider,
     WorkspaceService,

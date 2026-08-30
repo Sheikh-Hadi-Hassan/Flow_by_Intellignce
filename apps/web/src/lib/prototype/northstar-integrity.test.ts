@@ -5,6 +5,7 @@ import {
   NORTHSTAR_WORKSPACE_NAME,
   northstarDemoSession,
 } from "../../content/demo/northstar";
+import { NORTHSTAR_ACME_NOTES } from "../../content/demo/northstar-commercial";
 import { suggestedServicesFixture } from "../../content/demo/suggested-services";
 import {
   createUserSession,
@@ -53,6 +54,13 @@ describe("Northstar demo integrity", () => {
     expect(DEMO_FOUNDER_FIRST_NAME).toBe("Maya");
   });
 
+  it("includes the isolated Acme Robotics commercial scenario", () => {
+    expect(NORTHSTAR_ACME_NOTES).toMatch(/Acme Robotics/);
+    expect(suggestedServicesFixture().some((s) => /brand strategy/i.test(s.name))).toBe(
+      true,
+    );
+  });
+
   it("rehydrates stale demo sessions from the canonical fixture", () => {
     const stale = northstarDemoSession();
     stale.workspaceName = "Intellignce";
@@ -65,6 +73,16 @@ describe("Northstar demo integrity", () => {
       EXPECTED_SERVICE_COUNT,
     );
     expect(normalized.twin?.services).toHaveLength(EXPECTED_SERVICE_COUNT);
+  });
+
+  it("normalizes partial stored demo accent sessions without throwing", () => {
+    const normalized = normalizeLoadedSession({
+      mode: "demo",
+      workspaceSlug: NORTHSTAR_SLUG,
+      accentColor: "#0d6e6e",
+    } as ReturnType<typeof northstarDemoSession>);
+    expect(normalized.workspaceName).toBe(NORTHSTAR_WORKSPACE_NAME);
+    expect(normalized.mode).toBe("demo");
   });
 
   it("never gives Northstar data to a normal signup session", () => {

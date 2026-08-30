@@ -5,10 +5,7 @@ import {
   systemEchoTool,
   ToolRegistry,
 } from "@flow/contracts";
-import type {
-  ActionRequest,
-  CorrelationId,
-} from "@flow/contracts";
+import type { ActionRequest, CorrelationId } from "@flow/contracts";
 import {
   createDevelopmentAuthenticationStack,
   parseRequestSource,

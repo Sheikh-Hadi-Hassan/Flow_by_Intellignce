@@ -4,8 +4,12 @@ export const databaseBoundary = {
   tenantIsolation: "workspace_id-required-for-tenant-owned-records",
 } as const;
 
+export * from "./commercial-persistence.js";
 export * from "./business-persistence.js";
+export * from "./identity-persistence.js";
+export * from "./postgres-sql-executor.js";
 export * from "./workspace-phase1.js";
+export * from "./workspace-phase1-persistence.js";
 export * from "./workspace-provisioning.js";
 
 export type WorkspaceMembershipStatus = "ACTIVE" | "SUSPENDED";

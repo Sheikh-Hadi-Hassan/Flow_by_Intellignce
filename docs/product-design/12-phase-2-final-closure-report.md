@@ -10,7 +10,7 @@
 
 * **Supabase project reference:** `zuvtnmmnwohrapaecsuj` (Flow by Intellignce)
 * **Branch:** `main` (pre-commit; see §13 after commit)
-* **Commit:** `f908a4a` (closure commit on `main`)
+* **Commit:** `61c397c` (closure commit on `main`)
 * **Web/API ports:** Web `3000`, API `4000`
 * **Environment names (never values):** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_APP_URL`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `DATABASE_URL`, `DATABASE_POOLER_URL`, `API_PORT`, `FLOW_DB_INTEGRATION_TESTS`, `FLOW_E2E_COMMERCIAL`, `E2E_TEST_PASSWORD`
 
@@ -110,7 +110,7 @@ Migration head: `20260830000100` (schema) + `20260830000200` (RLS write split). 
 
 ## 13. Git checkpoint
 
-* **Commit hash:** `f908a4a`
+* **Commit hash:** `61c397c`
 * **Branch:** `main`
 * **Remote verified:** `origin` → `git@github.com:Sheikh-Hadi-Hassan/Flow_by_Intellignce.git`
 * **Push status:** Pending after commit

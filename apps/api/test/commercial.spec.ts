@@ -154,10 +154,18 @@ describe("commercial API journey", () => {
       .set(auth)
       .send({ notes: DISCOVERY_NOTES })
       .expect(201);
-    expect(notesRes.body.facts[0].status).toBe("draft");
+
+    const analyzeRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/analyze`,
+      )
+      .set(auth)
+      .send({})
+      .expect(201);
+    expect(analyzeRes.body.facts[0].status).toBe("draft");
 
     let rejectedOne = false;
-    for (const fact of notesRes.body.facts) {
+    for (const fact of analyzeRes.body.facts) {
       const status = !rejectedOne && fact.category !== "budget" ? "rejected" : "verified";
       if (status === "rejected") rejectedOne = true;
       await request(app.getHttpServer())
@@ -182,7 +190,7 @@ describe("commercial API journey", () => {
         .expect(201);
     }
 
-    const followUpId = notesRes.body.followUps[0].id as string;
+    const followUpId = analyzeRes.body.followUps[0].id as string;
     await request(app.getHttpServer())
       .post(
         `/api/v1/workspaces/${workspaceId}/commercial/follow-ups/${followUpId}/answer`,

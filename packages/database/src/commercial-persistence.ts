@@ -101,8 +101,42 @@ export interface ExtractedFactRecord {
   readonly status: FactStatus;
   readonly characterStart?: number;
   readonly characterEnd?: number;
+  readonly candidateId?: string;
+  readonly contradictionRef?: string;
+  readonly duplicateOfCandidateId?: string;
   readonly verifiedBy?: string;
   readonly verifiedAt?: string;
+}
+
+export type ExtractionRunStatus =
+  | "pending"
+  | "running"
+  | "succeeded"
+  | "failed"
+  | "cancelled"
+  | "reviewed";
+
+export interface DiscoveryExtractionRunRecord {
+  readonly id: string;
+  readonly workspaceId: string;
+  readonly opportunityId: string;
+  readonly sourceId: string;
+  readonly sourceFingerprint: string;
+  readonly promptVersion: string;
+  readonly schemaVersion: string;
+  readonly provider: string;
+  readonly model: string;
+  readonly status: ExtractionRunStatus;
+  readonly attemptCount: number;
+  readonly idempotencyKey: string;
+  readonly startedAt?: string;
+  readonly completedAt?: string;
+  readonly errorCode?: string;
+  readonly usageMetadata: Record<string, unknown>;
+  readonly latencyMs?: number;
+  readonly createdBy?: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
 }
 
 export interface FollowUpRecord {
@@ -410,9 +444,64 @@ export interface CommercialRepository {
     readonly requestClass: string;
     readonly fingerprint: string;
   }): Promise<"new" | "replay">;
+  createExtractionRun(
+    record: DiscoveryExtractionRunRecord,
+  ): Promise<DiscoveryExtractionRunRecord>;
+  updateExtractionRun(input: {
+    readonly workspaceId: string;
+    readonly runId: string;
+    readonly patch: Partial<
+      Pick<
+        DiscoveryExtractionRunRecord,
+        | "status"
+        | "attemptCount"
+        | "startedAt"
+        | "completedAt"
+        | "errorCode"
+        | "usageMetadata"
+        | "latencyMs"
+        | "provider"
+        | "model"
+      >
+    >;
+  }): Promise<DiscoveryExtractionRunRecord>;
+  getExtractionRunByIdempotency(
+    workspaceId: string,
+    idempotencyKey: string,
+  ): Promise<DiscoveryExtractionRunRecord | undefined>;
+  listExtractionRuns(
+    workspaceId: string,
+    opportunityId: string,
+  ): Promise<readonly DiscoveryExtractionRunRecord[]>;
 }
 
 /* eslint-disable @typescript-eslint/require-await -- in-memory store matches the async repository contract */
+
+function mapExtractionRun(row: Record<string, unknown>): DiscoveryExtractionRunRecord {
+  return {
+    id: String(row.id),
+    workspaceId: String(row.workspace_id),
+    opportunityId: String(row.opportunity_id),
+    sourceId: String(row.source_id),
+    sourceFingerprint: String(row.source_fingerprint),
+    promptVersion: String(row.prompt_version),
+    schemaVersion: String(row.schema_version),
+    provider: String(row.provider),
+    model: String(row.model),
+    status: row.status as ExtractionRunStatus,
+    attemptCount: Number(row.attempt_count),
+    idempotencyKey: String(row.idempotency_key),
+    ...(row.started_at ? { startedAt: String(row.started_at) } : {}),
+    ...(row.completed_at ? { completedAt: String(row.completed_at) } : {}),
+    ...(row.error_code ? { errorCode: String(row.error_code) } : {}),
+    usageMetadata: (row.usage_metadata as Record<string, unknown>) ?? {},
+    ...(row.latency_ms != null ? { latencyMs: Number(row.latency_ms) } : {}),
+    ...(row.created_by ? { createdBy: String(row.created_by) } : {}),
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
 export class InMemoryCommercialRepository implements CommercialRepository {
   private readonly services = new Map<string, CatalogServiceRecord>();
   private readonly costs: CostComponentRecord[] = [];
@@ -456,6 +545,7 @@ export class InMemoryCommercialRepository implements CommercialRepository {
   private readonly guards: GuardDecisionRecord[] = [];
   private readonly audits: CommercialAuditRecord[] = [];
   private readonly idempotency = new Set<string>();
+  private readonly extractionRuns = new Map<string, DiscoveryExtractionRunRecord>();
   private readonly sessions = new Map<
     string,
     { workspaceId: string; opportunityId: string }
@@ -976,6 +1066,57 @@ export class InMemoryCommercialRepository implements CommercialRepository {
     this.idempotency.add(token);
     return "new";
   }
+  async createExtractionRun(record: DiscoveryExtractionRunRecord) {
+    this.extractionRuns.set(record.id, record);
+    return record;
+  }
+  async updateExtractionRun(input: {
+    readonly workspaceId: string;
+    readonly runId: string;
+    readonly patch: Partial<
+      Pick<
+        DiscoveryExtractionRunRecord,
+        | "status"
+        | "attemptCount"
+        | "startedAt"
+        | "completedAt"
+        | "errorCode"
+        | "usageMetadata"
+        | "latencyMs"
+        | "provider"
+        | "model"
+      >
+    >;
+  }) {
+    const current = this.extractionRuns.get(input.runId);
+    if (!current || current.workspaceId !== input.workspaceId) {
+      throw new Error("Extraction run not found.");
+    }
+    const next = {
+      ...current,
+      ...input.patch,
+      updatedAt: new Date().toISOString(),
+    };
+    this.extractionRuns.set(input.runId, next);
+    return next;
+  }
+  async getExtractionRunByIdempotency(
+    workspaceId: string,
+    idempotencyKey: string,
+  ) {
+    return [...this.extractionRuns.values()].find(
+      (row) =>
+        row.workspaceId === workspaceId && row.idempotencyKey === idempotencyKey,
+    );
+  }
+  async listExtractionRuns(workspaceId: string, opportunityId: string) {
+    return [...this.extractionRuns.values()]
+      .filter(
+        (row) =>
+          row.workspaceId === workspaceId && row.opportunityId === opportunityId,
+      )
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
 }
 
 export class PostgresCommercialRepository implements CommercialRepository {
@@ -1437,8 +1578,9 @@ export class PostgresCommercialRepository implements CommercialRepository {
     await this.db.query(
       `insert into public.extracted_facts
         (id, workspace_id, opportunity_id, source_id, extraction_run_id, candidate_fact,
-         category, confidence_bps, status, character_start, character_end)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+         category, confidence_bps, status, character_start, character_end,
+         candidate_id, contradiction_ref, duplicate_of_candidate_id)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
        on conflict (workspace_id, source_id, candidate_fact, category) do nothing`,
       [
         record.id,
@@ -1452,6 +1594,9 @@ export class PostgresCommercialRepository implements CommercialRepository {
         record.status,
         record.characterStart ?? null,
         record.characterEnd ?? null,
+        record.candidateId ?? null,
+        record.contradictionRef ?? null,
+        record.duplicateOfCandidateId ?? null,
       ],
     );
     return record;
@@ -1476,6 +1621,13 @@ export class PostgresCommercialRepository implements CommercialRepository {
         : {}),
       ...(row.character_end != null
         ? { characterEnd: Number(row.character_end) }
+        : {}),
+      ...(row.candidate_id ? { candidateId: String(row.candidate_id) } : {}),
+      ...(row.contradiction_ref
+        ? { contradictionRef: String(row.contradiction_ref) }
+        : {}),
+      ...(row.duplicate_of_candidate_id
+        ? { duplicateOfCandidateId: String(row.duplicate_of_candidate_id) }
         : {}),
       ...(row.verified_by ? { verifiedBy: String(row.verified_by) } : {}),
       ...(row.verified_at ? { verifiedAt: String(row.verified_at) } : {}),
@@ -2102,5 +2254,129 @@ export class PostgresCommercialRepository implements CommercialRepository {
       [input.workspaceId, input.key, input.requestClass, input.fingerprint],
     );
     return "new";
+  }
+  async createExtractionRun(record: DiscoveryExtractionRunRecord) {
+    await this.db.query(
+      `insert into public.discovery_extraction_runs
+        (id, workspace_id, opportunity_id, source_id, source_fingerprint, prompt_version,
+         schema_version, provider, model, status, attempt_count, idempotency_key,
+         started_at, completed_at, error_code, usage_metadata, latency_ms, created_by,
+         created_at, updated_at)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+      [
+        record.id,
+        record.workspaceId,
+        record.opportunityId,
+        record.sourceId,
+        record.sourceFingerprint,
+        record.promptVersion,
+        record.schemaVersion,
+        record.provider,
+        record.model,
+        record.status,
+        record.attemptCount,
+        record.idempotencyKey,
+        record.startedAt ?? null,
+        record.completedAt ?? null,
+        record.errorCode ?? null,
+        JSON.stringify(record.usageMetadata),
+        record.latencyMs ?? null,
+        record.createdBy ?? null,
+        record.createdAt,
+        record.updatedAt,
+      ],
+    );
+    return record;
+  }
+  async updateExtractionRun(input: {
+    readonly workspaceId: string;
+    readonly runId: string;
+    readonly patch: Partial<
+      Pick<
+        DiscoveryExtractionRunRecord,
+        | "status"
+        | "attemptCount"
+        | "startedAt"
+        | "completedAt"
+        | "errorCode"
+        | "usageMetadata"
+        | "latencyMs"
+        | "provider"
+        | "model"
+      >
+    >;
+  }) {
+    const current = await this.db.query<Record<string, unknown>>(
+      `select * from public.discovery_extraction_runs where id = $1 and workspace_id = $2`,
+      [input.runId, input.workspaceId],
+    );
+    const row = current.rows[0];
+    if (!row) throw new Error("Extraction run not found.");
+    const next = {
+      status: (input.patch.status ?? row.status) as ExtractionRunStatus,
+      attemptCount: input.patch.attemptCount ?? Number(row.attempt_count),
+      startedAt:
+        input.patch.startedAt ??
+        (row.started_at ? String(row.started_at) : undefined),
+      completedAt:
+        input.patch.completedAt ??
+        (row.completed_at ? String(row.completed_at) : undefined),
+      errorCode:
+        input.patch.errorCode ??
+        (row.error_code ? String(row.error_code) : undefined),
+      usageMetadata:
+        input.patch.usageMetadata ??
+        ((row.usage_metadata as Record<string, unknown>) ?? {}),
+      latencyMs:
+        input.patch.latencyMs ??
+        (row.latency_ms != null ? Number(row.latency_ms) : undefined),
+      provider: input.patch.provider ?? String(row.provider),
+      model: input.patch.model ?? String(row.model),
+    };
+    await this.db.query(
+      `update public.discovery_extraction_runs
+          set status = $3, attempt_count = $4, started_at = $5, completed_at = $6,
+              error_code = $7, usage_metadata = $8, latency_ms = $9, provider = $10,
+              model = $11, updated_at = now()
+        where id = $1 and workspace_id = $2`,
+      [
+        input.runId,
+        input.workspaceId,
+        next.status,
+        next.attemptCount,
+        next.startedAt ?? null,
+        next.completedAt ?? null,
+        next.errorCode ?? null,
+        JSON.stringify(next.usageMetadata),
+        next.latencyMs ?? null,
+        next.provider,
+        next.model,
+      ],
+    );
+    return (await this.listExtractionRuns(
+      input.workspaceId,
+      String(row.opportunity_id),
+    )).find((run) => run.id === input.runId)!;
+  }
+  async getExtractionRunByIdempotency(
+    workspaceId: string,
+    idempotencyKey: string,
+  ) {
+    const result = await this.db.query<Record<string, unknown>>(
+      `select * from public.discovery_extraction_runs
+        where workspace_id = $1 and idempotency_key = $2`,
+      [workspaceId, idempotencyKey],
+    );
+    const row = result.rows[0];
+    return row ? mapExtractionRun(row) : undefined;
+  }
+  async listExtractionRuns(workspaceId: string, opportunityId: string) {
+    const result = await this.db.query<Record<string, unknown>>(
+      `select * from public.discovery_extraction_runs
+        where workspace_id = $1 and opportunity_id = $2
+        order by created_at desc`,
+      [workspaceId, opportunityId],
+    );
+    return result.rows.map(mapExtractionRun);
   }
 }

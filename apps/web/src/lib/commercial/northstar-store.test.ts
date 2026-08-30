@@ -37,7 +37,8 @@ describe("Northstar commercial golden path", () => {
       primaryAudience: "Plant managers and operations directors",
       successMetric: "Shortlist conversion",
     });
-    const notes = await api.addNotes(opportunityId, NORTHSTAR_ACME_NOTES);
+    await api.addNotes(opportunityId, NORTHSTAR_ACME_NOTES);
+    const notes = await api.analyzeNotes(opportunityId);
     expect(notes.facts.every((fact) => fact.status === "draft")).toBe(true);
     for (const fact of notes.facts) {
       await api.verifyFact(fact.id, "verified");

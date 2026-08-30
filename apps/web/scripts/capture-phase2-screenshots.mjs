@@ -132,14 +132,19 @@ try {
       },
     }),
   });
+  await fetch(`${apiBase}/api/v1/workspaces/${ws}/commercial/opportunities/${opp.id}/notes`, {
+    method: "POST",
+    headers: auth,
+    body: JSON.stringify({
+      notes:
+        "Audience: plant managers. Budget: $85000. Timeline 90 days. Legal review blocking must complete.",
+    }),
+  });
   const notes = await (
-    await fetch(`${apiBase}/api/v1/workspaces/${ws}/commercial/opportunities/${opp.id}/notes`, {
+    await fetch(`${apiBase}/api/v1/workspaces/${ws}/commercial/opportunities/${opp.id}/analyze`, {
       method: "POST",
       headers: auth,
-      body: JSON.stringify({
-        notes:
-          "Audience: plant managers. Budget: $85000. Timeline 90 days. Legal review blocking must complete.",
-      }),
+      body: JSON.stringify({}),
     })
   ).json();
   for (const fact of notes.facts) {

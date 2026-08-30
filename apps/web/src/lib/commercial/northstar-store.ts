@@ -42,6 +42,7 @@ interface DemoState {
   timeline: OpportunityBundle["timeline"];
   briefs: BriefVersionRecord[];
   guards: OpportunityBundle["guards"][number][];
+  extractionRuns: NonNullable<OpportunityBundle["extractionRuns"]>;
 }
 
 function seed(): DemoState {
@@ -125,6 +126,7 @@ function seed(): DemoState {
     timeline: { notes: "90 days to Q4 launch" },
     briefs: [],
     guards: [],
+    extractionRuns: [],
   };
 }
 
@@ -169,6 +171,7 @@ function bundle(state: DemoState): OpportunityBundle {
     questionnaire: state.questionnaire,
     answers: state.answers,
     sources: state.sources,
+    extractionRuns: state.extractionRuns,
     ...(state.budget ? { budget: state.budget } : {}),
     ...(state.timeline ? { timeline: state.timeline } : {}),
   };
@@ -231,12 +234,18 @@ export function createNorthstarCommercialApi() {
     },
     addNotes: async (_id: string, notes: string) => {
       const state = load();
+      state.sources = [{ originalText: notes || NORTHSTAR_ACME_NOTES }];
+      save(state);
+      return bundle(state);
+    },
+    analyzeNotes: async (_id: string) => {
+      const state = load();
+      const notes = state.sources[0]?.originalText ?? NORTHSTAR_ACME_NOTES;
       const drafts = await extractor.extract({
         sourceId: "ns-src-1",
-        sourceText: notes || NORTHSTAR_ACME_NOTES,
+        sourceText: notes,
         extractionRunId: "ns-run-1",
       });
-      state.sources = [{ originalText: notes }];
       state.facts = drafts.map((draft, index) => ({
         id: `ns-fact-${index}`,
         candidateFact: draft.candidateFact,
@@ -250,6 +259,18 @@ export function createNorthstarCommercialApi() {
           ? { characterEnd: draft.characterEnd }
           : {}),
       }));
+      state.extractionRuns = [
+        {
+          id: "ns-run-1",
+          sourceId: "ns-src-1",
+          sourceFingerprint: "demo",
+          provider: "fixture",
+          model: "fixture-v1",
+          status: "succeeded",
+          attemptCount: 1,
+          createdAt: new Date().toISOString(),
+        },
+      ];
       save(state);
       return bundle(state);
     },

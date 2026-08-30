@@ -8,27 +8,37 @@ import {
 import {
   brandStrategyQuestionnaireV1,
   calculateScope,
+  createDiscoveryProviderFromEnv,
   discoveryCompleteness,
-  FixtureDiscoveryExtractor,
+  DISCOVERY_EXTRACTION_PROMPT_VERSION,
+  DISCOVERY_EXTRACTION_SCHEMA_VERSION,
+  mapExtractionResultToDrafts,
   nextJourneyStatus,
   requiredQuestionKeys,
+  sanitizeSourceText,
   scopeWritesFromVerifiedFact,
+  sourceFingerprint,
   timelineDaysFromText,
   validateQuestionnaireResponse,
+  buildMinimalTwinSummary,
   type JourneyGuardInput,
   type JourneyStatus,
 } from "@flow/commercial";
 import type { CommercialRepository } from "@flow/database";
+import type { WorkspacePhase1Repository } from "@flow/database";
 import { COMMERCIAL_REPOSITORY } from "../database/persistence.providers.js";
+import { WORKSPACE_PHASE1_REPOSITORY } from "../database/persistence.providers.js";
 import type { TrustedExecutionContext } from "../security/flow-auth-context.js";
 
-const extractor = new FixtureDiscoveryExtractor();
+const discoveryProvider = createDiscoveryProviderFromEnv();
 
 @Injectable()
 export class CommercialService {
   constructor(
     @Inject(COMMERCIAL_REPOSITORY)
     private readonly repo: CommercialRepository,
+    @Inject(WORKSPACE_PHASE1_REPOSITORY)
+    private readonly phase1Repo: WorkspacePhase1Repository,
   ) {}
 
   private assert(identity: TrustedExecutionContext, permission: string) {
@@ -421,6 +431,7 @@ export class CommercialService {
       risks,
       budget,
       timeline,
+      extractionRuns,
     ] = await Promise.all([
       this.repo.listFacts(identity.workspaceId, opportunityId),
       this.repo.listFollowUps(identity.workspaceId, opportunityId),
@@ -439,6 +450,7 @@ export class CommercialService {
       this.repo.listRisks(identity.workspaceId, opportunityId),
       this.repo.getBudgetConstraint(identity.workspaceId, opportunityId),
       this.repo.getTimelineConstraint(identity.workspaceId, opportunityId),
+      this.repo.listExtractionRuns(identity.workspaceId, opportunityId),
     ]);
     return {
       opportunity,
@@ -456,6 +468,7 @@ export class CommercialService {
       risks,
       budget,
       timeline,
+      extractionRuns,
     };
   }
 
@@ -509,6 +522,8 @@ export class CommercialService {
     if (notes.length > 200_000) {
       throw new BadRequestException("Source exceeds size limit.");
     }
+    await this.requireOpportunity(identity, opportunityId);
+    const normalized = sanitizeSourceText(notes);
     const sessionId = crypto.randomUUID();
     await this.repo.createSession({
       id: sessionId,
@@ -521,45 +536,9 @@ export class CommercialService {
       workspaceId: identity.workspaceId,
       sessionId,
       sourceKind: "meeting_notes",
-      originalText: notes,
+      originalText: normalized,
       contentType: "text/plain",
     });
-    const runId = crypto.randomUUID();
-    const drafts = await extractor.extract({
-      sourceId: source.id,
-      sourceText: notes,
-      extractionRunId: runId,
-    });
-    for (const draft of drafts) {
-      const fact = await this.repo.saveFact({
-        id: crypto.randomUUID(),
-        workspaceId: identity.workspaceId,
-        opportunityId,
-        sourceId: source.id,
-        extractionRunId: draft.extractionRunId,
-        candidateFact: draft.candidateFact,
-        category: draft.category,
-        confidenceBps: draft.confidenceBps,
-        status: "draft",
-        ...(draft.characterStart !== undefined
-          ? { characterStart: draft.characterStart }
-          : {}),
-        ...(draft.characterEnd !== undefined
-          ? { characterEnd: draft.characterEnd }
-          : {}),
-      });
-      await this.repo.addEvidence({
-        id: crypto.randomUUID(),
-        workspaceId: identity.workspaceId,
-        opportunityId,
-        targetType: "extracted_fact",
-        targetId: fact.id,
-        sourceId: source.id,
-        factId: fact.id,
-        claimClassification: "INFERENCE",
-        excerpt: draft.candidateFact.slice(0, 280),
-      });
-    }
     await this.audit(
       identity,
       "discovery.notes.save",
@@ -570,6 +549,191 @@ export class CommercialService {
       },
     );
     return this.getOpportunityBundle(identity, opportunityId);
+  }
+
+  async analyzeDiscovery(
+    identity: TrustedExecutionContext,
+    opportunityId: string,
+    input: {
+      readonly sourceId?: string;
+      readonly idempotencyKey?: string;
+    },
+  ) {
+    this.assert(identity, "discovery.manage");
+    const opportunity = await this.requireOpportunity(identity, opportunityId);
+    const sources = await this.repo.listSources(
+      identity.workspaceId,
+      opportunityId,
+    );
+    const source = input.sourceId
+      ? await this.repo.getSource(identity.workspaceId, input.sourceId)
+      : sources.at(-1);
+    if (!source) {
+      throw new BadRequestException("Discovery source not found.");
+    }
+    const fingerprint = sourceFingerprint(source.originalText);
+    const idempotencyKey =
+      input.idempotencyKey ??
+      `analyze:${source.id}:${fingerprint}:${DISCOVERY_EXTRACTION_PROMPT_VERSION}`;
+    const replay = await this.repo.consumeIdempotency({
+      workspaceId: identity.workspaceId,
+      key: idempotencyKey,
+      requestClass: "discovery.analyze",
+      fingerprint,
+    });
+    if (replay === "replay") {
+      const existing = await this.repo.getExtractionRunByIdempotency(
+        identity.workspaceId,
+        idempotencyKey,
+      );
+      if (existing) {
+        return this.getOpportunityBundle(identity, opportunityId);
+      }
+    }
+    const runId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    await this.repo.createExtractionRun({
+      id: runId,
+      workspaceId: identity.workspaceId,
+      opportunityId,
+      sourceId: source.id,
+      sourceFingerprint: fingerprint,
+      promptVersion: DISCOVERY_EXTRACTION_PROMPT_VERSION,
+      schemaVersion: DISCOVERY_EXTRACTION_SCHEMA_VERSION,
+      provider: discoveryProvider.providerId,
+      model: "pending",
+      status: "pending",
+      attemptCount: 0,
+      idempotencyKey,
+      usageMetadata: {},
+      createdBy: identity.userId,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const service = await this.repo.getService(
+      identity.workspaceId,
+      opportunity.serviceId,
+    );
+    const twin = await this.phase1Repo.getTwin(identity.workspaceId);
+    const twinSummary = twin
+      ? buildMinimalTwinSummary({
+          businessName: twin.snapshot.businessName,
+          classification: twin.snapshot.classification,
+          services: twin.snapshot.services,
+        })
+      : undefined;
+    await this.repo.updateExtractionRun({
+      workspaceId: identity.workspaceId,
+      runId,
+      patch: {
+        status: "running",
+        attemptCount: 1,
+        startedAt: new Date().toISOString(),
+      },
+    });
+    try {
+      const result = await discoveryProvider.extract({
+        workspaceId: identity.workspaceId,
+        opportunityId,
+        sourceId: source.id,
+        sourceText: source.originalText,
+        extractionRunId: runId,
+        ...(twinSummary ? { twinSummary } : {}),
+        ...(service
+          ? {
+              serviceSummary: {
+                name: service.name,
+                pricingModel: service.pricingModel,
+              },
+            }
+          : {}),
+        opportunitySummary: {
+          name: opportunity.name,
+          journeyStatus: opportunity.journeyStatus,
+        },
+      });
+      const drafts = mapExtractionResultToDrafts(
+        result,
+        source.originalText,
+        source.id,
+        runId,
+      );
+      for (const draft of drafts) {
+        const fact = await this.repo.saveFact({
+          id: crypto.randomUUID(),
+          workspaceId: identity.workspaceId,
+          opportunityId,
+          sourceId: source.id,
+          extractionRunId: draft.extractionRunId,
+          candidateFact: draft.candidateFact,
+          category: draft.category,
+          confidenceBps: draft.confidenceBps,
+          status: "draft",
+          ...(draft.characterStart !== undefined
+            ? { characterStart: draft.characterStart }
+            : {}),
+          ...(draft.characterEnd !== undefined
+            ? { characterEnd: draft.characterEnd }
+            : {}),
+          ...(draft.candidateId ? { candidateId: draft.candidateId } : {}),
+          ...(draft.contradictionRef
+            ? { contradictionRef: draft.contradictionRef }
+            : {}),
+          ...(draft.duplicateOfCandidateId
+            ? { duplicateOfCandidateId: draft.duplicateOfCandidateId }
+            : {}),
+        });
+        const excerpt = source.originalText.slice(
+          draft.characterStart ?? 0,
+          draft.characterEnd ?? Math.min(source.originalText.length, 280),
+        );
+        await this.repo.addEvidence({
+          id: crypto.randomUUID(),
+          workspaceId: identity.workspaceId,
+          opportunityId,
+          targetType: "extracted_fact",
+          targetId: fact.id,
+          sourceId: source.id,
+          factId: fact.id,
+          claimClassification: "INFERENCE",
+          excerpt: excerpt.slice(0, 280),
+        });
+      }
+      await this.repo.updateExtractionRun({
+        workspaceId: identity.workspaceId,
+        runId,
+        patch: {
+          status: "succeeded",
+          completedAt: new Date().toISOString(),
+          provider: result.provider,
+          model: result.model,
+          latencyMs: result.latencyMs,
+          usageMetadata: result.usage ?? {},
+        },
+      });
+      await this.audit(identity, "discovery.analyze", "extraction_run", runId, {
+        sourceId: source.id,
+        provider: result.provider,
+        model: result.model,
+        candidateCount: drafts.length,
+      });
+      return this.refreshJourney(identity, opportunityId);
+    } catch (error) {
+      const errorCode =
+        error instanceof Error && "code" in error
+          ? String((error as { code: string }).code)
+          : "extraction_failed";
+      await this.repo.updateExtractionRun({
+        workspaceId: identity.workspaceId,
+        runId,
+        patch: {
+          status: "failed",
+          completedAt: new Date().toISOString(),
+          errorCode,
+        },
+      });
+      throw new BadRequestException("Discovery extraction failed.");
+    }
   }
 
   async verifyFact(

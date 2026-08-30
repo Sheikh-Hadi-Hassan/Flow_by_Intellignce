@@ -403,6 +403,27 @@ export class CommercialController {
     );
   }
 
+  @Post("opportunities/:opportunityId/analyze")
+  analyzeDiscovery(
+    @Headers("authorization") authorization: string | undefined,
+    @Headers("x-flow-workspace-id") workspaceHeader: string | undefined,
+    @Headers("idempotency-key") idempotencyKey: string | undefined,
+    @Param("workspaceId") workspaceId: string,
+    @Param("opportunityId") opportunityId: string,
+    @Body() body: { sourceId?: string },
+  ) {
+    return this.withIdentity(
+      authorization,
+      workspaceHeader,
+      workspaceId,
+      (identity) =>
+        this.commercial.analyzeDiscovery(identity, opportunityId, {
+          ...(body.sourceId ? { sourceId: body.sourceId } : {}),
+          ...(idempotencyKey ? { idempotencyKey } : {}),
+        }),
+    );
+  }
+
   @Post("facts/:factId/verify")
   verifyFact(
     @Headers("authorization") authorization: string | undefined,

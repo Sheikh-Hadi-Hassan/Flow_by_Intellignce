@@ -71,7 +71,23 @@ export function WorkspaceApiProvider({ children }: { children: ReactNode }) {
     }
     const supabase = createBrowserSupabaseClient();
     const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token ?? null;
+    let token = data.session?.access_token ?? null;
+    if (!token) {
+      try {
+        const response = await fetch("/api/auth/session", {
+          credentials: "include",
+          cache: "no-store",
+        });
+        if (response.ok) {
+          const payload = (await response.json()) as {
+            session?: { access_token?: string };
+          };
+          token = payload.session?.access_token ?? null;
+        }
+      } catch {
+        token = null;
+      }
+    }
     setAccessToken(token);
     return token;
   }, []);

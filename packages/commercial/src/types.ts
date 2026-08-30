@@ -50,6 +50,7 @@ export interface JourneyGuardInput {
 }
 
 export interface ExtractedFactDraft {
+  readonly candidateId?: string;
   readonly candidateFact: string;
   readonly category: string;
   readonly confidenceBps: number;
@@ -59,4 +60,6 @@ export interface ExtractedFactDraft {
   readonly timecode?: string;
   readonly extractionRunId: string;
   readonly status: FactStatus;
+  readonly duplicateOfCandidateId?: string;
+  readonly contradictionRef?: string;
 }

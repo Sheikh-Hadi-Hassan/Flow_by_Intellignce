@@ -184,7 +184,13 @@ try {
         body: JSON.stringify({ notes: DISCOVERY_NOTES }),
       },
     );
-    const notesBody = await notesRes.json();
+    if (!notesRes.ok) throw new Error(`notes failed: ${notesRes.status}`);
+    const analyzeRes = await fetch(
+      `${apiBase}/api/v1/workspaces/${workspace.id}/commercial/opportunities/${opp.id}/analyze`,
+      { method: "POST", headers: auth, body: JSON.stringify({}) },
+    );
+    if (!analyzeRes.ok) throw new Error(`analyze failed: ${analyzeRes.status}`);
+    const notesBody = await analyzeRes.json();
     let rejected = false;
     for (const fact of notesBody.facts) {
       const status = !rejected ? "rejected" : "verified";

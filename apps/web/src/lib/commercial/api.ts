@@ -57,6 +57,22 @@ export interface FactRecord {
   readonly status: string;
   readonly characterStart?: number;
   readonly characterEnd?: number;
+  readonly candidateId?: string;
+  readonly duplicateOfCandidateId?: string;
+  readonly contradictionRef?: string;
+}
+
+export interface ExtractionRunRecord {
+  readonly id: string;
+  readonly sourceId: string;
+  readonly sourceFingerprint: string;
+  readonly provider: string;
+  readonly model: string;
+  readonly status: string;
+  readonly attemptCount: number;
+  readonly errorCode?: string;
+  readonly latencyMs?: number;
+  readonly createdAt: string;
 }
 
 export interface FollowUpRecord {
@@ -88,7 +104,7 @@ export interface OpportunityBundle {
   }[];
   readonly questionnaire?: QuestionnaireVersion;
   readonly answers?: Record<string, unknown>;
-  readonly sources: readonly { readonly originalText: string }[];
+  readonly sources: readonly { readonly id?: string; readonly originalText: string }[];
   readonly requirements: readonly {
     readonly key: string;
     readonly statement: string;
@@ -110,6 +126,7 @@ export interface OpportunityBundle {
     readonly maxMinor?: string;
   };
   readonly timeline?: { readonly notes?: string };
+  readonly extractionRuns?: readonly ExtractionRunRecord[];
 }
 
 export function commercialPath(workspaceId: string, suffix: string): string {
@@ -219,6 +236,12 @@ export function createCommercialApi(input: {
       request<OpportunityBundle>(`/opportunities/${id}/notes`, {
         method: "POST",
         body: { notes },
+      }),
+    analyzeNotes: (id: string, sourceId?: string) =>
+      request<OpportunityBundle>(`/opportunities/${id}/analyze`, {
+        method: "POST",
+        body: sourceId ? { sourceId } : {},
+        idempotencyKey: `analyze-${id}-${Date.now()}`,
       }),
     verifyFact: (factId: string, status: "verified" | "rejected") =>
       request<FactRecord>(`/facts/${factId}/verify`, {

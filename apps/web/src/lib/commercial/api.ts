@@ -90,6 +90,36 @@ export interface BriefVersionRecord {
   readonly calculation?: Record<string, unknown>;
 }
 
+export interface ProposalVersionRecord {
+  readonly id: string;
+  readonly versionNumber: number;
+  readonly status: string;
+  readonly sections: readonly {
+    sectionKey: string;
+    title: string;
+    body: string;
+  }[];
+  readonly packages: readonly {
+    name: string;
+    totalMinor: string;
+    isRecommended: boolean;
+  }[];
+  readonly calculation?: Record<string, unknown>;
+}
+
+export interface ContractVersionRecord {
+  readonly id: string;
+  readonly versionNumber: number;
+  readonly status: string;
+  readonly clauses: readonly { title: string; body: string }[];
+  readonly parties: readonly { partyRole: string; legalName: string }[];
+  readonly paymentSchedule: readonly {
+    label: string;
+    amountMinor: string;
+  }[];
+  readonly calculation?: Record<string, unknown>;
+}
+
 export interface OpportunityBundle {
   readonly opportunity: OpportunityRecord;
   readonly facts: readonly FactRecord[];
@@ -287,6 +317,46 @@ export function createCommercialApi(input: {
         method: "POST",
         body: { expectedVersion },
         idempotencyKey: `approve-${versionId}`,
+      }),
+    listProposals: (opportunityId: string) =>
+      request<ProposalVersionRecord[]>(`/opportunities/${opportunityId}/proposals`),
+    generateProposal: (opportunityId: string) =>
+      request<ProposalVersionRecord>(`/opportunities/${opportunityId}/proposals`, {
+        method: "POST",
+      }),
+    submitProposal: (versionId: string) =>
+      request<ProposalVersionRecord>(`/proposals/${versionId}/submit`, {
+        method: "POST",
+      }),
+    approveProposal: (versionId: string) =>
+      request<ProposalVersionRecord>(`/proposals/${versionId}/approve`, {
+        method: "POST",
+        idempotencyKey: `proposal-approve-${versionId}`,
+      }),
+    shareProposal: (versionId: string) =>
+      request<{ token: string; expiresAt: string }>(`/proposals/${versionId}/share`, {
+        method: "POST",
+      }),
+    listContracts: (opportunityId: string) =>
+      request<ContractVersionRecord[]>(`/opportunities/${opportunityId}/contracts`),
+    generateContract: (opportunityId: string) =>
+      request<ContractVersionRecord>(`/opportunities/${opportunityId}/contracts`, {
+        method: "POST",
+      }),
+    submitContract: (versionId: string) =>
+      request<ContractVersionRecord>(`/contracts/${versionId}/submit`, {
+        method: "POST",
+      }),
+    approveContract: (versionId: string) =>
+      request<ContractVersionRecord>(`/contracts/${versionId}/approve`, {
+        method: "POST",
+        idempotencyKey: `contract-approve-${versionId}`,
+      }),
+    acceptContract: (versionId: string, actorLabel: string) =>
+      request<ContractVersionRecord>(`/contracts/${versionId}/accept`, {
+        method: "POST",
+        body: { actorLabel },
+        idempotencyKey: `contract-accept-${versionId}`,
       }),
   };
 }

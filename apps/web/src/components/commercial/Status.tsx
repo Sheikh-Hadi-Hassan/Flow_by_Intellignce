@@ -3,6 +3,21 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+export function proposalBadge(status: string) {
+  if (status === "accepted" || status === "approved") return "success" as const;
+  if (status === "declined") return "warning" as const;
+  if (status === "in_review" || status === "client_review") return "essential" as const;
+  if (status === "changes_requested") return "warning" as const;
+  return "default" as const;
+}
+
+export function contractBadge(status: string) {
+  if (status === "executed") return "success" as const;
+  if (status === "pending_client_acceptance") return "essential" as const;
+  if (status === "changes_requested") return "warning" as const;
+  return "default" as const;
+}
+
 export function journeyBadge(status: string) {
   if (status === "approved") return "success" as const;
   if (status.includes("missing") || status === "changes_requested") {
@@ -32,6 +47,8 @@ export function OpportunityNav({
     { href: `${base}/missing`, label: "Missing information" },
     { href: `${base}/brief`, label: "Brief" },
     { href: `${base}/approvals`, label: "Approvals" },
+    { href: `${base}/proposal`, label: "Proposal" },
+    { href: `${base}/contract`, label: "Contract" },
   ];
   return (
     <nav aria-label="Opportunity sections" className="flow-stepper">

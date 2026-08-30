@@ -46,6 +46,12 @@ const FOUNDER_PERMISSION_KEYS = [
   "fact.verify",
   "brief.manage",
   "brief.approve",
+  "proposal.manage",
+  "proposal.approve",
+  "proposal.share",
+  "contract.manage",
+  "contract.approve",
+  "contract.execute",
   "commercial.audit.read",
 ] as const;
 

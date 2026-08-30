@@ -5,6 +5,7 @@ export const databaseBoundary = {
 } as const;
 
 export * from "./commercial-persistence.js";
+export * from "./proposal-contract-persistence.js";
 export * from "./business-persistence.js";
 export * from "./identity-persistence.js";
 export * from "./postgres-sql-executor.js";

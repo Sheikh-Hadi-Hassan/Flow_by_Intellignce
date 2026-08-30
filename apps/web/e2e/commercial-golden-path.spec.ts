@@ -149,8 +149,10 @@ test.describe("authenticated commercial golden path", () => {
       await page.getByLabel("Service name").fill(`E2E Service ${workspace.runId}`);
       await page.getByRole("button", { name: "Create service" }).click();
       await page.waitForURL(/\/admin\/services\//);
-      await page.getByRole("button", { name: "Save service" }).click();
-      await expect(page.getByRole("status")).toContainText(/saved/i);
+      await waitForCommercialReady(page);
+      await expect(page.locator("#minutes-0")).toHaveValue("2400", {
+        timeout: 30_000,
+      });
       await page.getByRole("button", { name: "Publish questionnaire" }).click();
       await expect(page.getByText("Questionnaire published")).toBeVisible();
 

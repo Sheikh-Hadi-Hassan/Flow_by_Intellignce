@@ -1,8 +1,10 @@
 import { Pool } from "pg";
 import {
   InMemoryCommercialRepository,
+  InMemoryProposalContractRepository,
   InMemoryWorkspacePhase1Repository,
   PostgresCommercialRepository,
+  PostgresProposalContractRepository,
   PostgresFlowIdentityRepository,
   PostgresWorkspacePhase1Repository,
   asFlowIdentityRepository,
@@ -10,6 +12,7 @@ import {
   createPostgresSqlExecutor,
   type CommercialRepository,
   type FlowIdentityRepository,
+  type ProposalContractRepository,
   type WorkspacePhase1Repository,
 } from "@flow/database";
 import {
@@ -23,11 +26,13 @@ export const WORKSPACE_PHASE1_REPOSITORY = Symbol(
   "WORKSPACE_PHASE1_REPOSITORY",
 );
 export const COMMERCIAL_REPOSITORY = Symbol("COMMERCIAL_REPOSITORY");
+export const PROPOSAL_CONTRACT_REPOSITORY = Symbol("PROPOSAL_CONTRACT_REPOSITORY");
 
 export interface PersistenceStack {
   readonly identityRepository: FlowIdentityRepository;
   readonly phase1Repository: WorkspacePhase1Repository;
   readonly commercialRepository: CommercialRepository;
+  readonly proposalContractRepository: ProposalContractRepository;
   readonly dispose?: () => Promise<void>;
 }
 
@@ -49,6 +54,7 @@ export function createPersistenceStack(): PersistenceStack {
       identityRepository: asFlowIdentityRepository(inMemoryIdentity),
       phase1Repository: new InMemoryWorkspacePhase1Repository(),
       commercialRepository: new InMemoryCommercialRepository(),
+      proposalContractRepository: new InMemoryProposalContractRepository(),
     };
   }
 
@@ -62,6 +68,7 @@ export function createPersistenceStack(): PersistenceStack {
     identityRepository: new PostgresFlowIdentityRepository(sql),
     phase1Repository: new PostgresWorkspacePhase1Repository(sql),
     commercialRepository: new PostgresCommercialRepository(sql),
+    proposalContractRepository: new PostgresProposalContractRepository(sql),
     dispose: () => pool.end(),
   };
 }

@@ -452,6 +452,32 @@ export function createNorthstarCommercialApi() {
       save(state);
       return state.briefs.find((row) => row.id === versionId)!;
     },
+    listProposals: async () => [],
+    generateProposal: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    submitProposal: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    approveProposal: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    shareProposal: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    listContracts: async () => [],
+    generateContract: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    submitContract: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    approveContract: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
+    acceptContract: async () => {
+      throw new Error("Northstar demo stops at approved brief.");
+    },
   };
 }
 

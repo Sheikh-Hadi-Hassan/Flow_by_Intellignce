@@ -6,3 +6,7 @@ export * from "./questionnaire.js";
 export * from "./extraction.js";
 export * from "./discovery/index.js";
 export * from "./scope.js";
+export * from "./proposal-lifecycle.js";
+export * from "./contract-lifecycle.js";
+export * from "./proposal-pricing.js";
+export * from "./proposal-generation.js";

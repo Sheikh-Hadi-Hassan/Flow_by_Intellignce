@@ -5,7 +5,10 @@ export type JourneyStatus =
   | "brief_draft"
   | "founder_review"
   | "changes_requested"
-  | "approved";
+  | "approved"
+  | "proposal_in_progress"
+  | "proposal_accepted"
+  | "contract_executed";
 
 export type QuestionnaireLifecycle = "draft" | "published" | "archived";
 

@@ -287,4 +287,218 @@ describe("commercial API journey", () => {
       });
     expect(outsider.status).toBe(403);
   });
+
+  it("completes proposal to executed contract", async () => {
+    const auth = {
+      Authorization: "Bearer valid-unknown-token",
+      "x-flow-workspace-id": workspaceId,
+    };
+
+    const serviceRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/services`)
+      .set(auth)
+      .send({
+        name: "Phase3 Service",
+        pricingModel: "project",
+        currency: "USD",
+      })
+      .expect(201);
+    const serviceId = serviceRes.body.service.id as string;
+    const questionnaireId = serviceRes.body.questionnaire.id as string;
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/questionnaires/${questionnaireId}/publish`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p3-pub-${questionnaireId}` })
+      .expect(201);
+
+    const clientRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/clients`)
+      .set(auth)
+      .send({
+        name: "Phase3 Client",
+        contactFirstName: "A",
+        contactLastName: "B",
+      })
+      .expect(201);
+
+    const oppRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/opportunities`)
+      .set(auth)
+      .send({
+        clientId: clientRes.body.client.id,
+        contactId: clientRes.body.contact.id,
+        serviceId,
+        name: "Phase3 Opp",
+      })
+      .expect(201);
+    const opportunityId = oppRes.body.id as string;
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/answers`,
+      )
+      .set(auth)
+      .send({
+        answers: {
+          brandMaturity: "emerging",
+          primaryAudience: "Ops leaders",
+          successMetric: "Conversion",
+        },
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/notes`,
+      )
+      .set(auth)
+      .send({ notes: DISCOVERY_NOTES })
+      .expect(201);
+
+    const analyzeRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/analyze`,
+      )
+      .set(auth)
+      .send({})
+      .expect(201);
+
+    for (const fact of analyzeRes.body.facts) {
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/workspaces/${workspaceId}/commercial/facts/${fact.id}/verify`,
+        )
+        .set(auth)
+        .send({ status: "verified" })
+        .expect(201);
+    }
+
+    const bundle = await request(app.getHttpServer())
+      .get(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}`,
+      )
+      .set(auth)
+      .expect(200);
+    for (const risk of bundle.body.risks.filter(
+      (row: { blocking: boolean; handled: boolean }) => row.blocking && !row.handled,
+    )) {
+      await request(app.getHttpServer())
+        .post(`/api/v1/workspaces/${workspaceId}/commercial/risks/${risk.id}/handle`)
+        .set(auth)
+        .expect(201);
+    }
+
+    if (analyzeRes.body.followUps?.[0]?.id) {
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/workspaces/${workspaceId}/commercial/follow-ups/${analyzeRes.body.followUps[0].id}/answer`,
+        )
+        .set(auth)
+        .send({ answer: "Founder" })
+        .expect(201);
+    }
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/calculate`,
+      )
+      .set(auth)
+      .expect(201);
+
+    const briefRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/brief`,
+      )
+      .set(auth)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/briefs/${briefRes.body.id}/submit`,
+      )
+      .set(auth)
+      .send({ expectedVersion: briefRes.body.versionNumber })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/briefs/${briefRes.body.id}/approve`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p3-brief-${briefRes.body.id}` })
+      .send({ expectedVersion: briefRes.body.versionNumber })
+      .expect(201);
+
+    const proposalRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/proposals`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(proposalRes.body.status).toBe("draft");
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/proposals/${proposalRes.body.id}/submit`,
+      )
+      .set(auth)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/proposals/${proposalRes.body.id}/approve`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p3-prop-${proposalRes.body.id}` })
+      .expect(201);
+
+    const shareRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/proposals/${proposalRes.body.id}/share`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(shareRes.body.token).toBeTruthy();
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/client-review/${shareRes.body.token}/proposal/respond`,
+      )
+      .send({ response: "accepted", actorLabel: "Client" })
+      .expect(201);
+
+    const contractRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/contracts`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(contractRes.body.status).toBe("draft");
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/contracts/${contractRes.body.id}/submit`,
+      )
+      .set(auth)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/contracts/${contractRes.body.id}/approve`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p3-con-${contractRes.body.id}` })
+      .expect(201);
+
+    const executed = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/contracts/${contractRes.body.id}/accept`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p3-exe-${contractRes.body.id}` })
+      .send({ actorLabel: "Client representative" })
+      .expect(201);
+    expect(executed.body.status).toBe("executed");
+
+    await request(app.getHttpServer())
+      .get(`/api/v1/client-review/invalid-token/proposal`)
+      .expect(404);
+  });
 });

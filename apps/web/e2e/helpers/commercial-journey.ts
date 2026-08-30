@@ -1,0 +1,192 @@
+import { expect, type Page } from "@playwright/test";
+
+import type { ProvisionedCommercialWorkspace } from "./commercial-workspace";
+import { prepareCommercialApiProxy, signInThroughUi } from "./supabase-auth";
+
+export async function waitForCommercialReady(page: Page) {
+  await expect(page.getByTestId("commercial-data-pending")).toHaveCount(0, {
+    timeout: 30_000,
+  });
+}
+
+export async function verifyAllDraftFacts(page: Page) {
+  while ((await page.getByRole("button", { name: "Verify" }).count()) > 0) {
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes("/facts/") &&
+          response.url().includes("/verify") &&
+          response.ok(),
+        { timeout: 30_000 },
+      ),
+      page.getByRole("button", { name: "Verify" }).first().click(),
+    ]);
+  }
+}
+
+export async function handleBlockingRisks(page: Page) {
+  const markHandled = page.getByRole("button", { name: "Mark handled" });
+  while ((await markHandled.count()) > 0) {
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes("/risks/") &&
+          response.url().includes("/handle") &&
+          response.ok(),
+        { timeout: 30_000 },
+      ),
+      markHandled.first().click(),
+    ]);
+  }
+}
+
+export async function reachApprovedBrief(input: {
+  page: Page;
+  workspace: ProvisionedCommercialWorkspace;
+  appUrl: string;
+  apiBase: string;
+}): Promise<string> {
+  const { page, workspace, appUrl, apiBase } = input;
+
+  await prepareCommercialApiProxy(page, {
+    apiBase,
+    apiAuth: workspace.apiAuth,
+  });
+  await signInThroughUi(page, {
+    appUrl,
+    email: workspace.email,
+    password: workspace.password,
+    workspaceSlug: workspace.slug,
+  });
+
+  await page.goto(`/${workspace.slug}/admin/services`, {
+    waitUntil: "domcontentloaded",
+  });
+  await waitForCommercialReady(page);
+  await page.getByLabel("Service name").fill(`E2E Service ${workspace.runId}`);
+  await page.getByRole("button", { name: "Create service" }).click();
+  await page.waitForURL(/\/admin\/services\//);
+  await waitForCommercialReady(page);
+  await expect(page.locator("#minutes-0")).toHaveValue("2400", {
+    timeout: 30_000,
+  });
+  await page.getByRole("button", { name: "Publish questionnaire" }).click();
+  await expect(page.getByText("Questionnaire published")).toBeVisible();
+
+  await page.goto(`/${workspace.slug}/admin/clients`);
+  await waitForCommercialReady(page);
+  await page.getByLabel(/client name/i).fill(`E2E Client ${workspace.runId}`);
+  await page.getByLabel(/primary contact first name/i).fill("E2E");
+  await page.getByLabel(/primary contact last name/i).fill("Tester");
+  await page.getByRole("button", { name: /create client/i }).click();
+  await page.waitForURL(/\/admin\/clients\//);
+
+  await page.goto(`/${workspace.slug}/admin/opportunities`);
+  await waitForCommercialReady(page);
+  await page.locator("#opp-name").fill(`E2E Opportunity ${workspace.runId}`);
+  await Promise.all([
+    page.waitForURL(/\/admin\/opportunities\//),
+    page.getByRole("button", { name: /create opportunity/i }).click(),
+  ]);
+
+  const opportunityUrl = page.url();
+
+  await page.getByLabel("Brand maturity").selectOption("emerging");
+  await page.getByLabel("Primary audience").fill("Operations leaders");
+  await page.getByLabel("Success metric").fill("Qualified pipeline");
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/answers") && response.ok(),
+    ),
+    page.getByLabel("Success metric").blur(),
+  ]);
+
+  await page.goto(`${opportunityUrl}/discovery`);
+  await waitForCommercialReady(page);
+  await page.getByLabel("Meeting notes").fill(
+    "Audience: plant managers. Budget: $85000. Timeline is 90 days. Legal review blocking must complete before approval.",
+  );
+  await page.getByRole("button", { name: /save notes/i }).click();
+  await expect(page.getByRole("button", { name: /^save notes$/i })).toBeEnabled();
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/analyze") && response.status() === 201,
+    ),
+    page.getByRole("button", { name: /analyze notes/i }).click(),
+  ]);
+  await expect(page.getByRole("button", { name: "Verify" }).first()).toBeVisible({
+    timeout: 30_000,
+  });
+  await verifyAllDraftFacts(page);
+  await handleBlockingRisks(page);
+
+  await page.goto(`${opportunityUrl}/missing`);
+  await waitForCommercialReady(page);
+  await page.getByLabel(/approves the brief/i).fill("Founder");
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/follow-ups/") &&
+        response.url().includes("/answer") &&
+        response.ok(),
+    ),
+    page.getByRole("button", { name: "Save answer" }).click(),
+  ]);
+
+  await page.goto(opportunityUrl);
+  await waitForCommercialReady(page);
+  await handleBlockingRisks(page);
+  const [calculateResponse] = await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/calculate") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: /run deterministic calculation/i }).click(),
+  ]);
+  const calculateBody = (await calculateResponse.json()) as {
+    opportunity?: { latestCalculation?: { recommendedPriceMinor?: string } };
+  };
+  expect(
+    BigInt(calculateBody.opportunity?.latestCalculation?.recommendedPriceMinor ?? "0"),
+  ).toBeGreaterThan(0n);
+  await page.reload();
+  await waitForCommercialReady(page);
+  await expect(page.getByText(/recommended price/i)).toBeVisible({
+    timeout: 30_000,
+  });
+
+  await page.goto(`${opportunityUrl}/brief`);
+  await waitForCommercialReady(page);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/brief") &&
+        response.request().method() === "POST" &&
+        response.ok(),
+      { timeout: 60_000 },
+    ),
+    page.getByRole("button", { name: /generate brief version/i }).click(),
+  ]);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/submit") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: /request founder review/i }).click(),
+  ]);
+
+  await page.goto(`${opportunityUrl}/approvals`);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/approve") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: /approve immutable brief/i }).click(),
+  ]);
+  await expect(page.getByText("Approved", { exact: true }).first()).toBeVisible();
+
+  return opportunityUrl;
+}

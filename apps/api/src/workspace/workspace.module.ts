@@ -10,6 +10,7 @@ import {
   IDENTITY_REPOSITORY,
   WORKSPACE_PHASE1_REPOSITORY,
   COMMERCIAL_REPOSITORY,
+  PROPOSAL_CONTRACT_REPOSITORY,
   createPersistenceStack,
 } from "../database/persistence.providers.js";
 
@@ -34,6 +35,10 @@ const authStack = createAuthenticationStack(
       useValue: persistenceStack.commercialRepository,
     },
     {
+      provide: PROPOSAL_CONTRACT_REPOSITORY,
+      useValue: persistenceStack.proposalContractRepository,
+    },
+    {
       provide: FlowRequestIdentityResolver,
       useValue: authStack.identityResolver,
     },
@@ -48,6 +53,7 @@ const authStack = createAuthenticationStack(
     IDENTITY_REPOSITORY,
     WORKSPACE_PHASE1_REPOSITORY,
     COMMERCIAL_REPOSITORY,
+    PROPOSAL_CONTRACT_REPOSITORY,
     FlowRequestIdentityResolver,
     RepositoryAuthorizationProvider,
     WorkspaceService,

@@ -169,7 +169,7 @@ No passwords, tokens, or private rates appear in screenshots.
 | ------ | ------- |
 | `d62a878` | `chore(db): checkpoint applied resource capacity migration` |
 | `000e926` | `fix(workspace): remove orphaned BLM package dependencies` |
-| *(this feature commit)* | `feat(resources): add governed capacity and assignment planning` |
+| `d331c1e` | `feat(resources): add governed capacity and assignment planning` |
 
 Push target: `origin/feat/phase-5-resource-capacity` (not merged to `main`).
 

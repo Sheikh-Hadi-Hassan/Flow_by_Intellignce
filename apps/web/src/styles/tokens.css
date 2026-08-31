@@ -1,12 +1,23 @@
 :root {
   color-scheme: light;
 
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  --font-display: var(--font-sans);
-  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  /*
+   * FLOW VISUAL SYSTEM V3
+   * Identity comes from typography, density, machine/dot language, hierarchy,
+   * geometry and motion. Color is intentionally reduced to neutrals + ONE
+   * interchangeable accent.
+   */
 
+  --font-sans:
+    var(--font-space-grotesk), "Space Grotesk", "Avenir Next", "Helvetica Neue",
+    Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono:
+    var(--font-space-mono), "Space Mono", "SFMono-Regular", "SF Mono", Menlo,
+    Consolas, monospace;
+  --font-machine: var(--font-mono);
+
+  --text-2xs: 0.6875rem;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -14,6 +25,8 @@
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
   --text-3xl: 2rem;
+  --text-4xl: clamp(2.5rem, 5vw, 4.5rem);
+  --text-instrument: clamp(2.75rem, 7vw, 6.5rem);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -24,93 +37,147 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+  --space-16: 64px;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 9px;
+  --radius-lg: 14px;
+  --radius-xl: 22px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.07);
 
-  --duration-fast: 120ms;
-  --duration-normal: 200ms;
+  --duration-instant: 90ms;
+  --duration-fast: 140ms;
+  --duration-normal: 220ms;
+  --duration-context: 320ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --color-bg-canvas: #f7f8fa;
+  /* Neutral operating surfaces */
+  --color-bg-canvas: #f4f4f1;
   --color-bg-surface: #ffffff;
-  --color-bg-subtle: #f0f2f5;
+  --color-bg-subtle: #eeeeea;
   --color-bg-elevated: #ffffff;
-  --color-bg-inset: #e8ebf0;
+  --color-bg-inset: #e6e7e2;
 
-  --color-text-primary: #171717;
-  --color-text-secondary: #5f6875;
-  --color-text-muted: #8b939f;
+  --color-text-primary: #0d0e0e;
+  --color-text-secondary: #50544f;
+  --color-text-muted: #7d817b;
 
-  --color-border: #d9dee7;
-  --color-border-strong: #b8c0cc;
+  --color-border: #d5d7d0;
+  --color-border-strong: #aeb2aa;
 
+  /*
+   * ONE accent. This value is user/workspace configurable at runtime.
+   * All accent surfaces are derived from it, never from secondary hues.
+   */
   --color-brand: #1a56db;
-  --color-brand-hover: #1446b8;
-  --color-brand-strong: #1a56db;
-  --color-brand-subtle: #e8effc;
-  --color-brand-surface: #e8effc;
-  --color-brand-surface-hover: #dce8fa;
-  --color-brand-border: #b8ccef;
-  --color-focus: #1a56db;
+  --color-brand-foreground: #ffffff;
+  --color-brand-hover: color-mix(in srgb, var(--color-brand) 88%, #000000);
+  --color-brand-strong: var(--color-brand);
+  --color-brand-subtle: color-mix(
+    in srgb,
+    var(--color-brand) 12%,
+    transparent
+  );
+  --color-brand-surface: color-mix(
+    in srgb,
+    var(--color-brand) 8%,
+    var(--color-bg-surface)
+  );
+  --color-brand-surface-hover: color-mix(
+    in srgb,
+    var(--color-brand) 14%,
+    var(--color-bg-surface)
+  );
+  --color-brand-border: color-mix(
+    in srgb,
+    var(--color-brand) 34%,
+    var(--color-border)
+  );
+  --color-focus: var(--color-brand);
 
-  --color-success: #0d7a4e;
-  --color-success-bg: #e6f5ee;
-  --color-warning: #b45309;
-  --color-warning-bg: #fef3e2;
-  --color-danger: #c41e3a;
-  --color-danger-bg: #fce8ec;
-  --color-info: #1a56db;
-  --color-info-bg: #e8effc;
+  /*
+   * Compatibility semantic tokens. They deliberately resolve to the same
+   * accent/neutral system. Meaning must also be communicated with copy,
+   * iconography, fill/pattern and state — never hue alone.
+   */
+  --color-success: var(--color-brand);
+  --color-success-bg: var(--color-brand-surface);
+  --color-warning: var(--color-text-primary);
+  --color-warning-bg: var(--color-brand-surface);
+  --color-danger: var(--color-text-primary);
+  --color-danger-bg: var(--color-brand-surface);
+  --color-info: var(--color-brand);
+  --color-info-bg: var(--color-brand-surface);
 
-  --color-proof-fact: #0d7a4e;
-  --color-proof-inference: #1a56db;
-  --color-proof-recommendation: #7c3aed;
-  --color-proof-assumption: #b45309;
+  --color-proof-fact: var(--color-text-primary);
+  --color-proof-inference: var(--color-brand);
+  --color-proof-recommendation: var(--color-brand);
+  --color-proof-assumption: var(--color-text-secondary);
 
-  --color-guard-allow: #0d7a4e;
-  --color-guard-deny: #c41e3a;
-  --color-guard-pending: #b45309;
+  --color-guard-allow: var(--color-brand);
+  --color-guard-deny: var(--color-text-primary);
+  --color-guard-pending: var(--color-text-secondary);
 
-  --color-focus: #1a56db;
+  --color-machine-active: var(--color-brand);
+  --color-machine-processing: var(--color-brand);
+  --color-machine-idle: var(--color-text-muted);
+  --color-machine-off: color-mix(
+    in srgb,
+    var(--color-text-primary) 12%,
+    transparent
+  );
+
   --color-overlay: rgba(15, 17, 20, 0.48);
 
-  --sidebar-width: 240px;
+  --sidebar-width: 232px;
   --header-height: 56px;
-  --content-max: 960px;
-  --onboarding-max: 720px;
+  --content-max: 1120px;
+  --onboarding-max: 760px;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --color-bg-canvas: #0f1114;
-  --color-bg-surface: #1a1d23;
-  --color-bg-subtle: #242830;
-  --color-bg-elevated: #242830;
-  --color-bg-inset: #2e333d;
+  --color-bg-canvas: #0b0d0c;
+  --color-bg-surface: #121413;
+  --color-bg-subtle: #1a1d1b;
+  --color-bg-elevated: #171a18;
+  --color-bg-inset: #202320;
 
-  --color-text-primary: #f2f4f7;
-  --color-text-secondary: #a3aab4;
-  --color-text-muted: #6b7280;
+  --color-text-primary: #f2f2ed;
+  --color-text-secondary: #b2b6af;
+  --color-text-muted: #787d76;
 
-  --color-border: #3a4049;
-  --color-border-strong: #525a66;
+  --color-border: #2c302d;
+  --color-border-strong: #4a504a;
 
-  --color-brand-subtle: #1e2a44;
-  --color-brand-surface: #1a2233;
-  --color-brand-surface-hover: #222c40;
-  --color-brand-border: #2e3d5c;
-  --color-success-bg: #0d2818;
-  --color-warning-bg: #2a1f0a;
-  --color-danger-bg: #2a1015;
-  --color-info-bg: #1e2a44;
-  --color-overlay: rgba(0, 0, 0, 0.64);
+  --color-brand-hover: color-mix(in srgb, var(--color-brand) 86%, #ffffff);
+  --color-brand-subtle: color-mix(
+    in srgb,
+    var(--color-brand) 14%,
+    transparent
+  );
+  --color-brand-surface: color-mix(
+    in srgb,
+    var(--color-brand) 10%,
+    var(--color-bg-surface)
+  );
+  --color-brand-surface-hover: color-mix(
+    in srgb,
+    var(--color-brand) 16%,
+    var(--color-bg-surface)
+  );
+  --color-brand-border: color-mix(
+    in srgb,
+    var(--color-brand) 36%,
+    var(--color-border)
+  );
+
+  --color-overlay: rgba(0, 0, 0, 0.66);
 }
 
 @media (prefers-reduced-motion: reduce) {

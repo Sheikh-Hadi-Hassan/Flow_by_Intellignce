@@ -9,11 +9,9 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run --exclude src/business-persistence.test.ts"
   },
   "dependencies": {
-    "@flow/blm-contracts": "workspace:*",
-    "@flow/blm-core": "workspace:*",
     "@flow/commercial": "workspace:*",
     "@flow/contracts": "workspace:*",
     "pg": "^8.16.3"

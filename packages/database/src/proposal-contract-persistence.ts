@@ -2,7 +2,7 @@ import type {
   ContractVersionStatus,
   ProposalVersionStatus,
 } from "@flow/commercial";
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 
 type CreateProposalVersionInput = Parameters<
   ProposalContractRepository["createProposalVersion"]

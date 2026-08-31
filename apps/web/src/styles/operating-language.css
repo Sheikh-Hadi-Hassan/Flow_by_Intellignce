@@ -1,0 +1,167 @@
+/*
+ * Flow Operating Language V3
+ * Loaded after legacy component CSS so current routes inherit the new visual
+ * discipline without rewriting backend contracts or every screen at once.
+ */
+
+.flow-btn {
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.flow-btn--primary {
+  background: var(--color-brand);
+  color: var(--color-brand-foreground);
+}
+
+.flow-btn--primary:hover:not(:disabled) {
+  background: var(--color-brand-hover);
+}
+
+.flow-btn--secondary {
+  background: transparent;
+  border-color: var(--color-border-strong);
+}
+
+.flow-btn--secondary:hover:not(:disabled) {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-text-secondary);
+}
+
+.flow-icon-btn {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.flow-input,
+.flow-textarea,
+.flow-select {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-sm);
+}
+
+.flow-badge {
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.flow-badge--demo,
+.flow-badge--success,
+.flow-badge--essential {
+  border-color: var(--color-brand-border);
+  background: var(--color-brand-surface);
+  color: var(--color-brand);
+}
+
+.flow-badge--warning {
+  border-color: var(--color-border-strong);
+  background: var(--color-brand-surface);
+  color: var(--color-text-primary);
+}
+
+.flow-proof-label,
+.flow-proof-label--fact,
+.flow-proof-label--recommendation {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.flow-proof-label--fact {
+  color: var(--color-text-primary);
+}
+
+.flow-proof-label,
+.flow-proof-label--recommendation {
+  color: var(--color-brand);
+}
+
+.flow-section-header {
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.flow-section-header h1 {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.flow-section-header p {
+  max-width: 62ch;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.flow-panel,
+.flow-surface,
+.flow-module-item,
+.flow-module-row {
+  box-shadow: none;
+}
+
+.flow-panel {
+  border-radius: var(--radius-md);
+}
+
+.flow-panel--flat {
+  border-top-color: var(--color-border-strong);
+}
+
+.flow-progress__track {
+  height: 3px;
+  border-radius: 0;
+}
+
+.flow-progress__fill {
+  background: var(--color-brand);
+}
+
+.flow-stepper {
+  gap: var(--space-1);
+}
+
+.flow-stepper__step {
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.flow-empty {
+  border-radius: var(--radius-md);
+  border-color: var(--color-border);
+  background:
+    radial-gradient(
+      circle at 12px 12px,
+      color-mix(in srgb, var(--color-text-primary) 8%, transparent) 1px,
+      transparent 1.2px
+    );
+  background-size: 12px 12px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.tabular-nums {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

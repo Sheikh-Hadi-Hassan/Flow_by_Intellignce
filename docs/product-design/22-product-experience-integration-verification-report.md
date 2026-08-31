@@ -125,7 +125,14 @@ Pre-commit scan: no `sb_secret_`, JWTs, database URLs, or private keys in staged
 
 ## 20. Commit hashes
 
-_To be recorded after push._
+| Commit | Message |
+| ------ | ------- |
+| `4d710b6` | docs(experience): define product integration and UI adoption plan |
+| `3be019e` | feat(ui): establish Flow operating design system and shell |
+| `8bda5e2` | feat(experience): integrate mission control and business lifecycle |
+| `ffd3130` | feat(intelligence): add governed Ask Flow workspace experience |
+| `4b12c8a` | test(experience): verify responsive authenticated product journey |
+| `97c9271` | docs(experience): record product integration closure |
 
 ## 21. Push result
 

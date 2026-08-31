@@ -1,0 +1,537 @@
+{
+  "graphType": "REFERENCE_BUSINESS_ARCHITECTURE",
+  "graphId": "blm-reference-business-architecture-1.0.0",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "nodeId": "flow.concept.architecture.epistemic",
+      "nodeType": "epistemic",
+      "name": "Knowledge And Evidence",
+      "description": "Knowledge And Evidence reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.finance.financial-control"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.identity",
+      "nodeType": "identity",
+      "name": "Parties And Roles",
+      "description": "Parties And Roles reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.crm.lead-management"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.motivation",
+      "nodeType": "motivation",
+      "name": "Goals And Constraints",
+      "description": "Goals And Constraints reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.finance.financial-control"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.value",
+      "nodeType": "value",
+      "name": "Value Streams",
+      "description": "Value Streams reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.sales.quote-to-cash"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.capability",
+      "nodeType": "capability",
+      "name": "Business Capabilities",
+      "description": "Business Capabilities reference architecture node.",
+      "relatedCapabilityIds": [
+        "flow.capability.sales.quote-to-cash",
+        "flow.capability.inventory.availability"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.operating-model",
+      "nodeType": "operating_model",
+      "name": "Operating Model",
+      "description": "Operating Model reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.operations.project-delivery"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.process",
+      "nodeType": "process",
+      "name": "Business Processes",
+      "description": "Business Processes reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.operations.project-delivery"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.decision-control",
+      "nodeType": "decision_control",
+      "name": "Decision And Control",
+      "description": "Decision And Control reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.finance.financial-control"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.information",
+      "nodeType": "information",
+      "name": "Business Information",
+      "description": "Business Information reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.inventory.availability"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.people-work",
+      "nodeType": "people_work",
+      "name": "People And Work",
+      "description": "People And Work reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.operations.field-operations"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.application",
+      "nodeType": "application",
+      "name": "Applications",
+      "description": "Applications reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.finance.subscription-billing"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.integration",
+      "nodeType": "integration",
+      "name": "Integrations",
+      "description": "Integrations reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.sales.quote-to-cash"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.ai-skill",
+      "nodeType": "ai_skill",
+      "name": "AI Skills",
+      "description": "AI Skills reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.crm.lead-management"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nodeId": "flow.concept.architecture.execution",
+      "nodeType": "execution",
+      "name": "Execution",
+      "description": "Execution reference architecture node.",
+      "relatedCapabilityIds": ["flow.capability.operations.field-operations"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "edges": [
+    {
+      "edgeId": "flow.dependency.architecture.epistemic-to-identity",
+      "sourceNodeId": "flow.concept.architecture.epistemic",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.identity",
+      "description": "Knowledge And Evidence informs Parties And Roles.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.identity-to-motivation",
+      "sourceNodeId": "flow.concept.architecture.identity",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.motivation",
+      "description": "Parties And Roles informs Goals And Constraints.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.motivation-to-value",
+      "sourceNodeId": "flow.concept.architecture.motivation",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.value",
+      "description": "Goals And Constraints informs Value Streams.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.value-to-capability",
+      "sourceNodeId": "flow.concept.architecture.value",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.capability",
+      "description": "Value Streams informs Business Capabilities.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.capability-to-operating-model",
+      "sourceNodeId": "flow.concept.architecture.capability",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.operating-model",
+      "description": "Business Capabilities informs Operating Model.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.operating-model-to-process",
+      "sourceNodeId": "flow.concept.architecture.operating-model",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.process",
+      "description": "Operating Model informs Business Processes.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.process-to-decision-control",
+      "sourceNodeId": "flow.concept.architecture.process",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.decision-control",
+      "description": "Business Processes informs Decision And Control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.decision-control-to-information",
+      "sourceNodeId": "flow.concept.architecture.decision-control",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.information",
+      "description": "Decision And Control informs Business Information.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.information-to-people-work",
+      "sourceNodeId": "flow.concept.architecture.information",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.people-work",
+      "description": "Business Information informs People And Work.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.people-work-to-application",
+      "sourceNodeId": "flow.concept.architecture.people-work",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.application",
+      "description": "People And Work informs Applications.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.application-to-integration",
+      "sourceNodeId": "flow.concept.architecture.application",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.integration",
+      "description": "Applications informs Integrations.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.integration-to-ai-skill",
+      "sourceNodeId": "flow.concept.architecture.integration",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.ai-skill",
+      "description": "Integrations informs AI Skills.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.architecture.ai-skill-to-execution",
+      "sourceNodeId": "flow.concept.architecture.ai-skill",
+      "edgeType": "ENABLES",
+      "targetNodeId": "flow.concept.architecture.execution",
+      "description": "AI Skills informs Execution.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "provenance": {
+    "sourceIds": [
+      "BLM-TAXONOMY-V1",
+      "BLM-CORE-ARCHITECTURE-V1",
+      "BLM-MODULE-ARCH-V1",
+      "BLM-KG-REGISTRY-V2",
+      "BLM-EXPERTISE-V5"
+    ],
+    "use": "FLOW_NATIVE",
+    "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+  },
+  "fingerprint": "e7be251f1aa792b0716d493f601abf6972f8c9837aa877e2b3ff5c98373a5476"
+}

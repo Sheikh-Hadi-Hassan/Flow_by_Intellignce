@@ -1,0 +1,43 @@
+{
+  "suiteId": "blm-runtime-context-evaluation-v1",
+  "caseCount": 21,
+  "passed": 21,
+  "failed": 0,
+  "families": {
+    "classification": true,
+    "FounderSpeak": true,
+    "ExpertSpeak": true,
+    "role_expertise": true,
+    "metric_selection": true,
+    "calculation_routing": true,
+    "driver_diagnosis": true,
+    "correlation_vs_causation": true,
+    "capability_inference": true,
+    "module_recommendation": true,
+    "overbuild_prevention": true,
+    "SoR_preservation": true,
+    "missing_information": true,
+    "workflow_understanding": true,
+    "authority_boundaries": true,
+    "ethical_reasoning": true,
+    "current_regulation_escalation": true,
+    "cross_industry_reasoning": true,
+    "synthetic_agency_E2E": true,
+    "synthetic_isolation": true,
+    "internal_context_isolation": true
+  },
+  "moduleIntelligence": {
+    "requirementPrecision": 0.92,
+    "requirementRecall": 0.9,
+    "p0MissRate": 0,
+    "overbuildRate": 0,
+    "questionEfficiency": 0.85,
+    "sorIntegrity": 1,
+    "portability": 1,
+    "security": 1,
+    "explainability": 0.9,
+    "historicalReproducibility": 1,
+    "changeBurden": 0.2
+  },
+  "criticalFailures": []
+}

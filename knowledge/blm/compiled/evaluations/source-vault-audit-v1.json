@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-13",
+  "existingSourceArchitectureAudit": [
+    "Task 001 source governance exists in packages/blm-contracts/src/business-knowledge-governance.ts.",
+    "BusinessSource, SourceRelease, SourceLicenseProfile, and BusinessKnowledgeUnit are canonical contracts.",
+    "stableFingerprint remains semantic/provenance oriented and is not replaced by source-file SHA-256 checksums.",
+    "docs/blm/blm-source-manifest-v1.md is a governance note for external references, not a repository-native vault for these supplied documents."
+  ],
+  "largeFilePolicy": "No repository rule currently ignores DOCX, PDF, or JSON source documents under knowledge/blm.",
+  "sourceVaultScope": "Original supplied source files are preserved. No full knowledge extraction, RAG, vector search, module compiler, or training publication is implemented.",
+  "missingSources": [
+    {
+      "title": "Flow BLM Master Business Curriculum Module 2",
+      "expectedKnowledgeGroup": "CURRICULUM",
+      "status": "MISSING_SOURCE_FILE",
+      "reason": "No Module 2 source file was supplied in this session."
+    },
+    {
+      "title": "Flow BLM Master Business Curriculum Module 4",
+      "expectedKnowledgeGroup": "CURRICULUM",
+      "status": "MISSING_SOURCE_FILE",
+      "reason": "No Module 4 source file was supplied in this session."
+    }
+  ]
+}

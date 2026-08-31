@@ -1,0 +1,536 @@
+{
+  "registryId": "blm-business-module-registry-1.0.0",
+  "version": "1.0.0",
+  "modules": [
+    {
+      "moduleId": "flow.module.foundation.organization",
+      "canonicalName": "Organization Foundation",
+      "moduleClass": "FOUNDATION",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "Know the workspace, organization, roles, and operating boundaries.",
+      "buildingBlockRequirements": [
+        "flow.entity.foundation.organization",
+        "flow.role.workspace.module-owner",
+        "flow.policy.permission.module-read"
+      ],
+      "canonicalRecordTypes": ["flow.entity.foundation.organization"],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "CONTROL_LAYER",
+      "dependencies": [],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "workspace setup",
+        "roles",
+        "permissions",
+        "organization"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["FOUNDATION", "BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "4c70c8403abd6eae76f0a9c2a237ba1908546219cd24038f632594f3a6e788f3",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.universal.customer-revenue",
+      "canonicalName": "Customer Revenue",
+      "moduleClass": "UNIVERSAL",
+      "capabilityIds": ["flow.capability.crm.lead-management"],
+      "outcome": "Track customers, opportunities, and commercial pipeline.",
+      "buildingBlockRequirements": [
+        "flow.entity.revenue.customer",
+        "flow.entity.revenue.opportunity"
+      ],
+      "canonicalRecordTypes": [
+        "flow.entity.revenue.customer",
+        "flow.entity.revenue.opportunity"
+      ],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "ANALYTIC_CONTEXT",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "client",
+        "customer",
+        "lead",
+        "pipeline",
+        "B2B"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "8ff6e5da6cb1612858392abe273d27964ceb4cafaf2cd63ec5f21c689bb2760d",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.universal.quote-to-cash",
+      "canonicalName": "Quote To Cash",
+      "moduleClass": "UNIVERSAL",
+      "capabilityIds": ["flow.capability.sales.quote-to-cash"],
+      "outcome": "Connect proposals, approvals, invoices, and payment status.",
+      "buildingBlockRequirements": [
+        "flow.contract.document.revenue.proposal",
+        "flow.contract.document.finance.invoice",
+        "flow.decision.rule.finance.approval-required"
+      ],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": ["flow.decision.rule.finance.approval-required"],
+      "logicRequirements": [],
+      "blmRole": "WORKFLOW_ORCHESTRATION",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "proposal",
+        "quote",
+        "invoice",
+        "cash collection",
+        "retainer"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "3027114e27cd60dfe607e8d54bdd7cdfd21196847dc3279cbfafa77a7979ac5a",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.universal.project-delivery",
+      "canonicalName": "Project Delivery",
+      "moduleClass": "UNIVERSAL",
+      "capabilityIds": ["flow.capability.operations.project-delivery"],
+      "outcome": "Manage project delivery, scope, utilization, and margin signals.",
+      "buildingBlockRequirements": [
+        "flow.workflow.delivery.project-lifecycle",
+        "flow.decision.metric.delivery.project-margin",
+        "flow.widget.dashboard.business-health"
+      ],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": ["flow.workflow.delivery.project-lifecycle"],
+      "metricRequirements": ["flow.decision.metric.delivery.project-margin"],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "ANALYTIC_CONTEXT",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "project",
+        "delivery",
+        "scope creep",
+        "utilization",
+        "ClickUp"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "099b90cdd560e49f89b42ba92fb0942892ac04fb100981f1d7dffa0b2e323f1c",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.universal.cash-collection",
+      "canonicalName": "Cash Collection",
+      "moduleClass": "UNIVERSAL",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "Expose receivables, collection state, and cash timing risks.",
+      "buildingBlockRequirements": [
+        "flow.record.finance.receivable-state",
+        "flow.decision.logic.finance.cash-collection",
+        "flow.event.notification.approval-request"
+      ],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": ["flow.decision.logic.finance.cash-collection"],
+      "blmRole": "CONTROL_LAYER",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "cash collection",
+        "late payment",
+        "receivable",
+        "runs out of cash"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "3abc23fa8500ae30ebcb30f300d7e1a3a6d8eb1023e81fbfaa61e42645f83703",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.universal.finance-overlay",
+      "canonicalName": "Finance Overlay",
+      "moduleClass": "UNIVERSAL",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "Read financial truth from external accounting without duplicating SoR.",
+      "buildingBlockRequirements": [
+        "flow.integration.accounting.external-sor",
+        "flow.policy.sor.external-authoritative"
+      ],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "READ_ONLY_OVERLAY",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "QuickBooks",
+        "accounting",
+        "cash",
+        "margin",
+        "finance"
+      ],
+      "exclusions": [],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "f46afac222e470cc865a41545a8733e5eb0ace3ac036d8f7f28397911bb0cd64",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.conditional.manufacturing-operations",
+      "canonicalName": "Manufacturing Operations",
+      "moduleClass": "CONDITIONAL",
+      "capabilityIds": ["flow.capability.operations.production-planning"],
+      "outcome": "Plan production runs, BOMs, and capacity.",
+      "buildingBlockRequirements": [
+        "flow.workflow.manufacturing.production-run"
+      ],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": ["flow.workflow.manufacturing.production-run"],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "SYSTEM_OF_RECORD",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "manufacturing",
+        "factory",
+        "BOM",
+        "production run"
+      ],
+      "exclusions": ["agency", "retainer", "ClickUp delivery"],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "8689f507863353ad902ff3023e7717735be62cfa15912996b44d8ec8a5b63b9c",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.conditional.inventory-control",
+      "canonicalName": "Inventory Control",
+      "moduleClass": "CONDITIONAL",
+      "capabilityIds": ["flow.capability.inventory.availability"],
+      "outcome": "Track inventory availability and fulfillment constraints.",
+      "buildingBlockRequirements": ["flow.entity.inventory.item"],
+      "canonicalRecordTypes": ["flow.entity.inventory.item"],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "SYSTEM_OF_RECORD",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": [
+        "inventory",
+        "stock",
+        "warehouse",
+        "fulfillment"
+      ],
+      "exclusions": ["agency", "service retainer"],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "f1e83a3cb4881eb90a72d2578be1d3f127cdcbe7b63d3ee988645169fe87532b",
+      "scope": "GLOBAL"
+    },
+    {
+      "moduleId": "flow.module.conditional.retail-pos-overlay",
+      "canonicalName": "Retail POS Overlay",
+      "moduleClass": "CONDITIONAL",
+      "capabilityIds": ["flow.capability.sales.quote-to-cash"],
+      "outcome": "Overlay retail POS sales and return signals.",
+      "buildingBlockRequirements": ["flow.integration.retail.pos"],
+      "canonicalRecordTypes": [],
+      "workflowRequirements": [],
+      "metricRequirements": [],
+      "ruleRequirements": [],
+      "logicRequirements": [],
+      "blmRole": "READ_ONLY_OVERLAY",
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "applicabilityTriggers": ["POS", "store", "retail", "returns"],
+      "exclusions": ["agency", "SaaS", "manufacturer"],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "maturitySupport": ["BASIC", "STANDARD", "ADVANCED"],
+      "provenance": [
+        {
+          "sourceIds": [
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+        },
+        {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        }
+      ],
+      "version": "1.0.0",
+      "reviewStatus": "REVIEWED",
+      "fingerprint": "1379db3c9482c0eee7de6163ac9168b9ae5a1bdc347efb801495c30ff5bf7443",
+      "scope": "GLOBAL"
+    }
+  ]
+}

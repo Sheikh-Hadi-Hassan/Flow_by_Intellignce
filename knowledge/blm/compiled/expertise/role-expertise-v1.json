@@ -1,0 +1,141 @@
+{
+  "registryId": "blm-role-expertise-1.0.0",
+  "version": "1.0.0",
+  "roles": [
+    {
+      "roleId": "flow.role.occupation.founder",
+      "kind": "occupation",
+      "name": "Founder",
+      "description": "Founder role expertise definition.",
+      "capabilityIds": [
+        "flow.capability.finance.financial-control",
+        "flow.capability.crm.lead-management"
+      ],
+      "decisionAuthority": "RECOMMEND",
+      "authorizationBoundary": "Role expertise is advisory and does not grant workspace authorization.",
+      "commonEvidence": ["scope", "responsibility", "approval record"],
+      "prohibitedAssumptions": [
+        "Do not infer authorization from occupation or job function alone."
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "roleId": "flow.role.job-function.account-manager",
+      "kind": "job_function",
+      "name": "Account Manager",
+      "description": "Account Manager role expertise definition.",
+      "capabilityIds": [
+        "flow.capability.crm.lead-management",
+        "flow.capability.sales.quote-to-cash"
+      ],
+      "decisionAuthority": "DRAFT",
+      "authorizationBoundary": "Role expertise is advisory and does not grant workspace authorization.",
+      "commonEvidence": ["scope", "responsibility", "approval record"],
+      "prohibitedAssumptions": [
+        "Do not infer authorization from occupation or job function alone."
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "roleId": "flow.role.authorization.finance-approver",
+      "kind": "authorization_role",
+      "name": "Finance Approver",
+      "description": "Finance Approver role expertise definition.",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "decisionAuthority": "APPROVE",
+      "authorizationBoundary": "Role expertise is advisory and does not grant workspace authorization.",
+      "commonEvidence": ["scope", "responsibility", "approval record"],
+      "prohibitedAssumptions": [
+        "Do not infer authorization from occupation or job function alone."
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "roleId": "flow.role.workspace.operations-lead",
+      "kind": "workspace_role",
+      "name": "Operations Lead",
+      "description": "Operations Lead role expertise definition.",
+      "capabilityIds": [
+        "flow.capability.operations.project-delivery",
+        "flow.capability.inventory.availability",
+        "flow.capability.operations.field-operations"
+      ],
+      "decisionAuthority": "RECOMMEND",
+      "authorizationBoundary": "Role expertise is advisory and does not grant workspace authorization.",
+      "commonEvidence": ["scope", "responsibility", "approval record"],
+      "prohibitedAssumptions": [
+        "Do not infer authorization from occupation or job function alone."
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "roleId": "flow.role.decision-authority.owner",
+      "kind": "decision_authority",
+      "name": "Decision Owner",
+      "description": "Decision Owner role expertise definition.",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "decisionAuthority": "APPROVE",
+      "authorizationBoundary": "Role expertise is advisory and does not grant workspace authorization.",
+      "commonEvidence": ["scope", "responsibility", "approval record"],
+      "prohibitedAssumptions": [
+        "Do not infer authorization from occupation or job function alone."
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "SHA-256",
+  "generatedFrom": "knowledge/blm/manifests/sources.manifest.json",
+  "checksums": [
+    {
+      "sourceKey": "BLM-CORE-ARCHITECTURE-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Factual_Business_Architecture_Library_v1.docx",
+      "sha256": "7d29e6478b8cd52551040fd75559f9ebc86007ef8ef916579a1e6723c49d02ff",
+      "fileSize": 60413,
+      "version": "v1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-CORE-MATH-V3",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Superintelligence_Business_Knowledge_Mathematics_Library_v3.docx",
+      "sha256": "5be7fb6b4de3645403d959cb7c21a4ed5ca3ac0654997133736a213b0528bd29",
+      "fileSize": 110166,
+      "version": "v3",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-LANGUAGE-V4",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Business_Language_Execution_Corpus_v4.docx",
+      "sha256": "0af6c1010d7ff5ec8af9bc3b5ef0f6836c378f7e6b0fa26eca98ed01967adaff",
+      "fileSize": 91103,
+      "version": "v4",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-EXPERTISE-V5",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Industry_Niche_Expertise_Psychology_Strategy_Library_v5.docx",
+      "sha256": "e0c2436f8141468784a6f0768610e05e79547bf863c396e064f8c4736dcbb890",
+      "fileSize": 76291,
+      "version": "v5",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-TAXONOMY-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Global_Business_Taxonomy_Context_Architecture_v1.docx",
+      "sha256": "e9ebfe75c4606b218f15e8071e22cbc715543060c4d5eb1c0e53effdb5b53ec6",
+      "fileSize": 84178,
+      "version": "v1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-MODULE-ARCH-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Business_Operating_System_Module_Building_Block_Architecture_v1.pdf",
+      "sha256": "84a6badef8dbddc2fb5d126ae8ea776efa8fc9f7c09728fc99dcc24488edd729",
+      "fileSize": 1144604,
+      "version": "v1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-KG-REGISTRY-V2",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Business_Operating_System_Knowledge_Graph_Registry_v2.json",
+      "sha256": "500bf6d42bbb6fe4d1344662f46b601f501814914b13b3c6c2d5824573e6c375",
+      "fileSize": 407874,
+      "version": "v2",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-CURRICULUM-MODULE-1-ETHICS-CSR-ESG",
+      "repositoryPath": "knowledge/blm/sources/curriculum/Flow_BLM_Master_Business_Curriculum_Module_1_Ethics_CSR_ESG.docx",
+      "sha256": "671776a134391585006c87ee4d75660de301f4d20e24032f0c8c74c49e44c4f3",
+      "fileSize": 65051,
+      "version": "module-1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "BLM-CURRICULUM-MODULE-3",
+      "repositoryPath": "knowledge/blm/sources/curriculum/Flow_BLM_Master_Business_Curriculum_Module_3.docx",
+      "sha256": "c327543ff002a2c7543796397f870e1ca082d18a95ec8fdf76cdd1d00bbc5063",
+      "fileSize": 77659,
+      "version": "module-3",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "FLOW-EVAL-AGENCY-DEMO-BLUEPRINT",
+      "repositoryPath": "knowledge/blm/sources/evaluation/Flow_Agency_Case_Study_and_Investor_Demo_Blueprint.docx",
+      "sha256": "c79fe14c5e85b72c00272b2b343394076ab2e56a5ea85385f60018b660e3bf8a",
+      "fileSize": 43487,
+      "version": "v1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "FLOW-INTERNAL-FUNDRAISING-GTM-18M",
+      "repositoryPath": "knowledge/blm/sources/flow-internal/Flow_Fundraising_GTM_and_18_Month_Execution_Plan.docx",
+      "sha256": "95848a8bda8bc276fd4043ea134fb0299e0c67dc9cd3dc842777efb06cc8dd2f",
+      "fileSize": 43431,
+      "version": "v1",
+      "status": "AVAILABLE"
+    },
+    {
+      "sourceKey": "FLOW-INTERNAL-INVESTOR-STRATEGY-2026",
+      "repositoryPath": "knowledge/blm/sources/flow-internal/Flow_Investor_Master_Strategy_2026.docx",
+      "sha256": "f45d69bf58069f2d050b7249decc09b725c8049da03e4f5cace24dd07cfb864a",
+      "fileSize": 44908,
+      "version": "2026",
+      "status": "AVAILABLE"
+    }
+  ]
+}

@@ -1,0 +1,388 @@
+{
+  "registryId": "blm-building-block-registry-1.0.0",
+  "version": "1.0.0",
+  "buildingBlocks": [
+    {
+      "blockId": "flow.entity.foundation.organization",
+      "blockType": "ENTITY",
+      "name": "Organization",
+      "description": "Organization building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.foundation.organization"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.entity.revenue.customer",
+      "blockType": "ENTITY",
+      "name": "Customer",
+      "description": "Customer building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.customer-revenue"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.entity.revenue.opportunity",
+      "blockType": "ENTITY",
+      "name": "Opportunity",
+      "description": "Opportunity building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.customer-revenue"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.contract.document.revenue.proposal",
+      "blockType": "DOCUMENT",
+      "name": "Proposal",
+      "description": "Proposal building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.quote-to-cash"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.contract.document.finance.invoice",
+      "blockType": "DOCUMENT",
+      "name": "Invoice",
+      "description": "Invoice building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.quote-to-cash"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.workflow.delivery.project-lifecycle",
+      "blockType": "WORKFLOW",
+      "name": "Project Lifecycle",
+      "description": "Project Lifecycle building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.project-delivery"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.record.finance.receivable-state",
+      "blockType": "STATE",
+      "name": "Receivable State",
+      "description": "Receivable State building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.cash-collection"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.decision.rule.finance.approval-required",
+      "blockType": "RULE",
+      "name": "Approval Required",
+      "description": "Approval Required building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.quote-to-cash"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.decision.metric.delivery.project-margin",
+      "blockType": "METRIC",
+      "name": "Project Margin",
+      "description": "Project Margin building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.project-delivery"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.decision.logic.finance.cash-collection",
+      "blockType": "LOGIC",
+      "name": "Cash Collection Logic",
+      "description": "Cash Collection Logic building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.cash-collection"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.role.workspace.module-owner",
+      "blockType": "ROLE",
+      "name": "Module Owner",
+      "description": "Module Owner building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.foundation.organization"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.policy.permission.module-read",
+      "blockType": "PERMISSION",
+      "name": "Module Read",
+      "description": "Module Read building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.foundation.organization"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.widget.dashboard.business-health",
+      "blockType": "UI_BLOCK",
+      "name": "Business Health",
+      "description": "Business Health building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.project-delivery"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.event.notification.approval-request",
+      "blockType": "NOTIFICATION",
+      "name": "Approval Request",
+      "description": "Approval Request building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.cash-collection"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.integration.accounting.external-sor",
+      "blockType": "INTEGRATION",
+      "name": "Accounting External SoR",
+      "description": "Accounting External SoR building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.finance-overlay"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.policy.sor.external-authoritative",
+      "blockType": "SOR_POLICY",
+      "name": "External Authoritative",
+      "description": "External Authoritative building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.universal.finance-overlay"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.entity.inventory.item",
+      "blockType": "ENTITY",
+      "name": "Inventory Item",
+      "description": "Inventory Item building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.conditional.inventory-control"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.workflow.manufacturing.production-run",
+      "blockType": "WORKFLOW",
+      "name": "Production Run",
+      "description": "Production Run building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": [
+        "flow.module.conditional.manufacturing-operations"
+      ],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "blockId": "flow.integration.retail.pos",
+      "blockType": "INTEGRATION",
+      "name": "Retail POS",
+      "description": "Retail POS building block for dry-run module planning.",
+      "capabilityIds": [],
+      "requiredForModuleIds": ["flow.module.conditional.retail-pos-overlay"],
+      "authorityBoundary": "Building block registry is planning metadata; it does not execute actions.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.3 module planning foundation. Recommendations are dry-run planning outputs only."
+      },
+      "scope": "GLOBAL"
+    }
+  ]
+}

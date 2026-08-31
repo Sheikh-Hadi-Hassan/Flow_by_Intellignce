@@ -1,0 +1,288 @@
+{
+  "registryId": "blm-expertise-packs-1.0.0",
+  "version": "1.0.0",
+  "packs": [
+    {
+      "packId": "flow.concept.expertise-pack.digital-agency",
+      "version": "1.0.0",
+      "name": "Digital Agency Expertise",
+      "industryScopes": ["flow.concept.industry.digital-agency"],
+      "nicheScopes": ["flow.concept.niche.marketing-agency"],
+      "scaleScopes": ["SMB", "MID_MARKET"],
+      "vocabulary": ["digital-agency", "Digital Agency Expertise"],
+      "roles": [
+        "flow.role.occupation.founder",
+        "flow.role.job-function.account-manager",
+        "flow.role.workspace.operations-lead"
+      ],
+      "businessPhysics": [
+        "Business outcomes depend on cross-functional drivers, constraints, and evidence."
+      ],
+      "valueStreams": ["lead-to-cash", "operate-to-margin"],
+      "processes": ["flow.process.digital-agency.core-operations"],
+      "entities": ["flow.entity.digital-agency.business-record"],
+      "documents": ["flow.contract.document.digital-agency.operating-evidence"],
+      "metrics": ["flow.decision.metric.digital-agency.performance"],
+      "driverRelations": [
+        "demand, capacity, cash, and margin must be reasoned together"
+      ],
+      "rules": ["flow.decision.rule.digital-agency.evidence-required"],
+      "logicRequirements": [
+        "Pack covers 3 task-critical business capabilities.",
+        "Calculations require deterministic logic before authoritative output."
+      ],
+      "risks": ["MEDIUM"],
+      "controls": ["flow.policy.digital-agency.human-approval"],
+      "strategyPatterns": ["diagnose before prescribing"],
+      "psychologyPatterns": [
+        "avoid manipulative or unsupported customer claims"
+      ],
+      "prohibitedClaims": [
+        "Do not claim workspace-specific facts without workspace evidence."
+      ],
+      "liveEvidencePolicies": [
+        "Use live workspace evidence only when authorized and tenant scoped."
+      ],
+      "evaluationCases": [
+        "flow.contract.evaluation.digital-agency.classification"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "fingerprint": "bdd9bcea708c556f84693ea6ea11b6bc74455e3f1035f960d7e7b816e0c30193",
+      "scope": "GLOBAL"
+    },
+    {
+      "packId": "flow.concept.expertise-pack.saas",
+      "version": "1.0.0",
+      "name": "SaaS Expertise",
+      "industryScopes": ["flow.concept.industry.saas"],
+      "nicheScopes": ["flow.concept.niche.product-led-saas"],
+      "scaleScopes": ["SMB", "MID_MARKET"],
+      "vocabulary": ["saas", "SaaS Expertise"],
+      "roles": [
+        "flow.role.occupation.founder",
+        "flow.role.decision-authority.owner"
+      ],
+      "businessPhysics": [
+        "Business outcomes depend on cross-functional drivers, constraints, and evidence."
+      ],
+      "valueStreams": ["lead-to-cash", "operate-to-margin"],
+      "processes": ["flow.process.saas.core-operations"],
+      "entities": ["flow.entity.saas.business-record"],
+      "documents": ["flow.contract.document.saas.operating-evidence"],
+      "metrics": ["flow.decision.metric.saas.performance"],
+      "driverRelations": [
+        "demand, capacity, cash, and margin must be reasoned together"
+      ],
+      "rules": ["flow.decision.rule.saas.evidence-required"],
+      "logicRequirements": [
+        "Pack covers 3 task-critical business capabilities.",
+        "Calculations require deterministic logic before authoritative output."
+      ],
+      "risks": ["MEDIUM"],
+      "controls": ["flow.policy.saas.human-approval"],
+      "strategyPatterns": ["diagnose before prescribing"],
+      "psychologyPatterns": [
+        "avoid manipulative or unsupported customer claims"
+      ],
+      "prohibitedClaims": [
+        "Do not claim workspace-specific facts without workspace evidence."
+      ],
+      "liveEvidencePolicies": [
+        "Use live workspace evidence only when authorized and tenant scoped."
+      ],
+      "evaluationCases": ["flow.contract.evaluation.saas.classification"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "fingerprint": "dc29f7a13be34d3f0b5d521b55e036857201340127e530173170cba42e18fe53",
+      "scope": "GLOBAL"
+    },
+    {
+      "packId": "flow.concept.expertise-pack.manufacturing",
+      "version": "1.0.0",
+      "name": "Manufacturing Expertise",
+      "industryScopes": ["flow.concept.industry.manufacturing"],
+      "nicheScopes": ["flow.concept.niche.contract-manufacturing"],
+      "scaleScopes": ["SMB", "MID_MARKET"],
+      "vocabulary": ["manufacturing", "Manufacturing Expertise"],
+      "roles": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "businessPhysics": [
+        "Business outcomes depend on cross-functional drivers, constraints, and evidence."
+      ],
+      "valueStreams": ["lead-to-cash", "operate-to-margin"],
+      "processes": ["flow.process.manufacturing.core-operations"],
+      "entities": ["flow.entity.manufacturing.business-record"],
+      "documents": ["flow.contract.document.manufacturing.operating-evidence"],
+      "metrics": ["flow.decision.metric.manufacturing.performance"],
+      "driverRelations": [
+        "demand, capacity, cash, and margin must be reasoned together"
+      ],
+      "rules": ["flow.decision.rule.manufacturing.evidence-required"],
+      "logicRequirements": [
+        "Pack covers 3 task-critical business capabilities.",
+        "Calculations require deterministic logic before authoritative output."
+      ],
+      "risks": ["MEDIUM"],
+      "controls": ["flow.policy.manufacturing.human-approval"],
+      "strategyPatterns": ["diagnose before prescribing"],
+      "psychologyPatterns": [
+        "avoid manipulative or unsupported customer claims"
+      ],
+      "prohibitedClaims": [
+        "Do not claim workspace-specific facts without workspace evidence."
+      ],
+      "liveEvidencePolicies": [
+        "Use live workspace evidence only when authorized and tenant scoped."
+      ],
+      "evaluationCases": [
+        "flow.contract.evaluation.manufacturing.classification"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "fingerprint": "193c52ef8d37cf12e80ec07e875cc9a271cfca3c855ca7ffe8daa3379b444615",
+      "scope": "GLOBAL"
+    },
+    {
+      "packId": "flow.concept.expertise-pack.retail",
+      "version": "1.0.0",
+      "name": "Retail Expertise",
+      "industryScopes": ["flow.concept.industry.retail"],
+      "nicheScopes": ["flow.concept.niche.omnichannel-retail"],
+      "scaleScopes": ["SMB", "MID_MARKET"],
+      "vocabulary": ["retail", "Retail Expertise"],
+      "roles": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "businessPhysics": [
+        "Business outcomes depend on cross-functional drivers, constraints, and evidence."
+      ],
+      "valueStreams": ["lead-to-cash", "operate-to-margin"],
+      "processes": ["flow.process.retail.core-operations"],
+      "entities": ["flow.entity.retail.business-record"],
+      "documents": ["flow.contract.document.retail.operating-evidence"],
+      "metrics": ["flow.decision.metric.retail.performance"],
+      "driverRelations": [
+        "demand, capacity, cash, and margin must be reasoned together"
+      ],
+      "rules": ["flow.decision.rule.retail.evidence-required"],
+      "logicRequirements": [
+        "Pack covers 3 task-critical business capabilities.",
+        "Calculations require deterministic logic before authoritative output."
+      ],
+      "risks": ["MEDIUM"],
+      "controls": ["flow.policy.retail.human-approval"],
+      "strategyPatterns": ["diagnose before prescribing"],
+      "psychologyPatterns": [
+        "avoid manipulative or unsupported customer claims"
+      ],
+      "prohibitedClaims": [
+        "Do not claim workspace-specific facts without workspace evidence."
+      ],
+      "liveEvidencePolicies": [
+        "Use live workspace evidence only when authorized and tenant scoped."
+      ],
+      "evaluationCases": ["flow.contract.evaluation.retail.classification"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "fingerprint": "62ca15c1d68f89765568839fb26bd732833f21950cd6369046fdb121ea62d5aa",
+      "scope": "GLOBAL"
+    },
+    {
+      "packId": "flow.concept.expertise-pack.construction",
+      "version": "1.0.0",
+      "name": "Construction Expertise",
+      "industryScopes": ["flow.concept.industry.construction"],
+      "nicheScopes": ["flow.concept.niche.general-contractor"],
+      "scaleScopes": ["SMB", "MID_MARKET"],
+      "vocabulary": ["construction", "Construction Expertise"],
+      "roles": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "businessPhysics": [
+        "Business outcomes depend on cross-functional drivers, constraints, and evidence."
+      ],
+      "valueStreams": ["lead-to-cash", "operate-to-margin"],
+      "processes": ["flow.process.construction.core-operations"],
+      "entities": ["flow.entity.construction.business-record"],
+      "documents": ["flow.contract.document.construction.operating-evidence"],
+      "metrics": ["flow.decision.metric.construction.performance"],
+      "driverRelations": [
+        "demand, capacity, cash, and margin must be reasoned together"
+      ],
+      "rules": ["flow.decision.rule.construction.evidence-required"],
+      "logicRequirements": [
+        "Pack covers 3 task-critical business capabilities.",
+        "Calculations require deterministic logic before authoritative output."
+      ],
+      "risks": ["MEDIUM"],
+      "controls": ["flow.policy.construction.human-approval"],
+      "strategyPatterns": ["diagnose before prescribing"],
+      "psychologyPatterns": [
+        "avoid manipulative or unsupported customer claims"
+      ],
+      "prohibitedClaims": [
+        "Do not claim workspace-specific facts without workspace evidence."
+      ],
+      "liveEvidencePolicies": [
+        "Use live workspace evidence only when authorized and tenant scoped."
+      ],
+      "evaluationCases": [
+        "flow.contract.evaluation.construction.classification"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "fingerprint": "ec2e9a05e78757ee37d7378deeb7178a327fed7d307317f0233d73e855609d40",
+      "scope": "GLOBAL"
+    }
+  ]
+}

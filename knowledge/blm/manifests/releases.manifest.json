@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "corpusRelease": "1.0.0",
+  "createdAt": "2026-08-13",
+  "createdFrom": "approved Flow BLM source corpus",
+  "status": "SOURCE_INVENTORY_READY",
+  "sourceKeys": [
+    "BLM-CORE-ARCHITECTURE-V1",
+    "BLM-CORE-MATH-V3",
+    "BLM-LANGUAGE-V4",
+    "BLM-EXPERTISE-V5",
+    "BLM-TAXONOMY-V1",
+    "BLM-MODULE-ARCH-V1",
+    "BLM-KG-REGISTRY-V2",
+    "BLM-CURRICULUM-MODULE-1-ETHICS-CSR-ESG",
+    "BLM-CURRICULUM-MODULE-3",
+    "FLOW-EVAL-AGENCY-DEMO-BLUEPRINT",
+    "FLOW-INTERNAL-FUNDRAISING-GTM-18M",
+    "FLOW-INTERNAL-INVESTOR-STRATEGY-2026"
+  ],
+  "manifestPath": "knowledge/blm/manifests/sources.manifest.json",
+  "checksumManifestPath": "knowledge/blm/manifests/checksums.manifest.json",
+  "compiledKnowledgeStatus": "NOT_COMPILED",
+  "notes": "This release records source inventory readiness only. It does not claim compiled BLM knowledge, training eligibility, or publication readiness."
+}

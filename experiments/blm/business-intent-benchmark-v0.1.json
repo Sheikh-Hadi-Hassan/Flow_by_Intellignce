@@ -1,0 +1,67 @@
+[
+  {
+    "id": "invoice-roman-ur",
+    "input": "Amar ki next invoice bana do.",
+    "language": "roman-ur",
+    "workspaceIndependentIntent": "invoice.create",
+    "entities": ["Amar"],
+    "canonicalAction": "invoice.create",
+    "capability": "invoicing.invoices",
+    "parameters": {},
+    "missingFields": ["contract", "billing_schedule"],
+    "expectedClarification": "Which contract and billing schedule should be used?",
+    "riskCategory": "MEDIUM"
+  },
+  {
+    "id": "contract-status-roman-ur",
+    "input": "Morganics ke social media contract ka status batao.",
+    "language": "roman-ur",
+    "workspaceIndependentIntent": "contract.status",
+    "entities": ["Morganics", "social media contract"],
+    "canonicalAction": "contract.status",
+    "capability": "documents.contracts",
+    "parameters": {},
+    "missingFields": [],
+    "expectedClarification": null,
+    "riskCategory": "LOW"
+  },
+  {
+    "id": "project-draft-english",
+    "input": "Read this contract and draft the project setup.",
+    "language": "en",
+    "workspaceIndependentIntent": "project.setup_draft",
+    "entities": ["contract"],
+    "canonicalAction": "project.setup_draft",
+    "capability": "projects.setup",
+    "parameters": {},
+    "missingFields": ["document"],
+    "expectedClarification": "Which contract document should be read?",
+    "riskCategory": "MEDIUM"
+  },
+  {
+    "id": "attendance-roman-ur",
+    "input": "Mr X ki attendance change kar do.",
+    "language": "roman-ur",
+    "workspaceIndependentIntent": "attendance.update",
+    "entities": ["Mr X"],
+    "canonicalAction": "attendance.update",
+    "capability": "hr.attendance",
+    "parameters": {},
+    "missingFields": ["date", "new_value"],
+    "expectedClarification": "Which date and attendance value should be changed?",
+    "riskCategory": "HIGH"
+  },
+  {
+    "id": "invoice-send-urdu",
+    "input": "انوائس بھیج دیں۔",
+    "language": "ur",
+    "workspaceIndependentIntent": "invoice.send",
+    "entities": [],
+    "canonicalAction": "invoice.send",
+    "capability": "invoicing.invoices",
+    "parameters": {},
+    "missingFields": ["invoice", "client"],
+    "expectedClarification": "Which invoice and client should be used?",
+    "riskCategory": "HIGH"
+  }
+]

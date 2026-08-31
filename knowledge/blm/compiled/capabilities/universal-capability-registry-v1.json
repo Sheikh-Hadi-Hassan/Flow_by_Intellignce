@@ -1,0 +1,191 @@
+{
+  "registryId": "blm-universal-capabilities-1.0.0",
+  "version": "1.0.0",
+  "capabilities": [
+    {
+      "capabilityId": "flow.capability.crm.lead-management",
+      "name": "Lead Management",
+      "description": "Lead Management describes what a business must be able to do; it is not a software module.",
+      "family": "UNIVERSAL",
+      "requiredEvidence": [
+        "lead source",
+        "stage",
+        "owner",
+        "conversion status"
+      ],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.sales.quote-to-cash",
+      "name": "Quote To Cash",
+      "description": "Quote To Cash describes what a business must be able to do; it is not a software module.",
+      "family": "UNIVERSAL",
+      "requiredEvidence": ["quote", "order", "invoice", "payment status"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.operations.project-delivery",
+      "name": "Project Delivery",
+      "description": "Project Delivery describes what a business must be able to do; it is not a software module.",
+      "family": "PROFESSIONAL_SERVICES",
+      "requiredEvidence": ["scope", "tasks", "timeline", "utilization"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.finance.subscription-billing",
+      "name": "Subscription Billing",
+      "description": "Subscription Billing describes what a business must be able to do; it is not a software module.",
+      "family": "SOFTWARE_AND_PLATFORM",
+      "requiredEvidence": ["plan", "subscription", "MRR", "renewal"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.operations.production-planning",
+      "name": "Production Planning",
+      "description": "Production Planning describes what a business must be able to do; it is not a software module.",
+      "family": "MANUFACTURING_AND_SUPPLY",
+      "requiredEvidence": ["BOM", "work order", "capacity", "routing"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.inventory.availability",
+      "name": "Inventory Availability",
+      "description": "Inventory Availability describes what a business must be able to do; it is not a software module.",
+      "family": "UNIVERSAL",
+      "requiredEvidence": ["on hand", "reserved", "allocated", "reorder point"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.operations.field-operations",
+      "name": "Field Operations",
+      "description": "Field Operations describes what a business must be able to do; it is not a software module.",
+      "family": "CONSTRUCTION_AND_FIELD_SERVICES",
+      "requiredEvidence": ["crew", "site", "schedule", "materials"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "capabilityId": "flow.capability.finance.financial-control",
+      "name": "Financial Control",
+      "description": "Financial Control describes what a business must be able to do; it is not a software module.",
+      "family": "UNIVERSAL",
+      "requiredEvidence": ["ledger", "cash", "margin", "approval"],
+      "commonMetricIds": [],
+      "commonControlIds": [],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "provenance": {
+    "sourceIds": [
+      "BLM-TAXONOMY-V1",
+      "BLM-CORE-ARCHITECTURE-V1",
+      "BLM-MODULE-ARCH-V1",
+      "BLM-KG-REGISTRY-V2",
+      "BLM-EXPERTISE-V5"
+    ],
+    "use": "FLOW_NATIVE",
+    "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+  },
+  "fingerprint": "c167225e455d47b7dd609b0840db728461e803c43fd4d0d41ccf694c48b771a0"
+}

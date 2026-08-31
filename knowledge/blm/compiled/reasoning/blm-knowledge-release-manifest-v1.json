@@ -1,0 +1,24 @@
+{
+  "releaseId": "blm-runtime-knowledge-1.0.0",
+  "createdAt": "2026-08-14T00:00:00.000Z",
+  "sourceCorpus": "knowledge/blm/manifests/sources.manifest.json",
+  "taxonomy": "knowledge/blm/compiled/taxonomy/global-business-taxonomy-v1.json",
+  "architectureGraph": "knowledge/blm/compiled/architecture/reference-business-architecture-graph-v1.json",
+  "capabilities": "knowledge/blm/compiled/capabilities/universal-capability-registry-v1.json",
+  "expertisePacks": "knowledge/blm/compiled/expertise/blm-expertise-packs-v1.json",
+  "language": "packages/blm-core/src/business-language-foundation.ts",
+  "metrics": "packages/blm-core/src/business-metrics.ts",
+  "drivers": "packages/blm-core/src/business-metrics.ts",
+  "moduleRegistry": "packages/blm-contracts/src/business-module-planning.ts",
+  "reasoningCorpus": "packages/blm-contracts/src/blm-runtime-knowledge.ts",
+  "evaluationSuite": "packages/blm-core/src/blm-runtime-knowledge.test.ts",
+  "fingerprints": {
+    "sourceCorpus": "e4ef693a886a4393e1edf7d4bf8e3a575efe8c10c44f3552ddddb8c74953505f",
+    "taxonomy": "05ec4905ca8c112af38661eb1b9c69e3aa6c6b032c8ca5cc4bffe74b815e274e",
+    "capabilities": "b60e6efc5757e152f63409762ba00119f05b83a2f0b79819f45d2e3a5b3e1de1",
+    "expertisePacks": "c0bace2bcd71b86a391062b92e5eca0cf42eb637955b4fd6a9de3cf72fae7fa3",
+    "moduleRegistry": "20beace8844fcb2ff5ae474fb9e2fdb792974f3ce4b927c97cde9ddcd0190610",
+    "reasoningCorpus": "16f4868c731e87c33e8d0179dd0623999dd86a140019a77957452bbb9c29979d"
+  },
+  "reproducible": true
+}

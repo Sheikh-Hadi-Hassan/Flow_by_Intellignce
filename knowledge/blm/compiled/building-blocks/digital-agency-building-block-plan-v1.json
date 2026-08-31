@@ -1,0 +1,404 @@
+{
+  "planId": "building-block-plan:375b42408ade1042c715bed0",
+  "dryRunOnly": true,
+  "approvedCapabilityIds": [
+    "flow.capability.finance.financial-control",
+    "flow.capability.crm.lead-management",
+    "flow.capability.sales.quote-to-cash",
+    "flow.capability.operations.project-delivery"
+  ],
+  "modules": [
+    {
+      "moduleId": "flow.module.foundation.organization",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "INSTALL_NOW",
+      "needProbability": 0.85,
+      "confidence": 0.6,
+      "criticality": "P0",
+      "priority": 9.15,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": [],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.finance.financial-control"
+      ],
+      "negativeEvidence": [],
+      "dependencies": [],
+      "substitutes": [],
+      "currentCoverage": ["QuickBooks accounting"],
+      "systemOfRecordPolicy": "EXTERNAL_AUTHORITATIVE",
+      "requiredBuildingBlocks": [
+        "flow.entity.foundation.organization",
+        "flow.role.workspace.module-owner",
+        "flow.policy.permission.module-read"
+      ],
+      "requiredWorkflows": [],
+      "requiredRules": [],
+      "requiredMetrics": [],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Organization Foundation outcome: INSTALL_NOW.",
+        "No direct trigger evidence matched.",
+        "Covers capability gaps: flow.capability.finance.financial-control.",
+        "Current systems cover part of this area: QuickBooks accounting."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "fca9903b27f823eb26923f7fbe4aeb022216d23fe640638df2c9045690000e71"
+    },
+    {
+      "moduleId": "flow.module.universal.customer-revenue",
+      "capabilityIds": ["flow.capability.crm.lead-management"],
+      "outcome": "INSTALL_NOW",
+      "needProbability": 0.95,
+      "confidence": 0.9,
+      "criticality": "P1",
+      "priority": 13.05,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": ["client", "lead", "B2B"],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.crm.lead-management"
+      ],
+      "negativeEvidence": [],
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "currentCoverage": [],
+      "systemOfRecordPolicy": "SHARED_WITH_RECONCILIATION",
+      "requiredBuildingBlocks": [
+        "flow.entity.revenue.customer",
+        "flow.entity.revenue.opportunity"
+      ],
+      "requiredWorkflows": [],
+      "requiredRules": [],
+      "requiredMetrics": [],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Customer Revenue outcome: INSTALL_NOW.",
+        "Direct evidence matched: client, lead, B2B.",
+        "Covers capability gaps: flow.capability.crm.lead-management.",
+        "No current system coverage was supplied."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "e70b0e58a28bd6c0af3a70bbbd249a84847971bf8d457d8a6460157d3e90fd52"
+    },
+    {
+      "moduleId": "flow.module.universal.quote-to-cash",
+      "capabilityIds": ["flow.capability.sales.quote-to-cash"],
+      "outcome": "INSTALL_NOW",
+      "needProbability": 0.8,
+      "confidence": 0.8,
+      "criticality": "P1",
+      "priority": 13.2,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": ["cash collection", "retainer"],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.sales.quote-to-cash"
+      ],
+      "negativeEvidence": [],
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "currentCoverage": [],
+      "systemOfRecordPolicy": "SHARED_WITH_RECONCILIATION",
+      "requiredBuildingBlocks": [
+        "flow.contract.document.revenue.proposal",
+        "flow.contract.document.finance.invoice",
+        "flow.decision.rule.finance.approval-required"
+      ],
+      "requiredWorkflows": [],
+      "requiredRules": ["flow.decision.rule.finance.approval-required"],
+      "requiredMetrics": [],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Quote To Cash outcome: INSTALL_NOW.",
+        "Direct evidence matched: cash collection, retainer.",
+        "Covers capability gaps: flow.capability.sales.quote-to-cash.",
+        "No current system coverage was supplied."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "c2e7fae2207dd8a586f62b56cc3f18d088d8899116f0ffa4dcd62e6efdec0ec4"
+    },
+    {
+      "moduleId": "flow.module.universal.finance-overlay",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "READ_ONLY_OVERLAY",
+      "needProbability": 0.99,
+      "confidence": 0.99,
+      "criticality": "P0",
+      "priority": 19.01,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": ["QuickBooks", "accounting", "cash", "margin"],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.finance.financial-control"
+      ],
+      "negativeEvidence": [],
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "currentCoverage": ["QuickBooks accounting"],
+      "systemOfRecordPolicy": "EXTERNAL_AUTHORITATIVE",
+      "requiredBuildingBlocks": [
+        "flow.integration.accounting.external-sor",
+        "flow.policy.sor.external-authoritative"
+      ],
+      "requiredWorkflows": [],
+      "requiredRules": [],
+      "requiredMetrics": [],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Finance Overlay outcome: READ_ONLY_OVERLAY.",
+        "Direct evidence matched: QuickBooks, accounting, cash, margin.",
+        "Covers capability gaps: flow.capability.finance.financial-control.",
+        "Current systems cover part of this area: QuickBooks accounting."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "5c43d050b7c065b9e58c7e729e1af76fafe57507c4443dd171630a99c00c4b7d"
+    },
+    {
+      "moduleId": "flow.module.universal.cash-collection",
+      "capabilityIds": ["flow.capability.finance.financial-control"],
+      "outcome": "READ_ONLY_OVERLAY",
+      "needProbability": 0.65,
+      "confidence": 0.7,
+      "criticality": "P0",
+      "priority": 19.35,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": ["cash collection"],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.finance.financial-control"
+      ],
+      "negativeEvidence": [],
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "currentCoverage": ["QuickBooks accounting"],
+      "systemOfRecordPolicy": "EXTERNAL_AUTHORITATIVE",
+      "requiredBuildingBlocks": [
+        "flow.record.finance.receivable-state",
+        "flow.decision.logic.finance.cash-collection",
+        "flow.event.notification.approval-request"
+      ],
+      "requiredWorkflows": [],
+      "requiredRules": [],
+      "requiredMetrics": [],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Cash Collection outcome: READ_ONLY_OVERLAY.",
+        "Direct evidence matched: cash collection.",
+        "Covers capability gaps: flow.capability.finance.financial-control.",
+        "Current systems cover part of this area: QuickBooks accounting."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "d3faee2d9a4b4f7cd474183747e16972d22a043e9aa5834fb0d26e0d5aa7d63b"
+    },
+    {
+      "moduleId": "flow.module.universal.project-delivery",
+      "capabilityIds": ["flow.capability.operations.project-delivery"],
+      "outcome": "READ_ONLY_OVERLAY",
+      "needProbability": 0.99,
+      "confidence": 0.99,
+      "criticality": "P1",
+      "priority": 23.01,
+      "targetMaturity": "BASIC",
+      "timing": "NOW",
+      "directEvidence": ["project", "delivery", "scope creep", "ClickUp"],
+      "inferredEvidence": [
+        "Capability gap: flow.capability.operations.project-delivery"
+      ],
+      "negativeEvidence": [],
+      "dependencies": ["flow.module.foundation.organization"],
+      "substitutes": [],
+      "currentCoverage": ["ClickUp delivery", "Spreadsheet delivery tracker"],
+      "systemOfRecordPolicy": "EXTERNAL_AUTHORITATIVE",
+      "requiredBuildingBlocks": [
+        "flow.workflow.delivery.project-lifecycle",
+        "flow.decision.metric.delivery.project-margin",
+        "flow.widget.dashboard.business-health"
+      ],
+      "requiredWorkflows": ["flow.workflow.delivery.project-lifecycle"],
+      "requiredRules": [],
+      "requiredMetrics": ["flow.decision.metric.delivery.project-margin"],
+      "requiredIntegrations": [
+        "QuickBooks accounting",
+        "ClickUp delivery",
+        "Spreadsheet delivery tracker"
+      ],
+      "authorityBoundaries": [
+        "Recommendation is dry-run only.",
+        "No production install or ERP mutation is authorized.",
+        "Action Wall remains required for side effects."
+      ],
+      "why": [
+        "Project Delivery outcome: READ_ONLY_OVERLAY.",
+        "Direct evidence matched: project, delivery, scope creep, ClickUp.",
+        "Covers capability gaps: flow.capability.operations.project-delivery.",
+        "Current systems cover part of this area: ClickUp delivery, Spreadsheet delivery tracker."
+      ],
+      "whyNotAlternatives": [
+        "No substitute module has stronger evidence in this dry run."
+      ],
+      "missingInformation": [],
+      "fingerprint": "5fd66123566baf84612a14eaeaa7dabea7ab01b27703bc100fbda575364ceaf5"
+    }
+  ],
+  "targetMaturityByCapability": {
+    "flow.capability.finance.financial-control": "BASIC",
+    "flow.capability.crm.lead-management": "BASIC",
+    "flow.capability.sales.quote-to-cash": "BASIC",
+    "flow.capability.operations.project-delivery": "BASIC"
+  },
+  "canonicalEntitiesAndRelationships": [
+    "flow.entity.foundation.organization",
+    "flow.entity.revenue.customer",
+    "flow.entity.revenue.opportunity"
+  ],
+  "documents": [
+    "flow.contract.document.revenue.proposal",
+    "flow.contract.document.finance.invoice"
+  ],
+  "workflowTemplatesAndParameters": [
+    "flow.workflow.delivery.project-lifecycle"
+  ],
+  "rolePermissionTemplates": [
+    "flow.role.workspace.module-owner",
+    "flow.policy.permission.module-read"
+  ],
+  "businessLogicAndDecisionRuleIds": [
+    "flow.decision.logic.finance.cash-collection",
+    "flow.decision.rule.finance.approval-required"
+  ],
+  "uiBlocksAndViews": ["flow.widget.dashboard.business-health"],
+  "blmSkillsAndExpertisePacks": [],
+  "integrationAdapterCapabilities": [
+    "QuickBooks accounting",
+    "ClickUp delivery",
+    "Spreadsheet delivery tracker"
+  ],
+  "systemOfRecordPolicies": [
+    {
+      "moduleId": "flow.module.foundation.organization",
+      "policy": "EXTERNAL_AUTHORITATIVE",
+      "reason": "Existing external system remains authoritative; Flow plans overlay/context only."
+    },
+    {
+      "moduleId": "flow.module.universal.customer-revenue",
+      "policy": "SHARED_WITH_RECONCILIATION",
+      "reason": "Flow may own or reconcile this capability after approval."
+    },
+    {
+      "moduleId": "flow.module.universal.quote-to-cash",
+      "policy": "SHARED_WITH_RECONCILIATION",
+      "reason": "Flow may own or reconcile this capability after approval."
+    },
+    {
+      "moduleId": "flow.module.universal.finance-overlay",
+      "policy": "EXTERNAL_AUTHORITATIVE",
+      "reason": "Existing external system remains authoritative; Flow plans overlay/context only."
+    },
+    {
+      "moduleId": "flow.module.universal.cash-collection",
+      "policy": "EXTERNAL_AUTHORITATIVE",
+      "reason": "Existing external system remains authoritative; Flow plans overlay/context only."
+    },
+    {
+      "moduleId": "flow.module.universal.project-delivery",
+      "policy": "EXTERNAL_AUTHORITATIVE",
+      "reason": "Existing external system remains authoritative; Flow plans overlay/context only."
+    }
+  ],
+  "notificationApprovalPolicies": ["flow.event.notification.approval-request"],
+  "migrationMappings": [],
+  "implementationWave": [
+    {
+      "wave": 1,
+      "moduleIds": [
+        "flow.module.foundation.organization",
+        "flow.module.universal.finance-overlay",
+        "flow.module.universal.cash-collection"
+      ],
+      "rationale": "P0 foundation, controls, and cash/finance visibility."
+    },
+    {
+      "wave": 2,
+      "moduleIds": [
+        "flow.module.universal.customer-revenue",
+        "flow.module.universal.quote-to-cash",
+        "flow.module.universal.project-delivery"
+      ],
+      "rationale": "Remaining minimum sufficient capability coverage."
+    }
+  ],
+  "evidenceRefs": [
+    "evidence:35-person-agency",
+    "evidence:b2b-project-retainer",
+    "evidence:quickbooks-accounting",
+    "evidence:clickup-spreadsheet-delivery",
+    "evidence:cash-collection-scope-creep"
+  ],
+  "approvalRequirements": [
+    "Dry-run plan only.",
+    "Production module installation requires Action Wall approval.",
+    "External ERP/accounting mutation is not authorized by this plan."
+  ],
+  "architectureFingerprint": "375b42408ade1042c715bed037b3387083cb2615708f32ed0d93ab44bb71e125"
+}

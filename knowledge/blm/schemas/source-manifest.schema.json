@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flow.local/schemas/blm/source-manifest.schema.json",
+  "title": "Flow BLM Source Manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "corpusName",
+    "status",
+    "task001GovernanceRequired",
+    "sources",
+    "missingSources"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "corpusName": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "const": "SOURCE_INVENTORY_READY"
+    },
+    "task001GovernanceRequired": {
+      "type": "boolean",
+      "const": true
+    },
+    "sourceCount": {
+      "type": "integer"
+    },
+    "missingSourceCount": {
+      "type": "integer"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceKey",
+          "title",
+          "version",
+          "knowledgeGroup",
+          "repositoryPath",
+          "sourceType",
+          "authorityClass",
+          "knowledgeUse",
+          "runtimeAvailability",
+          "trainingEligibility",
+          "commercialTrainingEligibility",
+          "sourceGovernanceRequired",
+          "governanceMapping",
+          "fingerprint"
+        ]
+      }
+    },
+    "missingSources": {
+      "type": "array"
+    }
+  }
+}

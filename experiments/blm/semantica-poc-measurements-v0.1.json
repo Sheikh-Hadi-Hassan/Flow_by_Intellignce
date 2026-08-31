@@ -1,0 +1,11 @@
+{
+  "semantic_add_query_latency": {
+    "resolve_entity_ms": 0.0019170000000040543,
+    "graph_lookup_ms": 0.0013330000000061348,
+    "conflict_lookup_ms": 0.006124999999995717
+  },
+  "decision_trace_latency_ms": 0.0010839999999984196,
+  "memory_kb_maxrss": 13647872,
+  "python_version": "3.9.6",
+  "note": "Measured deterministic fallback provider because semantica==0.6.0 did not install on Python 3.9."
+}

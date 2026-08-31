@@ -1,0 +1,1038 @@
+{
+  "releaseId": "blm-global-business-taxonomy-1.0.0",
+  "version": "1.0.0",
+  "status": "ACTIVE",
+  "sourceCorpusRelease": "knowledge/blm/manifests/releases.manifest.json#1.0.0",
+  "sourceReferences": [
+    {
+      "sourceKey": "BLM-TAXONOMY-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Global_Business_Taxonomy_Context_Architecture_v1.docx",
+      "version": "v1",
+      "knowledgeGroup": "GLOBAL_CORE"
+    },
+    {
+      "sourceKey": "BLM-CORE-ARCHITECTURE-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Factual_Business_Architecture_Library_v1.docx",
+      "version": "v1",
+      "knowledgeGroup": "GLOBAL_CORE"
+    },
+    {
+      "sourceKey": "BLM-MODULE-ARCH-V1",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Business_Operating_System_Module_Building_Block_Architecture_v1.pdf",
+      "version": "v1",
+      "knowledgeGroup": "GLOBAL_CORE"
+    },
+    {
+      "sourceKey": "BLM-KG-REGISTRY-V2",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Business_Operating_System_Knowledge_Graph_Registry_v2.json",
+      "version": "v2",
+      "knowledgeGroup": "GLOBAL_CORE"
+    },
+    {
+      "sourceKey": "BLM-EXPERTISE-V5",
+      "repositoryPath": "knowledge/blm/sources/global-core/Flow_BLM_Industry_Niche_Expertise_Psychology_Strategy_Library_v5.docx",
+      "version": "v5",
+      "knowledgeGroup": "GLOBAL_CORE"
+    }
+  ],
+  "industryNodes": [
+    {
+      "industryId": "flow.concept.industry.digital-agency",
+      "name": "Digital Agency",
+      "description": "Digital Agency global business taxonomy node.",
+      "family": "PROFESSIONAL_SERVICES",
+      "aliases": ["agency", "marketing agency", "creative agency"],
+      "typicalNicheIds": ["flow.concept.niche.marketing-agency"],
+      "typicalCapabilityIds": [
+        "flow.capability.crm.lead-management",
+        "flow.capability.sales.quote-to-cash",
+        "flow.capability.operations.project-delivery",
+        "flow.capability.finance.financial-control"
+      ],
+      "typicalRoleIds": [
+        "flow.role.occupation.founder",
+        "flow.role.job-function.account-manager",
+        "flow.role.workspace.operations-lead"
+      ],
+      "maturitySignals": ["retainers", "project margin", "utilization"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "industryId": "flow.concept.industry.saas",
+      "name": "SaaS Company",
+      "description": "SaaS Company global business taxonomy node.",
+      "family": "SOFTWARE_AND_PLATFORM",
+      "aliases": ["software company", "subscription software", "platform"],
+      "typicalNicheIds": ["flow.concept.niche.product-led-saas"],
+      "typicalCapabilityIds": [
+        "flow.capability.crm.lead-management",
+        "flow.capability.finance.subscription-billing",
+        "flow.capability.finance.financial-control"
+      ],
+      "typicalRoleIds": [
+        "flow.role.occupation.founder",
+        "flow.role.decision-authority.owner"
+      ],
+      "maturitySignals": ["MRR", "ARR", "churn", "activation"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "industryId": "flow.concept.industry.manufacturing",
+      "name": "Manufacturer",
+      "description": "Manufacturer global business taxonomy node.",
+      "family": "MANUFACTURING_AND_SUPPLY",
+      "aliases": ["factory", "producer", "manufacturing company"],
+      "typicalNicheIds": ["flow.concept.niche.contract-manufacturing"],
+      "typicalCapabilityIds": [
+        "flow.capability.operations.production-planning",
+        "flow.capability.inventory.availability",
+        "flow.capability.finance.financial-control"
+      ],
+      "typicalRoleIds": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "maturitySignals": ["work orders", "BOM", "inventory", "capacity"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "industryId": "flow.concept.industry.retail",
+      "name": "Retailer",
+      "description": "Retailer global business taxonomy node.",
+      "family": "RETAIL_AND_COMMERCE",
+      "aliases": ["store", "shop", "retail business", "commerce"],
+      "typicalNicheIds": ["flow.concept.niche.omnichannel-retail"],
+      "typicalCapabilityIds": [
+        "flow.capability.inventory.availability",
+        "flow.capability.sales.quote-to-cash",
+        "flow.capability.finance.financial-control"
+      ],
+      "typicalRoleIds": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "maturitySignals": ["POS", "stock", "sell-through", "returns"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "industryId": "flow.concept.industry.construction",
+      "name": "Construction Firm",
+      "description": "Construction Firm global business taxonomy node.",
+      "family": "CONSTRUCTION_AND_FIELD_SERVICES",
+      "aliases": ["contractor", "builder", "construction company"],
+      "typicalNicheIds": ["flow.concept.niche.general-contractor"],
+      "typicalCapabilityIds": [
+        "flow.capability.operations.field-operations",
+        "flow.capability.operations.project-delivery",
+        "flow.capability.sales.quote-to-cash",
+        "flow.capability.finance.financial-control"
+      ],
+      "typicalRoleIds": [
+        "flow.role.workspace.operations-lead",
+        "flow.role.occupation.founder"
+      ],
+      "maturitySignals": ["job costing", "site work", "change orders", "crews"],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "industryEdges": [
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-has-niche-marketing-agency",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "HAS_NICHE",
+      "targetId": "flow.concept.niche.marketing-agency",
+      "description": "flow.concept.industry.digital-agency HAS_NICHE flow.concept.niche.marketing-agency.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-requires-capability-lead-management",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.crm.lead-management",
+      "description": "flow.concept.industry.digital-agency COMMONLY_REQUIRES_CAPABILITY flow.capability.crm.lead-management.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-requires-capability-quote-to-cash",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.sales.quote-to-cash",
+      "description": "flow.concept.industry.digital-agency COMMONLY_REQUIRES_CAPABILITY flow.capability.sales.quote-to-cash.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-requires-capability-project-delivery",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.operations.project-delivery",
+      "description": "flow.concept.industry.digital-agency COMMONLY_REQUIRES_CAPABILITY flow.capability.operations.project-delivery.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-requires-capability-financial-control",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.financial-control",
+      "description": "flow.concept.industry.digital-agency COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.financial-control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-uses-role-founder",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.occupation.founder",
+      "description": "flow.concept.industry.digital-agency COMMONLY_USES_ROLE flow.role.occupation.founder.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-uses-role-account-manager",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.job-function.account-manager",
+      "description": "flow.concept.industry.digital-agency COMMONLY_USES_ROLE flow.role.job-function.account-manager.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.digital-agency-commonly-uses-role-operations-lead",
+      "sourceIndustryId": "flow.concept.industry.digital-agency",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.workspace.operations-lead",
+      "description": "flow.concept.industry.digital-agency COMMONLY_USES_ROLE flow.role.workspace.operations-lead.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-has-niche-product-led-saas",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "HAS_NICHE",
+      "targetId": "flow.concept.niche.product-led-saas",
+      "description": "flow.concept.industry.saas HAS_NICHE flow.concept.niche.product-led-saas.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-commonly-requires-capability-lead-management",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.crm.lead-management",
+      "description": "flow.concept.industry.saas COMMONLY_REQUIRES_CAPABILITY flow.capability.crm.lead-management.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-commonly-requires-capability-subscription-billing",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.subscription-billing",
+      "description": "flow.concept.industry.saas COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.subscription-billing.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-commonly-requires-capability-financial-control",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.financial-control",
+      "description": "flow.concept.industry.saas COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.financial-control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-commonly-uses-role-founder",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.occupation.founder",
+      "description": "flow.concept.industry.saas COMMONLY_USES_ROLE flow.role.occupation.founder.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.saas-commonly-uses-role-owner",
+      "sourceIndustryId": "flow.concept.industry.saas",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.decision-authority.owner",
+      "description": "flow.concept.industry.saas COMMONLY_USES_ROLE flow.role.decision-authority.owner.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-has-niche-contract-manufacturing",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "HAS_NICHE",
+      "targetId": "flow.concept.niche.contract-manufacturing",
+      "description": "flow.concept.industry.manufacturing HAS_NICHE flow.concept.niche.contract-manufacturing.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-commonly-requires-capability-production-planning",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.operations.production-planning",
+      "description": "flow.concept.industry.manufacturing COMMONLY_REQUIRES_CAPABILITY flow.capability.operations.production-planning.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-commonly-requires-capability-availability",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.inventory.availability",
+      "description": "flow.concept.industry.manufacturing COMMONLY_REQUIRES_CAPABILITY flow.capability.inventory.availability.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-commonly-requires-capability-financial-control",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.financial-control",
+      "description": "flow.concept.industry.manufacturing COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.financial-control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-commonly-uses-role-operations-lead",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.workspace.operations-lead",
+      "description": "flow.concept.industry.manufacturing COMMONLY_USES_ROLE flow.role.workspace.operations-lead.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.manufacturing-commonly-uses-role-founder",
+      "sourceIndustryId": "flow.concept.industry.manufacturing",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.occupation.founder",
+      "description": "flow.concept.industry.manufacturing COMMONLY_USES_ROLE flow.role.occupation.founder.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-has-niche-omnichannel-retail",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "HAS_NICHE",
+      "targetId": "flow.concept.niche.omnichannel-retail",
+      "description": "flow.concept.industry.retail HAS_NICHE flow.concept.niche.omnichannel-retail.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-commonly-requires-capability-availability",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.inventory.availability",
+      "description": "flow.concept.industry.retail COMMONLY_REQUIRES_CAPABILITY flow.capability.inventory.availability.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-commonly-requires-capability-quote-to-cash",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.sales.quote-to-cash",
+      "description": "flow.concept.industry.retail COMMONLY_REQUIRES_CAPABILITY flow.capability.sales.quote-to-cash.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-commonly-requires-capability-financial-control",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.financial-control",
+      "description": "flow.concept.industry.retail COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.financial-control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-commonly-uses-role-operations-lead",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.workspace.operations-lead",
+      "description": "flow.concept.industry.retail COMMONLY_USES_ROLE flow.role.workspace.operations-lead.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.retail-commonly-uses-role-founder",
+      "sourceIndustryId": "flow.concept.industry.retail",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.occupation.founder",
+      "description": "flow.concept.industry.retail COMMONLY_USES_ROLE flow.role.occupation.founder.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-has-niche-general-contractor",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "HAS_NICHE",
+      "targetId": "flow.concept.niche.general-contractor",
+      "description": "flow.concept.industry.construction HAS_NICHE flow.concept.niche.general-contractor.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-requires-capability-field-operations",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.operations.field-operations",
+      "description": "flow.concept.industry.construction COMMONLY_REQUIRES_CAPABILITY flow.capability.operations.field-operations.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-requires-capability-project-delivery",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.operations.project-delivery",
+      "description": "flow.concept.industry.construction COMMONLY_REQUIRES_CAPABILITY flow.capability.operations.project-delivery.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-requires-capability-quote-to-cash",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.sales.quote-to-cash",
+      "description": "flow.concept.industry.construction COMMONLY_REQUIRES_CAPABILITY flow.capability.sales.quote-to-cash.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-requires-capability-financial-control",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_REQUIRES_CAPABILITY",
+      "targetId": "flow.capability.finance.financial-control",
+      "description": "flow.concept.industry.construction COMMONLY_REQUIRES_CAPABILITY flow.capability.finance.financial-control.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-uses-role-operations-lead",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.workspace.operations-lead",
+      "description": "flow.concept.industry.construction COMMONLY_USES_ROLE flow.role.workspace.operations-lead.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "edgeId": "flow.dependency.taxonomy.construction-commonly-uses-role-founder",
+      "sourceIndustryId": "flow.concept.industry.construction",
+      "edgeType": "COMMONLY_USES_ROLE",
+      "targetId": "flow.role.occupation.founder",
+      "description": "flow.concept.industry.construction COMMONLY_USES_ROLE flow.role.occupation.founder.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "familyMappings": [
+    {
+      "family": "PROFESSIONAL_SERVICES",
+      "industryIds": ["flow.concept.industry.digital-agency"],
+      "description": "PROFESSIONAL_SERVICES industry family mapping.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      }
+    },
+    {
+      "family": "SOFTWARE_AND_PLATFORM",
+      "industryIds": ["flow.concept.industry.saas"],
+      "description": "SOFTWARE_AND_PLATFORM industry family mapping.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      }
+    },
+    {
+      "family": "MANUFACTURING_AND_SUPPLY",
+      "industryIds": ["flow.concept.industry.manufacturing"],
+      "description": "MANUFACTURING_AND_SUPPLY industry family mapping.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      }
+    },
+    {
+      "family": "RETAIL_AND_COMMERCE",
+      "industryIds": ["flow.concept.industry.retail"],
+      "description": "RETAIL_AND_COMMERCE industry family mapping.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      }
+    },
+    {
+      "family": "CONSTRUCTION_AND_FIELD_SERVICES",
+      "industryIds": ["flow.concept.industry.construction"],
+      "description": "CONSTRUCTION_AND_FIELD_SERVICES industry family mapping.",
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      }
+    }
+  ],
+  "niches": [
+    {
+      "nicheId": "flow.concept.niche.marketing-agency",
+      "industryId": "flow.concept.industry.digital-agency",
+      "name": "Marketing Agency",
+      "description": "Marketing Agency niche classification.",
+      "signals": ["campaign", "client retainer", "creative", "media buying"],
+      "excludedSignals": ["factory floor", "inventory counts"],
+      "requiredCapabilityIds": [
+        "flow.capability.crm.lead-management",
+        "flow.capability.operations.project-delivery"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nicheId": "flow.concept.niche.product-led-saas",
+      "industryId": "flow.concept.industry.saas",
+      "name": "Product-Led SaaS",
+      "description": "Product-Led SaaS niche classification.",
+      "signals": ["trial", "activation", "self serve", "MRR"],
+      "excludedSignals": ["site crew", "purchase order inventory"],
+      "requiredCapabilityIds": [
+        "flow.capability.finance.subscription-billing",
+        "flow.capability.crm.lead-management"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nicheId": "flow.concept.niche.contract-manufacturing",
+      "industryId": "flow.concept.industry.manufacturing",
+      "name": "Contract Manufacturing",
+      "description": "Contract Manufacturing niche classification.",
+      "signals": ["work order", "BOM", "production run", "raw material"],
+      "excludedSignals": ["retainer utilization"],
+      "requiredCapabilityIds": [
+        "flow.capability.operations.production-planning",
+        "flow.capability.inventory.availability"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nicheId": "flow.concept.niche.omnichannel-retail",
+      "industryId": "flow.concept.industry.retail",
+      "name": "Omnichannel Retail",
+      "description": "Omnichannel Retail niche classification.",
+      "signals": ["POS", "online store", "stockout", "fulfillment"],
+      "excludedSignals": ["change order", "SaaS activation"],
+      "requiredCapabilityIds": [
+        "flow.capability.inventory.availability",
+        "flow.capability.sales.quote-to-cash"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    },
+    {
+      "nicheId": "flow.concept.niche.general-contractor",
+      "industryId": "flow.concept.industry.construction",
+      "name": "General Contractor",
+      "description": "General Contractor niche classification.",
+      "signals": ["job site", "subcontractor", "change order", "estimate"],
+      "excludedSignals": ["MRR", "media buying"],
+      "requiredCapabilityIds": [
+        "flow.capability.operations.field-operations",
+        "flow.capability.operations.project-delivery"
+      ],
+      "provenance": {
+        "sourceIds": [
+          "BLM-TAXONOMY-V1",
+          "BLM-CORE-ARCHITECTURE-V1",
+          "BLM-MODULE-ARCH-V1",
+          "BLM-KG-REGISTRY-V2",
+          "BLM-EXPERTISE-V5"
+        ],
+        "use": "FLOW_NATIVE",
+        "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+      },
+      "scope": "GLOBAL"
+    }
+  ],
+  "provenance": {
+    "sourceIds": [
+      "BLM-TAXONOMY-V1",
+      "BLM-CORE-ARCHITECTURE-V1",
+      "BLM-MODULE-ARCH-V1",
+      "BLM-KG-REGISTRY-V2",
+      "BLM-EXPERTISE-V5"
+    ],
+    "use": "FLOW_NATIVE",
+    "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+  },
+  "fingerprint": "02abf56eac9d7e8f7798e0ffd830d90064828dc4eafe174239de6238aa05666d"
+}

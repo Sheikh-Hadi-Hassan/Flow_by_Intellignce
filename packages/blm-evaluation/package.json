@@ -1,0 +1,36 @@
+{
+  "name": "@flow/blm-evaluation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "eval:list": "node dist/cli.js list",
+    "eval:validate": "node dist/cli.js validate",
+    "eval:run": "node dist/cli.js run",
+    "eval:compare": "node dist/cli.js compare",
+    "eval:report": "node dist/cli.js report",
+    "eval:gate": "node dist/cli.js gate",
+    "eval:business-benchmark": "node dist/cli.js business-benchmark",
+    "eval:redteam-benchmark": "node dist/cli.js redteam-benchmark",
+    "eval:certify": "node dist/cli.js certify",
+    "eval:b0": "node dist/cli.js b0",
+    "eval:model": "node dist/cli.js model"
+  },
+  "dependencies": {
+    "@flow/blm-contracts": "workspace:*",
+    "@flow/blm-core": "workspace:*",
+    "@flow/blm-provider-openai": "workspace:*",
+    "@flow/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

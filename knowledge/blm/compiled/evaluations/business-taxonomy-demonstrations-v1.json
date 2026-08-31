@@ -1,0 +1,621 @@
+{
+  "suiteId": "business-taxonomy-demonstrations-v1",
+  "demonstrations": [
+    {
+      "id": "digital-agency",
+      "input": "A small digital agency sells client retainers and project work for campaign delivery.",
+      "classification": {
+        "status": "CLASSIFIED",
+        "candidates": [
+          {
+            "candidateId": "candidate:flow.concept.industry.digital-agency",
+            "industryId": "flow.concept.industry.digital-agency",
+            "nicheId": "flow.concept.niche.marketing-agency",
+            "scale": "SMB",
+            "dimensions": {
+              "industry": "Digital Agency",
+              "niche": "Marketing Agency",
+              "scale": "SMB"
+            },
+            "confidence": 0.95,
+            "evidenceIds": ["evidence:2e5ea35a03dd82a6f9db40c5"],
+            "missingInformation": [
+              "customerModel",
+              "revenueModel",
+              "jurisdiction"
+            ],
+            "assumptions": [
+              "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:2e5ea35a03dd82a6f9db40c5",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A small digital agency sells client retainers and project work for campaign delivery.",
+            "supports": ["industry", "scale", "revenueModel", "customerModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": ["customerModel", "revenueModel", "jurisdiction"],
+        "discoveryQuestions": [
+          "Who are the primary customers: businesses, consumers, or both?",
+          "How does the business primarily earn revenue?",
+          "Which jurisdiction or operating region should be considered?"
+        ],
+        "workspaceFactsAcceptedAsTruth": false,
+        "genericPriorAcceptedAsWorkspaceFact": false
+      },
+      "context": {
+        "contextId": "business-taxonomy-context:ee5c4d528c480e9ccde6ad25",
+        "source": "BUSINESS_TAXONOMY_CONTEXT_COMPILER",
+        "classificationStatus": "CLASSIFIED",
+        "selectedCandidate": {
+          "candidateId": "candidate:flow.concept.industry.digital-agency",
+          "industryId": "flow.concept.industry.digital-agency",
+          "nicheId": "flow.concept.niche.marketing-agency",
+          "scale": "SMB",
+          "dimensions": {
+            "industry": "Digital Agency",
+            "niche": "Marketing Agency",
+            "scale": "SMB"
+          },
+          "confidence": 0.95,
+          "evidenceIds": ["evidence:2e5ea35a03dd82a6f9db40c5"],
+          "missingInformation": [
+            "customerModel",
+            "revenueModel",
+            "jurisdiction"
+          ],
+          "assumptions": [
+            "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+          ]
+        },
+        "relevantIndustryIds": ["flow.concept.industry.digital-agency"],
+        "relevantNicheIds": ["flow.concept.niche.marketing-agency"],
+        "relevantCapabilityIds": [
+          "flow.capability.crm.lead-management",
+          "flow.capability.sales.quote-to-cash",
+          "flow.capability.operations.project-delivery",
+          "flow.capability.finance.financial-control"
+        ],
+        "relevantExpertisePackIds": [
+          "flow.concept.expertise-pack.digital-agency"
+        ],
+        "relevantRoleIds": [
+          "flow.role.occupation.founder",
+          "flow.role.job-function.account-manager",
+          "flow.role.workspace.operations-lead"
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:2e5ea35a03dd82a6f9db40c5",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A small digital agency sells client retainers and project work for campaign delivery.",
+            "supports": ["industry", "scale", "revenueModel", "customerModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": ["customerModel", "revenueModel", "jurisdiction"],
+        "contextLimit": {
+          "maxIndustries": 2,
+          "maxCapabilities": 6,
+          "maxExpertisePacks": 2,
+          "maxRoles": 4
+        },
+        "provenance": {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        },
+        "fingerprint": "ee5c4d528c480e9ccde6ad25d354fc4f1f869809db953e621e7da87bb9037eb7"
+      }
+    },
+    {
+      "id": "saas",
+      "input": "A SaaS company has subscription software, trials, MRR, activation, and churn.",
+      "classification": {
+        "status": "CLASSIFIED",
+        "candidates": [
+          {
+            "candidateId": "candidate:flow.concept.industry.saas",
+            "industryId": "flow.concept.industry.saas",
+            "nicheId": "flow.concept.niche.product-led-saas",
+            "dimensions": {
+              "industry": "SaaS Company",
+              "niche": "Product-Led SaaS"
+            },
+            "confidence": 0.95,
+            "evidenceIds": ["evidence:18cb6e5467a255a52671f864"],
+            "missingInformation": [
+              "customerModel",
+              "revenueModel",
+              "jurisdiction",
+              "scale"
+            ],
+            "assumptions": [
+              "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:18cb6e5467a255a52671f864",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A SaaS company has subscription software, trials, MRR, activation, and churn.",
+            "supports": ["industry", "revenueModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "discoveryQuestions": [
+          "Who are the primary customers: businesses, consumers, or both?",
+          "How does the business primarily earn revenue?",
+          "Which jurisdiction or operating region should be considered?"
+        ],
+        "workspaceFactsAcceptedAsTruth": false,
+        "genericPriorAcceptedAsWorkspaceFact": false
+      },
+      "context": {
+        "contextId": "business-taxonomy-context:d5686553130f3ee909428247",
+        "source": "BUSINESS_TAXONOMY_CONTEXT_COMPILER",
+        "classificationStatus": "CLASSIFIED",
+        "selectedCandidate": {
+          "candidateId": "candidate:flow.concept.industry.saas",
+          "industryId": "flow.concept.industry.saas",
+          "nicheId": "flow.concept.niche.product-led-saas",
+          "dimensions": {
+            "industry": "SaaS Company",
+            "niche": "Product-Led SaaS"
+          },
+          "confidence": 0.95,
+          "evidenceIds": ["evidence:18cb6e5467a255a52671f864"],
+          "missingInformation": [
+            "customerModel",
+            "revenueModel",
+            "jurisdiction",
+            "scale"
+          ],
+          "assumptions": [
+            "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+          ]
+        },
+        "relevantIndustryIds": ["flow.concept.industry.saas"],
+        "relevantNicheIds": ["flow.concept.niche.product-led-saas"],
+        "relevantCapabilityIds": [
+          "flow.capability.crm.lead-management",
+          "flow.capability.finance.subscription-billing",
+          "flow.capability.finance.financial-control"
+        ],
+        "relevantExpertisePackIds": ["flow.concept.expertise-pack.saas"],
+        "relevantRoleIds": [
+          "flow.role.occupation.founder",
+          "flow.role.decision-authority.owner"
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:18cb6e5467a255a52671f864",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A SaaS company has subscription software, trials, MRR, activation, and churn.",
+            "supports": ["industry", "revenueModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "contextLimit": {
+          "maxIndustries": 2,
+          "maxCapabilities": 6,
+          "maxExpertisePacks": 2,
+          "maxRoles": 4
+        },
+        "provenance": {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        },
+        "fingerprint": "d5686553130f3ee9094282472d502cd532b47600d4c75813eca77dc0c843c7d7"
+      }
+    },
+    {
+      "id": "manufacturer",
+      "input": "A manufacturer runs production work orders, raw material inventory, BOMs, and capacity planning.",
+      "classification": {
+        "status": "CLASSIFIED",
+        "candidates": [
+          {
+            "candidateId": "candidate:flow.concept.industry.manufacturing",
+            "industryId": "flow.concept.industry.manufacturing",
+            "nicheId": "flow.concept.niche.contract-manufacturing",
+            "dimensions": {
+              "industry": "Manufacturer",
+              "niche": "Contract Manufacturing"
+            },
+            "confidence": 0.95,
+            "evidenceIds": ["evidence:14a61c0e839477808f09a9c7"],
+            "missingInformation": [
+              "customerModel",
+              "revenueModel",
+              "jurisdiction",
+              "scale"
+            ],
+            "assumptions": [
+              "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:14a61c0e839477808f09a9c7",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A manufacturer runs production work orders, raw material inventory, BOMs, and capacity planning.",
+            "supports": ["industry", "fulfilmentModel", "inventoryModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "discoveryQuestions": [
+          "Who are the primary customers: businesses, consumers, or both?",
+          "How does the business primarily earn revenue?",
+          "Which jurisdiction or operating region should be considered?"
+        ],
+        "workspaceFactsAcceptedAsTruth": false,
+        "genericPriorAcceptedAsWorkspaceFact": false
+      },
+      "context": {
+        "contextId": "business-taxonomy-context:b6683fec11e46ca7f1456118",
+        "source": "BUSINESS_TAXONOMY_CONTEXT_COMPILER",
+        "classificationStatus": "CLASSIFIED",
+        "selectedCandidate": {
+          "candidateId": "candidate:flow.concept.industry.manufacturing",
+          "industryId": "flow.concept.industry.manufacturing",
+          "nicheId": "flow.concept.niche.contract-manufacturing",
+          "dimensions": {
+            "industry": "Manufacturer",
+            "niche": "Contract Manufacturing"
+          },
+          "confidence": 0.95,
+          "evidenceIds": ["evidence:14a61c0e839477808f09a9c7"],
+          "missingInformation": [
+            "customerModel",
+            "revenueModel",
+            "jurisdiction",
+            "scale"
+          ],
+          "assumptions": [
+            "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+          ]
+        },
+        "relevantIndustryIds": ["flow.concept.industry.manufacturing"],
+        "relevantNicheIds": ["flow.concept.niche.contract-manufacturing"],
+        "relevantCapabilityIds": [
+          "flow.capability.operations.production-planning",
+          "flow.capability.inventory.availability",
+          "flow.capability.finance.financial-control"
+        ],
+        "relevantExpertisePackIds": [
+          "flow.concept.expertise-pack.manufacturing"
+        ],
+        "relevantRoleIds": [
+          "flow.role.workspace.operations-lead",
+          "flow.role.occupation.founder"
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:14a61c0e839477808f09a9c7",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A manufacturer runs production work orders, raw material inventory, BOMs, and capacity planning.",
+            "supports": ["industry", "fulfilmentModel", "inventoryModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "contextLimit": {
+          "maxIndustries": 2,
+          "maxCapabilities": 6,
+          "maxExpertisePacks": 2,
+          "maxRoles": 4
+        },
+        "provenance": {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        },
+        "fingerprint": "b6683fec11e46ca7f145611847eeb2eaedc97646d377282f15d3b9cfe4d61145"
+      }
+    },
+    {
+      "id": "retailer",
+      "input": "A retailer operates stores, POS, online stock, fulfillment, and returns.",
+      "classification": {
+        "status": "CLASSIFIED",
+        "candidates": [
+          {
+            "candidateId": "candidate:flow.concept.industry.retail",
+            "industryId": "flow.concept.industry.retail",
+            "nicheId": "flow.concept.niche.omnichannel-retail",
+            "dimensions": {
+              "industry": "Retailer",
+              "niche": "Omnichannel Retail"
+            },
+            "confidence": 0.95,
+            "evidenceIds": ["evidence:06a04106c14c3af9158a93ea"],
+            "missingInformation": [
+              "customerModel",
+              "revenueModel",
+              "jurisdiction",
+              "scale"
+            ],
+            "assumptions": [
+              "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:06a04106c14c3af9158a93ea",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A retailer operates stores, POS, online stock, fulfillment, and returns.",
+            "supports": ["industry", "fulfilmentModel", "inventoryModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "discoveryQuestions": [
+          "Who are the primary customers: businesses, consumers, or both?",
+          "How does the business primarily earn revenue?",
+          "Which jurisdiction or operating region should be considered?"
+        ],
+        "workspaceFactsAcceptedAsTruth": false,
+        "genericPriorAcceptedAsWorkspaceFact": false
+      },
+      "context": {
+        "contextId": "business-taxonomy-context:d94c4773319e7a2e8dcd60aa",
+        "source": "BUSINESS_TAXONOMY_CONTEXT_COMPILER",
+        "classificationStatus": "CLASSIFIED",
+        "selectedCandidate": {
+          "candidateId": "candidate:flow.concept.industry.retail",
+          "industryId": "flow.concept.industry.retail",
+          "nicheId": "flow.concept.niche.omnichannel-retail",
+          "dimensions": {
+            "industry": "Retailer",
+            "niche": "Omnichannel Retail"
+          },
+          "confidence": 0.95,
+          "evidenceIds": ["evidence:06a04106c14c3af9158a93ea"],
+          "missingInformation": [
+            "customerModel",
+            "revenueModel",
+            "jurisdiction",
+            "scale"
+          ],
+          "assumptions": [
+            "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+          ]
+        },
+        "relevantIndustryIds": ["flow.concept.industry.retail"],
+        "relevantNicheIds": ["flow.concept.niche.omnichannel-retail"],
+        "relevantCapabilityIds": [
+          "flow.capability.inventory.availability",
+          "flow.capability.sales.quote-to-cash",
+          "flow.capability.finance.financial-control"
+        ],
+        "relevantExpertisePackIds": ["flow.concept.expertise-pack.retail"],
+        "relevantRoleIds": [
+          "flow.role.workspace.operations-lead",
+          "flow.role.occupation.founder"
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:06a04106c14c3af9158a93ea",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A retailer operates stores, POS, online stock, fulfillment, and returns.",
+            "supports": ["industry", "fulfilmentModel", "inventoryModel"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "contextLimit": {
+          "maxIndustries": 2,
+          "maxCapabilities": 6,
+          "maxExpertisePacks": 2,
+          "maxRoles": 4
+        },
+        "provenance": {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        },
+        "fingerprint": "d94c4773319e7a2e8dcd60aaac284e1e3f47b1daa8a0573642c338798c92fe40"
+      }
+    },
+    {
+      "id": "construction",
+      "input": "A construction firm manages job sites, subcontractors, crews, estimates, and change orders.",
+      "classification": {
+        "status": "CLASSIFIED",
+        "candidates": [
+          {
+            "candidateId": "candidate:flow.concept.industry.construction",
+            "industryId": "flow.concept.industry.construction",
+            "nicheId": "flow.concept.niche.general-contractor",
+            "dimensions": {
+              "industry": "Construction Firm",
+              "niche": "General Contractor"
+            },
+            "confidence": 0.95,
+            "evidenceIds": ["evidence:04982edf35132c46acfd5281"],
+            "missingInformation": [
+              "customerModel",
+              "revenueModel",
+              "jurisdiction",
+              "scale"
+            ],
+            "assumptions": [
+              "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:04982edf35132c46acfd5281",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A construction firm manages job sites, subcontractors, crews, estimates, and change orders.",
+            "supports": ["industry"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "discoveryQuestions": [
+          "Who are the primary customers: businesses, consumers, or both?",
+          "How does the business primarily earn revenue?",
+          "Which jurisdiction or operating region should be considered?"
+        ],
+        "workspaceFactsAcceptedAsTruth": false,
+        "genericPriorAcceptedAsWorkspaceFact": false
+      },
+      "context": {
+        "contextId": "business-taxonomy-context:d41b7e37833cfe0d19db1bf0",
+        "source": "BUSINESS_TAXONOMY_CONTEXT_COMPILER",
+        "classificationStatus": "CLASSIFIED",
+        "selectedCandidate": {
+          "candidateId": "candidate:flow.concept.industry.construction",
+          "industryId": "flow.concept.industry.construction",
+          "nicheId": "flow.concept.niche.general-contractor",
+          "dimensions": {
+            "industry": "Construction Firm",
+            "niche": "General Contractor"
+          },
+          "confidence": 0.95,
+          "evidenceIds": ["evidence:04982edf35132c46acfd5281"],
+          "missingInformation": [
+            "customerModel",
+            "revenueModel",
+            "jurisdiction",
+            "scale"
+          ],
+          "assumptions": [
+            "Industry classification is a candidate until confirmed with workspace evidence or user answer."
+          ]
+        },
+        "relevantIndustryIds": ["flow.concept.industry.construction"],
+        "relevantNicheIds": ["flow.concept.niche.general-contractor"],
+        "relevantCapabilityIds": [
+          "flow.capability.operations.field-operations",
+          "flow.capability.operations.project-delivery",
+          "flow.capability.sales.quote-to-cash",
+          "flow.capability.finance.financial-control"
+        ],
+        "relevantExpertisePackIds": [
+          "flow.concept.expertise-pack.construction"
+        ],
+        "relevantRoleIds": [
+          "flow.role.workspace.operations-lead",
+          "flow.role.occupation.founder"
+        ],
+        "evidence": [
+          {
+            "evidenceId": "evidence:04982edf35132c46acfd5281",
+            "source": "BUSINESS_DESCRIPTION",
+            "text": "A construction firm manages job sites, subcontractors, crews, estimates, and change orders.",
+            "supports": ["industry"],
+            "confidence": 0.55,
+            "workspaceScoped": false
+          }
+        ],
+        "missingInformation": [
+          "customerModel",
+          "revenueModel",
+          "jurisdiction",
+          "scale"
+        ],
+        "contextLimit": {
+          "maxIndustries": 2,
+          "maxCapabilities": 6,
+          "maxExpertisePacks": 2,
+          "maxRoles": 4
+        },
+        "provenance": {
+          "sourceIds": [
+            "BLM-TAXONOMY-V1",
+            "BLM-CORE-ARCHITECTURE-V1",
+            "BLM-MODULE-ARCH-V1",
+            "BLM-KG-REGISTRY-V2",
+            "BLM-EXPERTISE-V5"
+          ],
+          "use": "FLOW_NATIVE",
+          "notes": "Governed Flow BLM Task 007.2 foundation compiled from repository source manifest and existing curated BLM outputs; generic knowledge is not workspace truth."
+        },
+        "fingerprint": "d41b7e37833cfe0d19db1bf098345c5071f403baa8810e8a1f04509f304d4d06"
+      }
+    }
+  ]
+}

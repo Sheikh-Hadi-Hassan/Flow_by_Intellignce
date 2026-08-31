@@ -133,10 +133,11 @@ Pre-commit scan: no `sb_secret_`, JWTs, database URLs, or private keys in staged
 | `ffd3130` | feat(intelligence): add governed Ask Flow workspace experience |
 | `4b12c8a` | test(experience): verify responsive authenticated product journey |
 | `97c9271` | docs(experience): record product integration closure |
+| `d6c5ded` | docs(experience): record final commit hashes in verification report |
 
 ## 21. Push result
 
-_To be recorded after push._
+Pushed to `origin/feat/product-experience-integration` at `d6c5ded` (2026-09-01).
 
 ## 22. Remaining blockers
 

@@ -161,6 +161,43 @@ export interface ProjectDetailRecord {
   readonly assignments: readonly ProjectAssignmentRecord[];
 }
 
+export interface ResourceProfileRecord {
+  readonly id: string;
+  readonly displayName: string;
+  readonly resourceType: string;
+  readonly roleKeys: readonly string[];
+  readonly timezone: string;
+  readonly status: string;
+}
+
+export interface ResourcePlanRecord {
+  readonly id: string;
+  readonly projectId: string;
+  readonly status: string;
+  readonly recommendations: readonly {
+    readonly id: string;
+    readonly taskId: string;
+    readonly roleKey: string;
+    readonly resourceProfileId?: string;
+    readonly rank: number;
+    readonly confidenceBps: number;
+    readonly evidence: Record<string, unknown>;
+    readonly excludedReason?: string;
+  }[];
+  readonly assignmentDrafts: readonly {
+    readonly id: string;
+    readonly taskId: string;
+    readonly roleKey: string;
+    readonly resourceProfileId: string;
+    readonly allocationMinutes: number;
+  }[];
+  readonly versions: readonly {
+    readonly id: string;
+    readonly versionNumber: number;
+    readonly publishedAt: string;
+  }[];
+}
+
 export interface OpportunityBundle {
   readonly opportunity: OpportunityRecord;
   readonly facts: readonly FactRecord[];
@@ -448,5 +485,48 @@ export function createCommercialApi(input: {
       request<{ guards: readonly { action: string; outcome: string }[] }>(
         `/projects/${projectId}/audit`,
       ),
+    listResources: () => request<ResourceProfileRecord[]>("/resources"),
+    getResourcePlan: (projectId: string) =>
+      request<ResourcePlanRecord>(`/projects/${projectId}/resource-plan`),
+    generateResourceRecommendations: (projectId: string) =>
+      request<{ plan: ResourcePlanRecord }>(
+        `/projects/${projectId}/resource-plan/recommendations`,
+        { method: "POST" },
+      ),
+    upsertResourceAssignment: (
+      projectId: string,
+      body: {
+        taskId: string;
+        roleKey: string;
+        resourceProfileId: string;
+        allocationMinutes: number;
+      },
+    ) =>
+      request(`/projects/${projectId}/resource-plan/assignments`, {
+        method: "POST",
+        body,
+      }),
+    submitResourcePlan: (projectId: string) =>
+      request<ResourcePlanRecord>(`/projects/${projectId}/resource-plan/submit`, {
+        method: "POST",
+      }),
+    approveResourcePlan: (projectId: string) =>
+      request<ResourcePlanRecord>(`/projects/${projectId}/resource-plan/approve`, {
+        method: "POST",
+      }),
+    publishResourcePlan: (projectId: string) =>
+      request(`/projects/${projectId}/resource-plan/publish`, {
+        method: "POST",
+        idempotencyKey: `resource-publish-${projectId}`,
+      }),
+    getMyWork: () =>
+      request<
+        readonly {
+          projectId: string;
+          taskId: string;
+          roleKey: string;
+          allocationMinutes: number;
+        }[]
+      >("/my-work"),
   };
 }

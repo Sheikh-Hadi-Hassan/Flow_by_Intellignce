@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 import { PostgresWorkspacePhase1Repository } from "./workspace-phase1-persistence.js";
 
 class FakeSqlExecutor implements SqlExecutor {

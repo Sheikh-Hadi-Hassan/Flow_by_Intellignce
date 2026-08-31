@@ -8,7 +8,7 @@ import type {
   WorkspaceRecord,
 } from "./index.js";
 import type { InMemoryIdentityAuthorizationRepository } from "./index.js";
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 
 export interface FlowIdentityRepository extends IdentityAuthorizationRepository {
   findWorkspaceBySlug(slug: string): Promise<WorkspaceRecord | undefined>;

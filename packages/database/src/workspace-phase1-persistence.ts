@@ -1,4 +1,4 @@
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 import type {
   UserProfileRecord,
   WorkspaceOnboardingState,

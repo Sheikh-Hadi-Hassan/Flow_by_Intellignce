@@ -3,10 +3,12 @@ import {
   InMemoryCommercialRepository,
   InMemoryProjectEngineRepository,
   InMemoryProposalContractRepository,
+  InMemoryResourceCapacityRepository,
   InMemoryWorkspacePhase1Repository,
   PostgresCommercialRepository,
   PostgresProjectEngineRepository,
   PostgresProposalContractRepository,
+  PostgresResourceCapacityRepository,
   PostgresFlowIdentityRepository,
   PostgresWorkspacePhase1Repository,
   asFlowIdentityRepository,
@@ -16,6 +18,7 @@ import {
   type FlowIdentityRepository,
   type ProjectEngineRepository,
   type ProposalContractRepository,
+  type ResourceCapacityRepository,
   type WorkspacePhase1Repository,
 } from "@flow/database";
 import {
@@ -31,6 +34,7 @@ export const WORKSPACE_PHASE1_REPOSITORY = Symbol(
 export const COMMERCIAL_REPOSITORY = Symbol("COMMERCIAL_REPOSITORY");
 export const PROPOSAL_CONTRACT_REPOSITORY = Symbol("PROPOSAL_CONTRACT_REPOSITORY");
 export const PROJECT_ENGINE_REPOSITORY = Symbol("PROJECT_ENGINE_REPOSITORY");
+export const RESOURCE_CAPACITY_REPOSITORY = Symbol("RESOURCE_CAPACITY_REPOSITORY");
 
 export interface PersistenceStack {
   readonly identityRepository: FlowIdentityRepository;
@@ -38,6 +42,7 @@ export interface PersistenceStack {
   readonly commercialRepository: CommercialRepository;
   readonly proposalContractRepository: ProposalContractRepository;
   readonly projectEngineRepository: ProjectEngineRepository;
+  readonly resourceCapacityRepository: ResourceCapacityRepository;
   readonly dispose?: () => Promise<void>;
 }
 
@@ -61,6 +66,7 @@ export function createPersistenceStack(): PersistenceStack {
       commercialRepository: new InMemoryCommercialRepository(),
       proposalContractRepository: new InMemoryProposalContractRepository(),
       projectEngineRepository: new InMemoryProjectEngineRepository(),
+      resourceCapacityRepository: new InMemoryResourceCapacityRepository(),
     };
   }
 
@@ -76,6 +82,7 @@ export function createPersistenceStack(): PersistenceStack {
     commercialRepository: new PostgresCommercialRepository(sql),
     proposalContractRepository: new PostgresProposalContractRepository(sql),
     projectEngineRepository: new PostgresProjectEngineRepository(sql),
+    resourceCapacityRepository: new PostgresResourceCapacityRepository(sql),
     dispose: () => pool.end(),
   };
 }

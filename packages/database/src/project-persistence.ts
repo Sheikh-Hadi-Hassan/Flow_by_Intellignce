@@ -1,5 +1,5 @@
 import type { ProjectStatus } from "@flow/commercial";
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 
 export interface ProjectRecord {
   readonly id: string;

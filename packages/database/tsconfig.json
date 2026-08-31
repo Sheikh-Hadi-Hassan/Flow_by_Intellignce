@@ -7,10 +7,12 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": ["src/**/*.ts"],
+  "exclude": [
+    "src/business-persistence.ts",
+    "src/business-persistence.test.ts"
+  ],
   "references": [
     { "path": "../contracts" },
-    { "path": "../blm-contracts" },
-    { "path": "../blm-core" },
     { "path": "../commercial" }
   ]
 }

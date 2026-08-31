@@ -6,7 +6,7 @@ import type {
   QuestionnaireLifecycle,
   ScopeCalculation,
 } from "@flow/commercial";
-import type { SqlExecutor } from "./business-persistence.js";
+import type { SqlExecutor } from "./sql-executor.js";
 
 function pgCellString(value: unknown): string {
   if (value instanceof Date) return value.toISOString();

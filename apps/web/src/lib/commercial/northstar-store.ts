@@ -5,6 +5,7 @@ import {
   FixtureDiscoveryExtractor,
   generateProjectPlan,
   nextProjectStatus,
+  nextResourcePlanStatus,
   scopeWritesFromVerifiedFact,
   validateQuestionnaireResponse,
 } from "@flow/commercial";
@@ -26,6 +27,8 @@ import type {
   ProjectDetailRecord,
   ProposalVersionRecord,
   QuestionnaireVersion,
+  ResourcePlanRecord,
+  ResourceProfileRecord,
 } from "./api";
 
 const extractor = new FixtureDiscoveryExtractor();
@@ -49,6 +52,8 @@ interface DemoState {
   proposals: ProposalVersionRecord[];
   contracts: ContractVersionRecord[];
   project: ProjectDetailRecord | null;
+  team: ResourceProfileRecord[];
+  resourcePlan: ResourcePlanRecord | null;
   guards: OpportunityBundle["guards"][number][];
   extractionRuns: NonNullable<OpportunityBundle["extractionRuns"]>;
 }
@@ -231,6 +236,8 @@ function seed(): DemoState {
     proposals: [acceptedProposal],
     contracts: [executedContract],
     project: null,
+    team: northstarTeamSeed(),
+    resourcePlan: null,
     guards: [
       {
         id: "ns-guard-contract",
@@ -263,6 +270,8 @@ function load(): DemoState {
       proposals: parsed.proposals ?? base.proposals,
       contracts: parsed.contracts ?? base.contracts,
       project: parsed.project ?? base.project,
+      team: parsed.team ?? base.team,
+      resourcePlan: parsed.resourcePlan ?? base.resourcePlan,
       guards: parsed.guards ?? base.guards,
     };
   } catch {
@@ -793,7 +802,273 @@ export function createNorthstarCommercialApi() {
         guards: state.guards.filter((row) => row.action.startsWith("project.")),
       };
     },
+    listResources: async () => load().team,
+    getResourcePlan: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      if (!state.resourcePlan) {
+        state.resourcePlan = {
+          id: "ns-rp-1",
+          projectId,
+          status: "draft",
+          recommendations: [],
+          assignmentDrafts: [],
+          versions: [],
+        };
+        save(state);
+      }
+      return state.resourcePlan;
+    },
+    generateResourceRecommendations: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const strategistTask = state.project.tasks[0];
+      const strategist = state.team.find((r) => r.roleKeys.includes("strategist"));
+      const designer = state.team.find((r) => r.roleKeys.includes("designer"));
+      const contractor = state.team.find((r) => r.resourceType === "contractor");
+      const recommendations: ResourcePlanRecord["recommendations"] = [
+        {
+          id: "ns-rr-1",
+          taskId: strategistTask?.id ?? "ns-task-1",
+          roleKey: "strategist",
+          ...(strategist ? { resourceProfileId: strategist.id } : {}),
+          rank: 1,
+          confidenceBps: 8200,
+          evidence: {
+            factors: [
+              { key: "role", label: "Required role", included: true },
+              { key: "capacity", label: "Available capacity", included: true },
+            ],
+          },
+        },
+        {
+          id: "ns-rr-2",
+          taskId: strategistTask?.id ?? "ns-task-1",
+          roleKey: "designer",
+          ...(designer ? { resourceProfileId: designer.id } : {}),
+          rank: 0,
+          confidenceBps: 0,
+          evidence: { factors: [{ key: "skills", included: false }] },
+          excludedReason: "skill_gap",
+        },
+        {
+          id: "ns-rr-3",
+          taskId: strategistTask?.id ?? "ns-task-1",
+          roleKey: "developer",
+          ...(contractor ? { resourceProfileId: contractor.id } : {}),
+          rank: 1,
+          confidenceBps: 4500,
+          evidence: {
+            factors: [
+              { key: "over_allocation", label: "Over-allocation warning", included: true },
+            ],
+          },
+        },
+      ];
+      state.resourcePlan = {
+        id: "ns-rp-1",
+        projectId,
+        status: nextResourcePlanStatus("draft", "GENERATE_RECOMMENDATIONS", {
+          projectActive: true,
+          hasRequirements: true,
+          hasDraftAssignments: false,
+          roleCoverageComplete: false,
+          guardAllowsPublish: true,
+          actorCanManage: true,
+          actorCanApprove: true,
+          actorCanPublish: true,
+        }),
+        recommendations,
+        assignmentDrafts: state.resourcePlan?.assignmentDrafts ?? [],
+        versions: state.resourcePlan?.versions ?? [],
+      };
+      save(state);
+      return { plan: state.resourcePlan };
+    },
+    upsertResourceAssignment: async (
+      projectId: string,
+      body: {
+        taskId: string;
+        roleKey: string;
+        resourceProfileId: string;
+        allocationMinutes: number;
+      },
+    ) => {
+      const state = load();
+      const plan = state.resourcePlan;
+      if (!plan || plan.projectId !== projectId) {
+        throw new Error("Resource plan not found.");
+      }
+      const draft = {
+        id: crypto.randomUUID(),
+        taskId: body.taskId,
+        roleKey: body.roleKey,
+        resourceProfileId: body.resourceProfileId,
+        allocationMinutes: body.allocationMinutes,
+      };
+      state.resourcePlan = {
+        ...plan,
+        assignmentDrafts: [
+          ...plan.assignmentDrafts.filter(
+            (d) => !(d.taskId === body.taskId && d.roleKey === body.roleKey),
+          ),
+          draft,
+        ],
+      };
+      save(state);
+      return draft;
+    },
+    submitResourcePlan: async (projectId: string) => {
+      void projectId;
+      const state = load();
+      if (!state.resourcePlan) throw new Error("Resource plan not found.");
+      state.resourcePlan = {
+        ...state.resourcePlan,
+        status: nextResourcePlanStatus(
+          state.resourcePlan.status as "recommendations_ready",
+          "SUBMIT_FOR_REVIEW",
+          {
+            projectActive: true,
+            hasRequirements: true,
+            hasDraftAssignments: state.resourcePlan.assignmentDrafts.length > 0,
+            roleCoverageComplete: false,
+            guardAllowsPublish: true,
+            actorCanManage: true,
+            actorCanApprove: true,
+            actorCanPublish: true,
+          },
+        ),
+      };
+      save(state);
+      return state.resourcePlan;
+    },
+    approveResourcePlan: async (projectId: string) => {
+      void projectId;
+      const state = load();
+      if (!state.resourcePlan) throw new Error("Resource plan not found.");
+      state.resourcePlan = {
+        ...state.resourcePlan,
+        status: nextResourcePlanStatus(
+          state.resourcePlan.status as "founder_review",
+          "APPROVE",
+          {
+            projectActive: true,
+            hasRequirements: true,
+            hasDraftAssignments: true,
+            roleCoverageComplete: true,
+            guardAllowsPublish: true,
+            actorCanManage: true,
+            actorCanApprove: true,
+            actorCanPublish: true,
+          },
+        ),
+      };
+      save(state);
+      return state.resourcePlan;
+    },
+    publishResourcePlan: async (projectId: string) => {
+      void projectId;
+      const state = load();
+      if (!state.resourcePlan) throw new Error("Resource plan not found.");
+      const version = {
+        id: "ns-rpv-1",
+        versionNumber: 1,
+        publishedAt: new Date().toISOString(),
+      };
+      state.resourcePlan = {
+        ...state.resourcePlan,
+        status: "published",
+        versions: [version],
+      };
+      save(state);
+      return version;
+    },
+    getMyWork: async () => {
+      const state = load();
+      if (!state.resourcePlan || state.resourcePlan.status !== "published") {
+        return [];
+      }
+      return state.resourcePlan.assignmentDrafts.map((d) => ({
+        projectId: state.resourcePlan!.projectId,
+        taskId: d.taskId,
+        roleKey: d.roleKey,
+        allocationMinutes: d.allocationMinutes,
+      }));
+    },
   };
+}
+
+function northstarTeamSeed(): ResourceProfileRecord[] {
+  return [
+    {
+      id: "ns-res-maya",
+      displayName: "Maya Chen (Founder)",
+      resourceType: "employee",
+      roleKeys: ["founder", "strategist"],
+      timezone: "America/Los_Angeles",
+      status: "active",
+    },
+    {
+      id: "ns-res-ops",
+      displayName: "Jordan Ellis (Operations)",
+      resourceType: "employee",
+      roleKeys: ["project_manager", "strategist"],
+      timezone: "America/New_York",
+      status: "active",
+    },
+    {
+      id: "ns-res-strategist",
+      displayName: "Avery Brooks (Brand Strategist)",
+      resourceType: "employee",
+      roleKeys: ["strategist"],
+      timezone: "America/Chicago",
+      status: "active",
+    },
+    {
+      id: "ns-res-designer",
+      displayName: "Sam Rivera (Designer)",
+      resourceType: "employee",
+      roleKeys: ["designer"],
+      timezone: "America/Los_Angeles",
+      status: "active",
+    },
+    {
+      id: "ns-res-copy",
+      displayName: "Taylor Kim (Copywriter)",
+      resourceType: "employee",
+      roleKeys: ["copywriter"],
+      timezone: "America/Denver",
+      status: "active",
+    },
+    {
+      id: "ns-res-media",
+      displayName: "Chris Park (Paid Media)",
+      resourceType: "employee",
+      roleKeys: ["paid_media"],
+      timezone: "America/New_York",
+      status: "active",
+    },
+    {
+      id: "ns-res-dev",
+      displayName: "Riley Morgan (Developer)",
+      resourceType: "employee",
+      roleKeys: ["developer"],
+      timezone: "Europe/London",
+      status: "active",
+    },
+    {
+      id: "ns-res-contractor",
+      displayName: "Alex Vendor (Contractor)",
+      resourceType: "contractor",
+      roleKeys: ["developer"],
+      timezone: "Asia/Singapore",
+      status: "active",
+    },
+  ];
 }
 
 function buildNorthstarProject(

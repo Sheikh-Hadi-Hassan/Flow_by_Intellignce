@@ -19,6 +19,8 @@ export default [
       "packages/commercial/src/**/*.js",
       "packages/commercial/src/**/*.d.ts",
       "packages/commercial/src/**/*.map",
+      "packages/database/src/business-persistence.ts",
+      "packages/database/src/business-persistence.test.ts",
     ],
   },
   js.configs.recommended,
@@ -37,7 +39,8 @@ export default [
     },
   },
   {
-    files: ["**/*.config.*", "**/next.config.ts"],
+    files: ["**/*.config.*", "**/next.config.ts", "**/vitest.config.ts"],
+    ...tseslint.configs.disableTypeChecked,
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
     },

@@ -92,28 +92,54 @@ export function saveTheme(theme: ThemeMode): void {
   }
 }
 
+/**
+ * Returns a readable monochrome foreground for an arbitrary accent.
+ * We intentionally do not derive another hue — only black or white.
+ */
+export function getAccentForeground(accent: string): "#050505" | "#ffffff" {
+  const safe = parseAccent(accent);
+  const r = Number.parseInt(safe.slice(1, 3), 16) / 255;
+  const g = Number.parseInt(safe.slice(3, 5), 16) / 255;
+  const b = Number.parseInt(safe.slice(5, 7), 16) / 255;
+
+  const linear = (channel: number) =>
+    channel <= 0.04045
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4;
+
+  const luminance =
+    0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+
+  return luminance > 0.42 ? "#050505" : "#ffffff";
+}
+
 export function applyAccent(accent: string): void {
   if (typeof document === "undefined") return;
   const safe = parseAccent(accent);
   const root = document.documentElement;
+
   root.style.setProperty("--color-brand", safe);
-  root.style.setProperty("--color-brand-hover", safe);
+  root.style.setProperty("--color-brand-foreground", getAccentForeground(safe));
+  root.style.setProperty(
+    "--color-brand-hover",
+    `color-mix(in srgb, ${safe} 88%, var(--color-text-primary))`,
+  );
   root.style.setProperty("--color-brand-strong", safe);
   root.style.setProperty("--color-focus", safe);
   root.style.setProperty(
     "--color-brand-subtle",
-    `color-mix(in srgb, ${safe} 14%, transparent)`,
+    `color-mix(in srgb, ${safe} 12%, transparent)`,
   );
   root.style.setProperty(
     "--color-brand-surface",
-    `color-mix(in srgb, ${safe} 10%, var(--color-bg-surface))`,
+    `color-mix(in srgb, ${safe} 8%, var(--color-bg-surface))`,
   );
   root.style.setProperty(
     "--color-brand-surface-hover",
-    `color-mix(in srgb, ${safe} 16%, var(--color-bg-surface))`,
+    `color-mix(in srgb, ${safe} 14%, var(--color-bg-surface))`,
   );
   root.style.setProperty(
     "--color-brand-border",
-    `color-mix(in srgb, ${safe} 38%, var(--color-border))`,
+    `color-mix(in srgb, ${safe} 34%, var(--color-border))`,
   );
 }

@@ -8,7 +8,10 @@ export type JourneyStatus =
   | "approved"
   | "proposal_in_progress"
   | "proposal_accepted"
-  | "contract_executed";
+  | "contract_executed"
+  | "project_in_progress"
+  | "project_published"
+  | "project_active";
 
 export type QuestionnaireLifecycle = "draft" | "published" | "archived";
 

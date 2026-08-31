@@ -10,3 +10,5 @@ export * from "./proposal-lifecycle.js";
 export * from "./contract-lifecycle.js";
 export * from "./proposal-pricing.js";
 export * from "./proposal-generation.js";
+export * from "./project-lifecycle.js";
+export * from "./project-plan-generation.js";

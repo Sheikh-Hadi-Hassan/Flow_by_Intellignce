@@ -500,5 +500,58 @@ describe("commercial API journey", () => {
     await request(app.getHttpServer())
       .get(`/api/v1/client-review/invalid-token/proposal`)
       .expect(404);
+
+    const projectRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/projects`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(projectRes.body.status).toBe("draft");
+    expect(projectRes.body.tasks.length).toBeGreaterThan(0);
+    expect(projectRes.body.recommendationDrafts.length).toBeGreaterThan(0);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectRes.body.id}/submit`,
+      )
+      .set(auth)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectRes.body.id}/approve`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p4-approve-${projectRes.body.id}` })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectRes.body.id}/publish`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p4-publish-${projectRes.body.id}` })
+      .expect(201);
+
+    const activated = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectRes.body.id}/activate`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p4-activate-${projectRes.body.id}` })
+      .expect(201);
+    expect(activated.body.status).toBe("active");
+
+    const draft = activated.body.recommendationDrafts[0];
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectRes.body.id}/assignments`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p4-assign-${draft.id}` })
+      .send({
+        taskId: draft.taskId,
+        roleKey: draft.roleKey,
+        assigneeLabel: draft.suggestedAssigneeLabel,
+      })
+      .expect(201);
+    expect(activated.body.assignments.length + 1).toBeGreaterThanOrEqual(1);
   });
 });

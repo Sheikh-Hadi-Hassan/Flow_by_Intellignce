@@ -5,6 +5,11 @@ import {
   deleteProvisionedUser,
   provisionCommercialWorkspace,
 } from "./helpers/commercial-workspace";
+import {
+  handleBlockingRisks,
+  verifyAllDraftFacts,
+  waitForCommercialReady,
+} from "./helpers/commercial-journey";
 import { prepareCommercialApiProxy, signInThroughUi } from "./helpers/supabase-auth";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -71,43 +76,6 @@ async function assertNoHorizontalOverflow(page: Page) {
     return root.scrollWidth > root.clientWidth + 1;
   });
   expect(overflow, "page should not overflow horizontally").toBe(false);
-}
-
-async function waitForCommercialReady(page: Page) {
-  await expect(page.getByTestId("commercial-data-pending")).toHaveCount(0, {
-    timeout: 30_000,
-  });
-}
-
-async function verifyAllDraftFacts(page: Page) {
-  while ((await page.getByRole("button", { name: "Verify" }).count()) > 0) {
-    await Promise.all([
-      page.waitForResponse(
-        (response) =>
-          response.url().includes("/facts/") &&
-          response.url().includes("/verify") &&
-          response.ok(),
-        { timeout: 30_000 },
-      ),
-      page.getByRole("button", { name: "Verify" }).first().click(),
-    ]);
-  }
-}
-
-async function handleBlockingRisks(page: Page) {
-  const markHandled = page.getByRole("button", { name: "Mark handled" });
-  while ((await markHandled.count()) > 0) {
-    await Promise.all([
-      page.waitForResponse(
-        (response) =>
-          response.url().includes("/risks/") &&
-          response.url().includes("/handle") &&
-          response.ok(),
-        { timeout: 30_000 },
-      ),
-      markHandled.first().click(),
-    ]);
-  }
 }
 
 test.describe("authenticated commercial golden path", () => {
@@ -232,19 +200,40 @@ test.describe("authenticated commercial golden path", () => {
       await page.goto(opportunityUrl);
       await waitForCommercialReady(page);
       await handleBlockingRisks(page);
-      await page.getByRole("button", { name: /run deterministic calculation/i }).click();
-      await page.waitForResponse(
-        (response) =>
-          response.url().includes("/calculate") && response.ok(),
-        { timeout: 30_000 },
-      );
+      const [calculateResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) => response.url().includes("/calculate") && response.ok(),
+          { timeout: 30_000 },
+        ),
+        page.getByRole("button", { name: /run deterministic calculation/i }).click(),
+      ]);
+      const calculateBody = (await calculateResponse.json()) as {
+        opportunity?: { latestCalculation?: { recommendedPriceMinor?: string } };
+      };
+      expect(
+        BigInt(
+          calculateBody.opportunity?.latestCalculation?.recommendedPriceMinor ??
+            "0",
+        ),
+      ).toBeGreaterThan(0n);
       await page.reload();
       await waitForCommercialReady(page);
-      await expect(page.getByText(/recommended price/i)).toBeVisible();
+      await expect(page.getByText(/recommended price/i)).toBeVisible({
+        timeout: 30_000,
+      });
 
       await page.goto(`${opportunityUrl}/brief`);
       await waitForCommercialReady(page);
-      await page.getByRole("button", { name: /generate brief version/i }).click();
+      await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes("/brief") &&
+            response.request().method() === "POST" &&
+            response.ok(),
+          { timeout: 60_000 },
+        ),
+        page.getByRole("button", { name: /generate brief version/i }).click(),
+      ]);
       await expect(
         page.getByRole("button", { name: /request founder review/i }),
       ).toBeVisible({ timeout: 60_000 });
@@ -287,7 +276,7 @@ test.describe("authenticated commercial golden path", () => {
       await waitForCommercialReady(page);
       await expect(page.getByText("Approved", { exact: true }).first()).toBeVisible();
 
-      await page.goto("/sign-in");
+      await page.goto(`${appUrl}/sign-in`);
       await signInThroughUi(page, {
         appUrl,
         email: workspace.email,

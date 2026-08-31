@@ -120,6 +120,47 @@ export interface ContractVersionRecord {
   readonly calculation?: Record<string, unknown>;
 }
 
+export interface ProjectTaskRecord {
+  readonly id: string;
+  readonly taskKey: string;
+  readonly name: string;
+  readonly status: string;
+  readonly estimatedMinutes: number;
+}
+
+export interface ProjectRecommendationDraftRecord {
+  readonly id: string;
+  readonly taskId: string;
+  readonly roleKey: string;
+  readonly suggestedAssigneeLabel: string;
+  readonly confidenceBps: number;
+  readonly rationale: string;
+}
+
+export interface ProjectAssignmentRecord {
+  readonly id: string;
+  readonly taskId: string;
+  readonly roleKey: string;
+  readonly assigneeLabel: string;
+}
+
+export interface ProjectDetailRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+  readonly phases: readonly { id: string; name: string; status: string }[];
+  readonly milestones: readonly {
+    id: string;
+    name: string;
+    dueOffsetDays: number;
+    status: string;
+  }[];
+  readonly deliverables: readonly { id: string; name: string; description: string }[];
+  readonly tasks: readonly ProjectTaskRecord[];
+  readonly recommendationDrafts: readonly ProjectRecommendationDraftRecord[];
+  readonly assignments: readonly ProjectAssignmentRecord[];
+}
+
 export interface OpportunityBundle {
   readonly opportunity: OpportunityRecord;
   readonly facts: readonly FactRecord[];
@@ -358,5 +399,54 @@ export function createCommercialApi(input: {
         body: { actorLabel },
         idempotencyKey: `contract-accept-${versionId}`,
       }),
+    listProjects: (opportunityId: string) =>
+      request<ProjectDetailRecord[]>(`/opportunities/${opportunityId}/projects`),
+    generateProject: (opportunityId: string) =>
+      request<ProjectDetailRecord>(`/opportunities/${opportunityId}/projects`, {
+        method: "POST",
+      }),
+    getProject: (projectId: string) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}`),
+    submitProject: (projectId: string) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}/submit`, {
+        method: "POST",
+      }),
+    approveProject: (projectId: string) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}/approve`, {
+        method: "POST",
+        idempotencyKey: `project-approve-${projectId}`,
+      }),
+    publishProject: (projectId: string) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}/publish`, {
+        method: "POST",
+        idempotencyKey: `project-publish-${projectId}`,
+      }),
+    activateProject: (projectId: string) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}/activate`, {
+        method: "POST",
+        idempotencyKey: `project-activate-${projectId}`,
+      }),
+    assignTask: (
+      projectId: string,
+      body: { taskId: string; roleKey: string; assigneeLabel: string },
+    ) =>
+      request<ProjectDetailRecord>(`/projects/${projectId}/assignments`, {
+        method: "POST",
+        body,
+        idempotencyKey: `project-assign-${projectId}-${body.taskId}`,
+      }),
+    getTimeline: (projectId: string) =>
+      request<{
+        status: string;
+        progress: {
+          totalTasks: number;
+          assignedTasks: number;
+          percentComplete: number;
+        };
+      }>(`/projects/${projectId}/timeline`),
+    getAudit: (projectId: string) =>
+      request<{ guards: readonly { action: string; outcome: string }[] }>(
+        `/projects/${projectId}/audit`,
+      ),
   };
 }

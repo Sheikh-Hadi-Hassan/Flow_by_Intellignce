@@ -190,3 +190,107 @@ export async function reachApprovedBrief(input: {
 
   return opportunityUrl;
 }
+
+export async function reachExecutedContract(input: {
+  page: Page;
+  context: import("@playwright/test").BrowserContext;
+  opportunityUrl: string;
+  appUrl: string;
+}): Promise<string> {
+  const { page, context, opportunityUrl, appUrl } = input;
+
+  await page.goto(`${opportunityUrl}/proposal`);
+  await waitForCommercialReady(page);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/proposals") &&
+        response.request().method() === "POST" &&
+        response.ok(),
+      { timeout: 60_000 },
+    ),
+    page.getByRole("button", { name: "Generate proposal" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/submit") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Submit for review" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/approve") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Approve proposal" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/share") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Share with client" }).click(),
+  ]);
+  const tokenText = await page.locator("code").textContent();
+  expect(tokenText).toMatch(/^\/review\/.+/);
+  const shareToken = tokenText!.replace("/review/", "");
+
+  const clientPage = await context.newPage();
+  await clientPage.goto(`${appUrl}/review/${shareToken}`, {
+    waitUntil: "domcontentloaded",
+  });
+  await clientPage.getByRole("button", { name: "Accept" }).click();
+  await expect(
+    clientPage.getByText(/Response recorded: accepted/i),
+  ).toBeVisible({ timeout: 30_000 });
+  await clientPage.close();
+
+  await page.reload();
+  await waitForCommercialReady(page);
+
+  await page.goto(`${opportunityUrl}/contract`);
+  await waitForCommercialReady(page);
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/contracts") &&
+        response.request().method() === "POST" &&
+        response.ok(),
+      { timeout: 60_000 },
+    ),
+    page.getByRole("button", { name: "Generate contract" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/submit") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Submit for review" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/approve") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Approve for client" }).click(),
+  ]);
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes("/accept") && response.ok(),
+      { timeout: 30_000 },
+    ),
+    page.getByRole("button", { name: "Record client acceptance" }).click(),
+  ]);
+  await expect(page.getByText("executed", { exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+
+  return opportunityUrl;
+}

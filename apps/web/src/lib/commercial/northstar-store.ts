@@ -3,6 +3,8 @@ import {
   brandStrategyQuestionnaireV1,
   calculateScope,
   FixtureDiscoveryExtractor,
+  generateProjectPlan,
+  nextProjectStatus,
   scopeWritesFromVerifiedFact,
   validateQuestionnaireResponse,
 } from "@flow/commercial";
@@ -16,10 +18,13 @@ import type {
   CommercialClientRecord,
   CommercialContactRecord,
   CommercialServiceRecord,
+  ContractVersionRecord,
   FactRecord,
   FollowUpRecord,
   OpportunityBundle,
   OpportunityRecord,
+  ProjectDetailRecord,
+  ProposalVersionRecord,
   QuestionnaireVersion,
 } from "./api";
 
@@ -41,6 +46,9 @@ interface DemoState {
   budget: OpportunityBundle["budget"];
   timeline: OpportunityBundle["timeline"];
   briefs: BriefVersionRecord[];
+  proposals: ProposalVersionRecord[];
+  contracts: ContractVersionRecord[];
+  project: ProjectDetailRecord | null;
   guards: OpportunityBundle["guards"][number][];
   extractionRuns: NonNullable<OpportunityBundle["extractionRuns"]>;
 }
@@ -53,6 +61,86 @@ function seed(): DemoState {
     jsonSchema: brandStrategyQuestionnaireV1.jsonSchema,
     uiSchema: { ...brandStrategyQuestionnaireV1.uiSchema },
     questionMeta: { ...brandStrategyQuestionnaireV1.questionMeta },
+  };
+  const calculation = calculateScope({
+    currency: "USD",
+    components: [
+      {
+        roleKey: "strategist",
+        estimatedMinutes: 2400,
+        internalRatePerHourMinor: "15000",
+        vendorCostMinor: "0",
+      },
+    ],
+    contingencyBps: 1000,
+    targetMarginBps: 4000,
+    budgetMinMinor: 7000000n,
+    budgetMaxMinor: 9000000n,
+    estimatedDeliveryDays: 70,
+    timelineDays: 90,
+  });
+  const approvedBrief: BriefVersionRecord = {
+    id: "ns-brief-1",
+    versionNumber: 1,
+    status: "approved",
+    calculation: { ...calculation },
+    sections: [
+      {
+        key: "goals",
+        title: "Goals",
+        body: "Launch-ready brand identity for Acme cobot line.",
+      },
+      {
+        key: "audience",
+        title: "Audience",
+        body: "Plant managers and procurement leaders.",
+      },
+      {
+        key: "scope",
+        title: "Scope",
+        body: "Brand strategy, identity system, and launch narrative.",
+      },
+    ],
+  };
+  const acceptedProposal: ProposalVersionRecord = {
+    id: "ns-prop-1",
+    versionNumber: 1,
+    status: "accepted",
+    sections: [
+      {
+        sectionKey: "scope_deliverables",
+        title: "Scope",
+        body: approvedBrief.sections.find((row) => row.key === "scope")?.body ?? "",
+      },
+    ],
+    packages: [
+      {
+        name: "Growth Package",
+        totalMinor: calculation.recommendedPriceMinor ?? "8500000",
+        isRecommended: true,
+      },
+    ],
+    calculation: { ...calculation },
+  };
+  const executedContract: ContractVersionRecord = {
+    id: "ns-contract-1",
+    versionNumber: 1,
+    status: "executed",
+    clauses: [
+      {
+        title: "Scope of work",
+        body: "90-day brand launch engagement for Acme Robotics.",
+      },
+    ],
+    parties: [
+      { partyRole: "provider", legalName: "Northstar Creative" },
+      { partyRole: "client", legalName: "Acme Robotics" },
+    ],
+    paymentSchedule: [
+      { label: "Kickoff", amountMinor: "4250000" },
+      { label: "Launch", amountMinor: "4250000" },
+    ],
+    calculation: { ...calculation },
   };
   return {
     service: {
@@ -70,7 +158,7 @@ function seed(): DemoState {
       name: "Acme Robotics",
       industry: "industrial robotics",
       website: "https://acme-robotics.demo",
-      status: "prospect",
+      status: "client",
     },
     contact: {
       id: "ns-contact-priya",
@@ -81,41 +169,56 @@ function seed(): DemoState {
     },
     opportunity: {
       id: "ns-opp-acme-brand",
-      name: "Acme Robotics brand system",
+      name: "Acme Q4 Product Launch Campaign",
       clientId: "ns-client-acme",
       serviceId: "ns-svc-brand",
-      journeyStatus: "collecting_information",
+      journeyStatus: "contract_executed",
       currency: "USD",
-      completeness: 0,
-      revision: 1,
+      completeness: 100,
+      revision: 5,
       budgetMinMinor: "7000000",
       budgetMaxMinor: "9000000",
+      latestCalculation: { ...calculation },
     },
-    answers: {},
-    sources: [],
+    answers: {
+      brandMaturity: "emerging",
+      primaryAudience: "Plant managers and procurement leaders",
+      successMetric: "Shortlist conversion for robotics OEMs",
+    },
+    sources: [{ originalText: NORTHSTAR_ACME_NOTES }],
     facts: [],
     followUps: [
       {
         id: "ns-fu-1",
         prompt: "Who internally approves the brief?",
         required: true,
+        answer: "Maya Chen, founder",
       },
     ],
-    requirements: [],
+    requirements: [
+      {
+        key: "legal_review",
+        statement: "Legal review of claims required before launch.",
+      },
+    ],
     deliverables: [
       {
         id: "ns-del-1",
-        name: "Brand strategy and identity system",
+        name: "Creative concept and messaging",
         description: "Positioning, identity, and launch narrative.",
+      },
+      {
+        id: "ns-del-2",
+        name: "Channel asset package",
+        description: "Six channel deliverables for launch.",
       },
     ],
     risks: [
       {
         id: "ns-risk-1",
-        statement:
-          "Blocking: confirm procurement approval path before final brief approval.",
+        statement: "Legal review of claims must complete before launch.",
         blocking: true,
-        handled: false,
+        handled: true,
       },
     ],
     budget: {
@@ -124,8 +227,19 @@ function seed(): DemoState {
       maxMinor: "9000000",
     },
     timeline: { notes: "90 days to Q4 launch" },
-    briefs: [],
-    guards: [],
+    briefs: [approvedBrief],
+    proposals: [acceptedProposal],
+    contracts: [executedContract],
+    project: null,
+    guards: [
+      {
+        id: "ns-guard-contract",
+        action: "contract.execute",
+        outcome: "ALLOW",
+        reason: "Executed contract ready for project creation.",
+        createdAt: new Date().toISOString(),
+      },
+    ],
     extractionRuns: [],
   };
 }
@@ -145,6 +259,11 @@ function load(): DemoState {
       risks: parsed.risks ?? [],
       budget: parsed.budget ?? base.budget,
       timeline: parsed.timeline ?? base.timeline,
+      briefs: parsed.briefs ?? base.briefs,
+      proposals: parsed.proposals ?? base.proposals,
+      contracts: parsed.contracts ?? base.contracts,
+      project: parsed.project ?? base.project,
+      guards: parsed.guards ?? base.guards,
     };
   } catch {
     return seed();
@@ -452,32 +571,280 @@ export function createNorthstarCommercialApi() {
       save(state);
       return state.briefs.find((row) => row.id === versionId)!;
     },
-    listProposals: async () => [],
+    listProposals: async () => load().proposals,
     generateProposal: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an accepted proposal.");
     },
     submitProposal: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an accepted proposal.");
     },
     approveProposal: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an accepted proposal.");
     },
     shareProposal: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an accepted proposal.");
     },
-    listContracts: async () => [],
+    listContracts: async (id?: string) => {
+      void id;
+      return load().contracts;
+    },
     generateContract: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an executed contract.");
     },
     submitContract: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an executed contract.");
     },
     approveContract: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+      throw new Error("Northstar demo ships with an executed contract.");
     },
-    acceptContract: async () => {
-      throw new Error("Northstar demo stops at approved brief.");
+    acceptContract: async () => load().contracts[0]!,
+    listProjects: async () => {
+      const state = load();
+      return state.project ? [state.project] : [];
     },
+    generateProject: async (id?: string) => {
+      void id;
+      const state = load();
+      if (state.project) {
+        throw new Error("Project already exists for this opportunity.");
+      }
+      if (!state.contracts.some((row) => row.status === "executed")) {
+        throw new Error("Executed contract required.");
+      }
+      const plan = generateProjectPlan({
+        opportunityName: state.opportunity.name,
+        clientName: state.client.name,
+        clauses: state.contracts[0]!.clauses.map((row, index) => ({
+          clauseKey: index === 0 ? "scope" : `clause-${index}`,
+          title: row.title,
+          body: row.body,
+        })),
+        deliverables: state.deliverables,
+        paymentSchedule: state.contracts[0]!.paymentSchedule.map((row) => ({
+          label: row.label,
+          dueDescription: row.label,
+        })),
+        timelineDays: 90,
+      });
+      const project = buildNorthstarProject(plan, "draft");
+      state.project = project;
+      state.opportunity = {
+        ...state.opportunity,
+        journeyStatus: "project_in_progress",
+      };
+      state.guards.push({
+        id: crypto.randomUUID(),
+        action: "project.create",
+        outcome: "ALLOW",
+        reason: "Deterministic plan generated from executed contract.",
+        createdAt: new Date().toISOString(),
+      });
+      save(state);
+      return project;
+    },
+    getProject: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      return state.project;
+    },
+    submitProject: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const next = nextProjectStatus(
+        state.project.status as "draft",
+        "SUBMIT_FOR_REVIEW",
+        {
+          planComplete:
+            state.project.phases.length > 0 &&
+            state.project.milestones.length > 0 &&
+            state.project.deliverables.length > 0 &&
+            state.project.tasks.length > 0,
+          actorCanApprove: true,
+          actorCanPublish: true,
+          actorCanManage: true,
+        },
+      );
+      state.project = { ...state.project, status: next };
+      save(state);
+      return state.project;
+    },
+    approveProject: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const next = nextProjectStatus(
+        state.project.status as "in_review",
+        "APPROVE",
+        {
+          planComplete: true,
+          actorCanApprove: true,
+          actorCanPublish: true,
+          actorCanManage: true,
+        },
+      );
+      state.project = { ...state.project, status: next };
+      save(state);
+      return state.project;
+    },
+    publishProject: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const next = nextProjectStatus(
+        state.project.status as "approved",
+        "PUBLISH",
+        {
+          planComplete: true,
+          actorCanApprove: true,
+          actorCanPublish: true,
+          actorCanManage: true,
+        },
+      );
+      state.project = { ...state.project, status: next };
+      state.opportunity = {
+        ...state.opportunity,
+        journeyStatus: "project_published",
+      };
+      save(state);
+      return state.project;
+    },
+    activateProject: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const next = nextProjectStatus(
+        state.project.status as "published",
+        "ACTIVATE",
+        {
+          planComplete: true,
+          actorCanApprove: true,
+          actorCanPublish: true,
+          actorCanManage: true,
+        },
+      );
+      state.project = { ...state.project, status: next };
+      state.opportunity = {
+        ...state.opportunity,
+        journeyStatus: "project_active",
+      };
+      save(state);
+      return state.project;
+    },
+    assignTask: async (
+      projectId: string,
+      body: { taskId: string; roleKey: string; assigneeLabel: string },
+    ) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const assignment = {
+        id: crypto.randomUUID(),
+        taskId: body.taskId,
+        roleKey: body.roleKey,
+        assigneeLabel: body.assigneeLabel,
+      };
+      state.project = {
+        ...state.project,
+        assignments: [
+          ...state.project.assignments.filter(
+            (row) =>
+              !(
+                row.taskId === body.taskId && row.roleKey === body.roleKey
+              ),
+          ),
+          assignment,
+        ],
+      };
+      save(state);
+      return state.project;
+    },
+    getTimeline: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      const totalTasks = state.project.tasks.length;
+      const assignedTasks = new Set(
+        state.project.assignments.map((row) => row.taskId),
+      ).size;
+      return {
+        status: state.project.status,
+        progress: {
+          totalTasks,
+          assignedTasks,
+          percentComplete: 0,
+        },
+      };
+    },
+    getAudit: async (projectId: string) => {
+      const state = load();
+      if (!state.project || state.project.id !== projectId) {
+        throw new Error("Project not found.");
+      }
+      return {
+        guards: state.guards.filter((row) => row.action.startsWith("project.")),
+      };
+    },
+  };
+}
+
+function buildNorthstarProject(
+  plan: ReturnType<typeof generateProjectPlan>,
+  status: string,
+): ProjectDetailRecord {
+  const projectId = "ns-project-1";
+  const phaseIds = new Map(
+    plan.phases.map((phase) => [phase.phaseKey, `ns-phase-${phase.phaseKey}`]),
+  );
+  const deliverableIds = new Map(
+    plan.deliverables.map((row) => [row.deliverableKey, `ns-${row.deliverableKey}`]),
+  );
+  const tasks = plan.tasks.map((task, index) => ({
+    id: `ns-task-${index + 1}`,
+    taskKey: task.taskKey,
+    name: task.name,
+    status: "todo",
+    estimatedMinutes: task.estimatedMinutes,
+  }));
+  const taskIds = new Map(tasks.map((task) => [task.taskKey, task.id]));
+  return {
+    id: projectId,
+    name: plan.name,
+    status,
+    phases: plan.phases.map((phase) => ({
+      id: phaseIds.get(phase.phaseKey)!,
+      name: phase.name,
+      status: "planned",
+    })),
+    milestones: plan.milestones.map((row, index) => ({
+      id: `ns-ms-${index + 1}`,
+      name: row.name,
+      dueOffsetDays: row.dueOffsetDays,
+      status: "pending",
+    })),
+    deliverables: plan.deliverables.map((row) => ({
+      id: deliverableIds.get(row.deliverableKey)!,
+      name: row.name,
+      description: row.description,
+    })),
+    tasks,
+    recommendationDrafts: plan.recommendationDrafts.map((row, index) => ({
+      id: `ns-rec-${index + 1}`,
+      taskId: taskIds.get(row.taskKey)!,
+      roleKey: row.roleKey,
+      suggestedAssigneeLabel: row.suggestedAssigneeLabel,
+      confidenceBps: row.confidenceBps,
+      rationale: row.rationale,
+    })),
+    assignments: [],
   };
 }
 

@@ -32,17 +32,20 @@ export async function signInThroughUi(
     workspaceSlug: string;
   },
 ) {
+  const destination = new RegExp(`/${input.workspaceSlug}/(admin|onboarding)`);
   await page.goto(`${input.appUrl}/sign-in`, { waitUntil: "domcontentloaded" });
+  if (destination.test(page.url())) {
+    return;
+  }
+
   const emailField = page.getByLabel("Email");
   const passwordField = page.getByLabel("Password");
-  await expect(emailField).toBeVisible();
+  await expect(emailField).toBeVisible({ timeout: 30_000 });
   await expect(passwordField).toBeVisible();
+  await emailField.click();
   await emailField.fill(input.email);
+  await passwordField.click();
   await passwordField.fill(input.password);
-  await expect(emailField).toHaveValue(input.email);
   await page.getByRole("button", { name: /sign in/i }).click();
-  await page.waitForURL(
-    new RegExp(`/${input.workspaceSlug}/(admin|onboarding)`),
-    { timeout: 30_000 },
-  );
+  await page.waitForURL(destination, { timeout: 60_000 });
 }

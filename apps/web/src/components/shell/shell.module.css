@@ -148,13 +148,23 @@
 
 .navLink,
 .navLinkActive {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
   border-left: 3px solid transparent;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.navIcon {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .navLink:hover {
@@ -202,14 +212,20 @@
 .bottomNavActive {
   flex: 1;
   text-align: center;
-  padding: var(--space-3) var(--space-1);
+  padding: var(--space-2) var(--space-1);
   font-size: var(--text-xs);
   color: var(--color-text-secondary);
   text-decoration: none;
   min-height: 48px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .bottomNavActive {
@@ -446,4 +462,40 @@
 
 .checklistLabel {
   color: var(--color-text-primary);
+}
+
+.utilityMenu {
+  position: relative;
+}
+
+.utilityMenuBtn {
+  display: flex;
+}
+
+.utilityDropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 180px;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md);
+  z-index: 60;
+}
+
+.utilityLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.utilityLink:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+  text-decoration: none;
 }

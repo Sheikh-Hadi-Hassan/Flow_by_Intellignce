@@ -23,7 +23,7 @@
 
 .flow-btn--primary {
   background: var(--color-brand);
-  color: #fff;
+  color: var(--color-on-brand);
 }
 
 .flow-btn--primary:hover:not(:disabled) {

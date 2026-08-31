@@ -134,7 +134,7 @@ Running 4 tests using 1 worker
 | Commit | Purpose |
 | ------ | ------- |
 | `36a5ab7` | `chore(db): checkpoint applied supabase migration history` |
-| `0377b18` | `feat(projects): close Phase 4 contract-to-project execution` |
+| `f89ef2e` | `feat(projects): close Phase 4 contract-to-project execution` |
 
 ### Files in Phase 4 closure commit
 
@@ -166,4 +166,4 @@ Running 4 tests using 1 worker
 
 ## Push result
 
-Pushed `36a5ab7` and `0377b18` to `origin/main` (recorded after push).
+Pushed `36a5ab7` and `f89ef2e` to `origin/main` — success (`c583506..f89ef2e`).

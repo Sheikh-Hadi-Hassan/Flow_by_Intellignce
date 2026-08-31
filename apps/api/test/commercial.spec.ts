@@ -553,5 +553,81 @@ describe("commercial API journey", () => {
       })
       .expect(201);
     expect(activated.body.assignments.length + 1).toBeGreaterThanOrEqual(1);
+
+    const resource = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/resources`)
+      .set(auth)
+      .send({
+        displayName: "Test Strategist",
+        resourceType: "employee",
+        roleKeys: ["strategist"],
+        timezone: "UTC",
+        internalRateMinor: "15000",
+        currency: "USD",
+      })
+      .expect(201);
+
+    const projectId = projectRes.body.id;
+    const recs = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}/resource-plan/recommendations`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(recs.body.recommendations.length).toBeGreaterThan(0);
+
+    const activeProject = await request(app.getHttpServer())
+      .get(`/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}`)
+      .set(auth)
+      .expect(200);
+
+    for (const req of activeProject.body.roleRequirements as {
+      taskId: string;
+      roleKey: string;
+      estimatedMinutes: number;
+    }[]) {
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}/resource-plan/assignments`,
+        )
+        .set(auth)
+        .send({
+          taskId: req.taskId,
+          roleKey: req.roleKey,
+          resourceProfileId: resource.body.id,
+          allocationMinutes: req.estimatedMinutes || 60,
+        })
+        .expect(201);
+    }
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}/resource-plan/submit`,
+      )
+      .set(auth)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}/resource-plan/approve`,
+      )
+      .set(auth)
+      .expect(201);
+
+    const publishedPlan = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/projects/${projectId}/resource-plan/publish`,
+      )
+      .set({ ...auth, "Idempotency-Key": `p5-publish-rp-${projectId}` })
+      .expect(201);
+    expect(publishedPlan.body.versionNumber).toBe(1);
+  });
+
+  it("rejects resource planning without permission", async () => {
+    await request(app.getHttpServer())
+      .get(`/api/v1/workspaces/${otherWorkspaceId}/commercial/resources`)
+      .set("Authorization", "Bearer valid-unknown-token")
+      .set("X-Flow-Workspace-Id", otherWorkspaceId)
+      .expect(403);
   });
 });

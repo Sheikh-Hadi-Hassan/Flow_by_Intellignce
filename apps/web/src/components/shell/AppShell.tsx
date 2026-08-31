@@ -132,6 +132,8 @@ export function FounderShell({
     { href: `${base}/services`, label: "Services" },
     { href: `${base}/clients`, label: "Clients" },
     { href: `${base}/opportunities`, label: "Opportunities" },
+    { href: `${base}/team`, label: "Team" },
+    { href: `/${workspace}/work`, label: "My work" },
     { href: `${base}/settings`, label: "Settings" },
   ];
 

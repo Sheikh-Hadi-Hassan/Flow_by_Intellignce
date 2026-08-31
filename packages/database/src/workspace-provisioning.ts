@@ -56,6 +56,13 @@ const FOUNDER_PERMISSION_KEYS = [
   "project.approve",
   "project.publish",
   "project.assign",
+  "resource.read",
+  "resource.manage",
+  "resource.plan.manage",
+  "resource.plan.approve",
+  "resource.plan.publish",
+  "resource.cost.read",
+  "resource.work.read",
   "commercial.audit.read",
 ] as const;
 

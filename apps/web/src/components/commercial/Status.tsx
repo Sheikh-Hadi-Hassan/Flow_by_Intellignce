@@ -33,6 +33,17 @@ export function factBadge(status: string) {
   return "default" as const;
 }
 
+export function projectBadge(status: string) {
+  if (status === "active" || status === "published" || status === "approved") {
+    return "success" as const;
+  }
+  if (status === "changes_requested" || status === "on_hold") {
+    return "warning" as const;
+  }
+  if (status === "in_review") return "essential" as const;
+  return "default" as const;
+}
+
 export function OpportunityNav({
   workspace,
   opportunityId,
@@ -49,6 +60,8 @@ export function OpportunityNav({
     { href: `${base}/approvals`, label: "Approvals" },
     { href: `${base}/proposal`, label: "Proposal" },
     { href: `${base}/contract`, label: "Contract" },
+    { href: `${base}/project`, label: "Project" },
+    { href: `${base}/project/capacity`, label: "Capacity" },
   ];
   return (
     <nav aria-label="Opportunity sections" className="flow-stepper">

@@ -12,3 +12,6 @@ export * from "./proposal-pricing.js";
 export * from "./proposal-generation.js";
 export * from "./project-lifecycle.js";
 export * from "./project-plan-generation.js";
+export * from "./resource-plan-lifecycle.js";
+export * from "./capacity-engine.js";
+export * from "./recommendation-engine.js";

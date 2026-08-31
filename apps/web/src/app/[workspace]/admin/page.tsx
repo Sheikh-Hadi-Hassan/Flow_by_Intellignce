@@ -11,7 +11,7 @@ import { StatusBadge } from "../../../components/ui/Display";
 import { getSetupProgress } from "../../../lib/prototype/recommendations";
 import { getSetupChecklist } from "../../../lib/prototype/setup-checklist";
 import { useWorkspaceSessionActions } from "../../../lib/workspace/session-actions";
-import styles from "../../../components/shell/shell.module.css";
+import styles from "./founder-now.module.css";
 
 function FounderHome() {
   const params = useParams();

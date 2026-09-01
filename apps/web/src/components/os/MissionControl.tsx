@@ -5,10 +5,15 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { DEMO_FOUNDER_FIRST_NAME } from "../../content/demo/northstar";
-import { buildPriorities } from "../../lib/experience/mission-control";
+import {
+  buildFinancePriorities,
+  buildPriorities,
+} from "../../lib/experience/mission-control";
 import { LIFECYCLE_PIPELINE_STAGES } from "../../lib/navigation/lifecycle-nav";
 import { useCommercialClient } from "../../lib/commercial/use-commercial";
+import { useFinanceClient } from "../../lib/commercial/use-finance";
 import type { OpportunityRecord } from "../../lib/commercial/api";
+import type { FinanceSummary, Invoice } from "../../lib/commercial/finance-api";
 import type { PrototypeSession } from "../../lib/prototype/types";
 import { MissionScreen } from "./MissionScreen";
 import { StatusBadge } from "../ui/Display";
@@ -43,7 +48,12 @@ function pipelineHref(workspace: string, stageId: string): string {
 export function MissionControl({ session }: { session: PrototypeSession }) {
   const workspace = useParams().workspace as string;
   const api = useCommercialClient(workspace);
+  const finance = useFinanceClient(workspace);
   const [rows, setRows] = useState<OpportunityRecord[]>([]);
+  const [financeSummary, setFinanceSummary] = useState<FinanceSummary | null>(
+    null,
+  );
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [greeting, setGreeting] = useState("there");
 
   useEffect(() => {
@@ -55,14 +65,31 @@ export function MissionControl({ session }: { session: PrototypeSession }) {
     void api.listOpportunities().then(setRows);
   }, [api]);
 
+  useEffect(() => {
+    if (!finance) return;
+    void Promise.all([
+      finance.getFinancialSummary(),
+      finance.listInvoices(),
+    ]).then(([summary, invoiceRows]) => {
+      setFinanceSummary(summary);
+      setInvoices(invoiceRows);
+    });
+  }, [finance]);
+
   const founderName =
     session.mode === "demo"
       ? DEMO_FOUNDER_FIRST_NAME
       : session.founderFirstName || "founder";
 
   const priorities = useMemo(
-    () => buildPriorities(workspace, rows),
-    [workspace, rows],
+    () => [
+      ...buildPriorities(workspace, rows),
+      ...buildFinancePriorities(workspace, {
+        summary: financeSummary,
+        invoices,
+      }),
+    ].slice(0, 8),
+    [workspace, rows, financeSummary, invoices],
   );
   const pendingApprovals = priorities.filter((p) => p.tone === "urgent").length;
   const inDiscovery = rows.filter(
@@ -116,6 +143,12 @@ export function MissionControl({ session }: { session: PrototypeSession }) {
             className="flow-btn flow-btn--secondary flow-btn--sm"
           >
             Delivery
+          </Link>
+          <Link
+            href={`/${workspace}/admin/finance`}
+            className="flow-btn flow-btn--secondary flow-btn--sm"
+          >
+            Finance
           </Link>
         </>
       }

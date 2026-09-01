@@ -12,7 +12,9 @@ import {
   type AskFlowResponse,
 } from "../../lib/experience/ask-flow";
 import { useCommercialClient } from "../../lib/commercial/use-commercial";
+import { useFinanceClient } from "../../lib/commercial/use-finance";
 import type { OpportunityRecord } from "../../lib/commercial/api";
+import type { FinanceSummary, Invoice } from "../../lib/commercial/finance-api";
 import { useWorkspaceSessionActions } from "../../lib/workspace/session-actions";
 import { IconButton } from "../ui/Button";
 import { ProofLabel, StatusBadge } from "../ui/Display";
@@ -26,6 +28,12 @@ const INTENT_LABELS: Record<AskFlowIntent, string> = {
   capacity_conflict: "Capacity conflict",
   next_action: "Next action",
   twin_summary: "Business Twin",
+  unbilled_work: "Unbilled work",
+  overdue_invoices: "Overdue invoices",
+  receivables_summary: "Receivables summary",
+  invoice_total_explain: "How invoice totals work",
+  finance_next_action: "Finance next action",
+  project_margin_risk: "Project margin risk",
 };
 
 export function AskFlowDrawer({
@@ -37,8 +45,13 @@ export function AskFlowDrawer({
 }) {
   const workspace = useParams().workspace as string;
   const api = useCommercialClient(workspace);
+  const finance = useFinanceClient(workspace);
   const { session } = useWorkspaceSessionActions(workspace);
   const [rows, setRows] = useState<OpportunityRecord[]>([]);
+  const [financeSummary, setFinanceSummary] = useState<FinanceSummary | null>(
+    null,
+  );
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [intent, setIntent] = useState<AskFlowIntent | null>(null);
   const [response, setResponse] = useState<AskFlowResponse | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -47,6 +60,17 @@ export function AskFlowDrawer({
     if (!api || !open) return;
     void api.listOpportunities().then(setRows);
   }, [api, open]);
+
+  useEffect(() => {
+    if (!finance || !open) return;
+    void Promise.all([
+      finance.getFinancialSummary(),
+      finance.listInvoices(),
+    ]).then(([summary, invoiceRows]) => {
+      setFinanceSummary(summary);
+      setInvoices(invoiceRows);
+    });
+  }, [finance, open]);
 
   useEffect(() => {
     if (!open) {
@@ -75,6 +99,8 @@ export function AskFlowDrawer({
         intent: next,
         workspace,
         opportunities: rows,
+        financeSummary,
+        invoices,
         ...(twinSummary ? { twinSummary } : {}),
       }),
     );

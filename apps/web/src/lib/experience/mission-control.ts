@@ -1,4 +1,6 @@
 import type { OpportunityRecord } from "../commercial/api";
+import type { FinanceSummary, Invoice } from "../commercial/finance-api";
+import { formatMinor } from "../commercial/finance-api";
 
 export interface PriorityItem {
   readonly id: string;
@@ -94,4 +96,74 @@ export function countPipelineStage(
 
 export function hasFakeMetrics(): boolean {
   return false;
+}
+
+export function buildFinancePriorities(
+  workspace: string,
+  input: {
+    readonly summary?: FinanceSummary | null;
+    readonly invoices?: readonly Invoice[];
+  },
+): PriorityItem[] {
+  const items: PriorityItem[] = [];
+  const base = `/${workspace}/admin/finance`;
+
+  for (const invoice of input.invoices ?? []) {
+    if (invoice.status === "founder_review") {
+      items.push({
+        id: `${invoice.id}-invoice-review`,
+        label: "Invoice approval",
+        title: invoice.invoiceNumber ?? `Invoice ${invoice.id.slice(0, 8)}`,
+        meta: "Awaiting founder sign-off before issue",
+        href: `${base}/invoices/${invoice.id}`,
+        tone: "urgent",
+      });
+    } else if (invoice.status === "overdue") {
+      items.push({
+        id: `${invoice.id}-overdue`,
+        label: "Overdue invoice",
+        title: invoice.invoiceNumber ?? `Invoice ${invoice.id.slice(0, 8)}`,
+        meta: `${formatMinor(invoice.balanceDueMinor, invoice.currency)} past due`,
+        href: `${base}/invoices/${invoice.id}`,
+        tone: "urgent",
+      });
+    }
+  }
+
+  const summary = input.summary;
+  if (summary && summary.unbilledApprovedTimeMinutes > 0) {
+    items.push({
+      id: "unbilled-time",
+      label: "Unbilled work",
+      title: "Approved time not yet invoiced",
+      meta: `${summary.unbilledApprovedTimeMinutes} billable minutes ready to draft`,
+      href: `${base}/time`,
+      tone: "attention",
+    });
+  }
+  if (
+    summary &&
+    BigInt(summary.unbilledApprovedExpenseMinor) > 0n
+  ) {
+    items.push({
+      id: "unbilled-expense",
+      label: "Unbilled expenses",
+      title: "Approved expenses awaiting invoice",
+      meta: `${formatMinor(summary.unbilledApprovedExpenseMinor, "USD")} billable`,
+      href: `${base}/expenses`,
+      tone: "attention",
+    });
+  }
+  if (summary && summary.draftInvoiceCount > 0) {
+    items.push({
+      id: "draft-invoices",
+      label: "Draft invoices",
+      title: `${summary.draftInvoiceCount} draft invoice${summary.draftInvoiceCount === 1 ? "" : "s"}`,
+      meta: "Submit for founder review when ready",
+      href: `${base}/invoices`,
+      tone: "ready",
+    });
+  }
+
+  return items.slice(0, 8);
 }

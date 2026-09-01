@@ -1,5 +1,7 @@
 import type { OpportunityRecord } from "../commercial/api";
-import { buildPriorities } from "./mission-control";
+import type { FinanceSummary, Invoice } from "../commercial/finance-api";
+import { formatMinor } from "../commercial/finance-api";
+import { buildFinancePriorities, buildPriorities } from "./mission-control";
 
 export type AskFlowIntent =
   | "summarize_opportunity"
@@ -9,7 +11,13 @@ export type AskFlowIntent =
   | "project_risks"
   | "capacity_conflict"
   | "next_action"
-  | "twin_summary";
+  | "twin_summary"
+  | "unbilled_work"
+  | "overdue_invoices"
+  | "receivables_summary"
+  | "invoice_total_explain"
+  | "finance_next_action"
+  | "project_margin_risk";
 
 export interface AskFlowResponse {
   readonly supported: boolean;
@@ -30,6 +38,12 @@ const SUPPORTED_INTENTS: readonly AskFlowIntent[] = [
   "capacity_conflict",
   "next_action",
   "twin_summary",
+  "unbilled_work",
+  "overdue_invoices",
+  "receivables_summary",
+  "invoice_total_explain",
+  "finance_next_action",
+  "project_margin_risk",
 ];
 
 export function listSupportedIntents(): readonly AskFlowIntent[] {
@@ -46,8 +60,11 @@ export function answerAskFlow(input: {
   opportunities: readonly OpportunityRecord[];
   twinSummary?: string;
   opportunityId?: string;
+  financeSummary?: FinanceSummary | null;
+  invoices?: readonly Invoice[];
 }): AskFlowResponse {
   const { intent, workspace, opportunities } = input;
+  const financeBase = `/${workspace}/admin/finance`;
   const target =
     opportunities.find((row) => row.id === input.opportunityId) ??
     opportunities[0];
@@ -160,6 +177,126 @@ export function answerAskFlow(input: {
         answer: input.twinSummary ?? "Business Twin is still being compiled.",
         proof: "Workspace twin snapshot from onboarding and services catalog.",
         records: [{ label: "Business Twin", href: `/${workspace}/admin/twin` }],
+        guardRequired: false,
+      };
+    case "unbilled_work": {
+      const summary = input.financeSummary;
+      if (!summary) {
+        return unsupported("Financial summary is not available yet.");
+      }
+      const minutes = summary.unbilledApprovedTimeMinutes;
+      const expenseMinor = summary.unbilledApprovedExpenseMinor;
+      if (minutes === 0 && BigInt(expenseMinor) === 0n) {
+        return {
+          supported: true,
+          answer: "No approved billable time or expenses are waiting to be invoiced.",
+          proof: "Finance summary unbilled counters from stored records.",
+          records: [{ label: "Finance hub", href: financeBase }],
+          guardRequired: false,
+        };
+      }
+      return {
+        supported: true,
+        answer: `${minutes} approved billable minutes and ${formatMinor(expenseMinor, "USD")} in approved expenses are not yet on an invoice.`,
+        proof: "Unbilled counters from finance summary endpoint.",
+        records: [
+          { label: "Time entries", href: `${financeBase}/time` },
+          { label: "Expenses", href: `${financeBase}/expenses` },
+        ],
+        recommendedAction: "Generate a draft invoice from approved billable work.",
+        guardRequired: false,
+      };
+    }
+    case "overdue_invoices": {
+      const overdue = (input.invoices ?? []).filter(
+        (row) => row.status === "overdue",
+      );
+      if (overdue.length === 0) {
+        return {
+          supported: true,
+          answer: "No invoices are currently marked overdue.",
+          proof: "Invoice status from stored finance records.",
+          records: [{ label: "Invoices", href: `${financeBase}/invoices` }],
+          guardRequired: false,
+        };
+      }
+      const total = overdue.reduce(
+        (sum, row) => sum + BigInt(row.balanceDueMinor),
+        0n,
+      );
+      return {
+        supported: true,
+        answer: `${overdue.length} invoice${overdue.length === 1 ? "" : "s"} overdue totalling ${formatMinor(total.toString(), overdue[0]?.currency ?? "USD")}.`,
+        proof: "Overdue status and balance due from invoice records.",
+        records: overdue.map((row) => ({
+          label: row.invoiceNumber ?? row.id.slice(0, 8),
+          href: `${financeBase}/invoices/${row.id}`,
+        })),
+        recommendedAction: "Record payment or follow up with the client.",
+        guardRequired: true,
+      };
+    }
+    case "receivables_summary": {
+      const summary = input.financeSummary;
+      if (!summary) {
+        return unsupported("Financial summary is not available yet.");
+      }
+      return {
+        supported: true,
+        answer: `Outstanding receivables: ${formatMinor(summary.outstandingMinor, "USD")}. Collected to date: ${formatMinor(summary.collectedMinor, "USD")}. Overdue: ${formatMinor(summary.overdueMinor, "USD")}.`,
+        proof: "Finance summary from stored invoice and payment records.",
+        records: [{ label: "Finance reports", href: `${financeBase}/reports` }],
+        guardRequired: false,
+      };
+    }
+    case "invoice_total_explain":
+      return {
+        supported: true,
+        answer:
+          "Invoice totals are computed deterministically: line subtotals (quantity × unit amount), minus discount, plus tax per workspace billing settings.",
+        proof: "@flow/commercial finance-calculations engine — no LLM math.",
+        records: [{ label: "Invoices", href: `${financeBase}/invoices` }],
+        limitation: "Open a specific invoice to see line-item breakdown.",
+        guardRequired: false,
+      };
+    case "finance_next_action": {
+      const financePriorities = buildFinancePriorities(workspace, {
+        ...(input.financeSummary !== undefined
+          ? { summary: input.financeSummary }
+          : {}),
+        ...(input.invoices !== undefined ? { invoices: input.invoices } : {}),
+      });
+      const top = financePriorities[0];
+      if (!top) {
+        return {
+          supported: true,
+          answer: "No finance actions pending. Submit billable time or expenses to begin.",
+          proof: "Finance priority queue is empty.",
+          records: [{ label: "Finance hub", href: financeBase }],
+          recommendedAction: "Open My Work to submit time or expenses.",
+          guardRequired: false,
+        };
+      }
+      return {
+        supported: true,
+        answer: `${top.title}: ${top.meta}`,
+        proof: "Deterministic finance priority mapping from stored records.",
+        records: [{ label: top.title, href: top.href }],
+        recommendedAction: top.label,
+        guardRequired: top.tone === "urgent",
+      };
+    }
+    case "project_margin_risk":
+      return {
+        supported: true,
+        answer:
+          "Project margin risk appears when approved labour and expense costs approach or exceed invoiced revenue on a project.",
+        proof: "Project profitability endpoint uses deterministic gross margin calculation.",
+        records: [
+          { label: "Finance reports", href: `${financeBase}/reports` },
+          { label: "Delivery", href: `/${workspace}/admin/lifecycle/projects` },
+        ],
+        limitation: "Open a specific project profitability view for line detail.",
         guardRequired: false,
       };
     default:

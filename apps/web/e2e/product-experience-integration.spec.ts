@@ -152,7 +152,7 @@ test.describe("Product experience integration — Northstar journey", () => {
     await waitForCommercialReady(page);
     await page.getByRole("button", { name: "Open Ask Flow" }).click();
     await expect(page.getByRole("dialog", { name: /Ask Flow/i })).toBeVisible();
-    await page.getByRole("button", { name: "Next action" }).click();
+    await page.getByRole("button", { name: "Next action", exact: true }).click();
     await expect(page.getByText(/Proof/i)).toBeVisible();
     await capture(page, "11-ask-flow-proof.png");
 

@@ -1,4 +1,5 @@
 import { apiRequest } from "../api/client";
+import type { QuestionnaireBuilderDocument } from "@flow/commercial";
 
 export interface CommercialServiceRecord {
   readonly id: string;
@@ -305,15 +306,21 @@ export function createCommercialApi(input: {
     updateDraftQuestionnaire: (
       versionId: string,
       body: {
-        jsonSchema: Record<string, unknown>;
-        uiSchema: Record<string, unknown>;
-        questionMeta: Record<string, unknown>;
+        jsonSchema?: Record<string, unknown>;
+        uiSchema?: Record<string, unknown>;
+        questionMeta?: Record<string, unknown>;
+        builder?: QuestionnaireBuilderDocument;
       },
     ) =>
       request<QuestionnaireVersion>(`/questionnaires/${versionId}/draft`, {
         method: "POST",
         body,
       }),
+    duplicateQuestionnaireDraft: (serviceId: string) =>
+      request<QuestionnaireVersion>(
+        `/services/${serviceId}/questionnaires/duplicate-draft`,
+        { method: "POST" },
+      ),
     publishQuestionnaire: (versionId: string) =>
       request<QuestionnaireVersion>(`/questionnaires/${versionId}/publish`, {
         method: "POST",
@@ -339,6 +346,12 @@ export function createCommercialApi(input: {
       request<OpportunityBundle>(`/opportunities/${id}/answers`, {
         method: "POST",
         body: { answers },
+      }),
+    submitAnswers: (id: string, answers: Record<string, unknown>) =>
+      request<OpportunityBundle>(`/opportunities/${id}/answers/submit`, {
+        method: "POST",
+        body: { answers },
+        idempotencyKey: `submit-${id}`,
       }),
     addNotes: (id: string, notes: string) =>
       request<OpportunityBundle>(`/opportunities/${id}/notes`, {

@@ -138,6 +138,9 @@ class UpdateQuestionnaireDto {
 
   @IsOptional()
   questionMeta?: Record<string, unknown>;
+
+  @IsOptional()
+  builder?: Record<string, unknown>;
 }
 
 class UpdateDeliverableDto {
@@ -233,10 +236,29 @@ export class CommercialController {
       workspaceId,
       (identity) =>
         this.commercial.updateDraftQuestionnaire(identity, versionId, {
-          jsonSchema: body.jsonSchema ?? {},
-          uiSchema: body.uiSchema ?? {},
-          questionMeta: body.questionMeta ?? {},
+          ...(body.jsonSchema ? { jsonSchema: body.jsonSchema } : {}),
+          ...(body.uiSchema ? { uiSchema: body.uiSchema } : {}),
+          ...(body.questionMeta ? { questionMeta: body.questionMeta } : {}),
+          ...(body.builder
+            ? { builder: body.builder as never }
+            : {}),
         }),
+    );
+  }
+
+  @Post("services/:serviceId/questionnaires/duplicate-draft")
+  duplicateQuestionnaireDraft(
+    @Headers("authorization") authorization: string | undefined,
+    @Headers("x-flow-workspace-id") workspaceHeader: string | undefined,
+    @Param("workspaceId") workspaceId: string,
+    @Param("serviceId") serviceId: string,
+  ) {
+    return this.withIdentity(
+      authorization,
+      workspaceHeader,
+      workspaceId,
+      (identity) =>
+        this.commercial.duplicateQuestionnaireDraft(identity, serviceId),
     );
   }
 
@@ -358,6 +380,29 @@ export class CommercialController {
       workspaceId,
       (identity) =>
         this.commercial.getOpportunityBundle(identity, opportunityId),
+    );
+  }
+
+  @Post("opportunities/:opportunityId/answers/submit")
+  submitAnswers(
+    @Headers("authorization") authorization: string | undefined,
+    @Headers("x-flow-workspace-id") workspaceHeader: string | undefined,
+    @Headers("idempotency-key") idempotencyKey: string | undefined,
+    @Param("workspaceId") workspaceId: string,
+    @Param("opportunityId") opportunityId: string,
+    @Body() body: { answers?: Record<string, unknown> },
+  ) {
+    return this.withIdentity(
+      authorization,
+      workspaceHeader,
+      workspaceId,
+      (identity) =>
+        this.commercial.submitAnswers(
+          identity,
+          opportunityId,
+          body.answers ?? {},
+          idempotencyKey,
+        ),
     );
   }
 

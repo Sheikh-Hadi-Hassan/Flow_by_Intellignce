@@ -102,7 +102,7 @@ export interface DiscoverySourceRecord {
   readonly id: string;
   readonly workspaceId: string;
   readonly sessionId: string;
-  readonly sourceKind: "meeting_notes" | "transcript" | "document";
+  readonly sourceKind: "meeting_notes" | "transcript" | "document" | "questionnaire";
   readonly originalText: string;
   readonly contentType: string;
 }
@@ -260,6 +260,14 @@ export interface CommercialRepository {
     workspaceId: string,
     serviceId: string,
   ): Promise<readonly QuestionnaireVersionRecord[]>;
+  getQuestionnaireVersion(
+    workspaceId: string,
+    versionId: string,
+  ): Promise<QuestionnaireVersionRecord | undefined>;
+  duplicatePublishedToDraft(
+    workspaceId: string,
+    serviceId: string,
+  ): Promise<QuestionnaireVersionRecord>;
   listSources(
     workspaceId: string,
     opportunityId: string,
@@ -293,6 +301,17 @@ export interface CommercialRepository {
     readonly questionnaireVersionId: string;
     readonly answers: Record<string, unknown>;
   }): Promise<void>;
+  markResponseSubmitted(input: {
+    readonly workspaceId: string;
+    readonly opportunityId: string;
+    readonly questionnaireVersionId: string;
+    readonly submittedBy: string;
+  }): Promise<void>;
+  getResponseSubmission(
+    workspaceId: string,
+    opportunityId: string,
+    questionnaireVersionId: string,
+  ): Promise<{ readonly submittedAt: string; readonly submittedBy: string } | undefined>;
   getResponse(
     workspaceId: string,
     opportunityId: string,
@@ -531,6 +550,10 @@ export class InMemoryCommercialRepository implements CommercialRepository {
   private readonly contacts: ContactRecord[] = [];
   private readonly opportunities = new Map<string, OpportunityRecord>();
   private readonly responses = new Map<string, Record<string, unknown>>();
+  private readonly responseSubmissions = new Map<
+    string,
+    { submittedAt: string; submittedBy: string }
+  >();
   private readonly sources = new Map<string, DiscoverySourceRecord>();
   private readonly facts = new Map<string, ExtractedFactRecord>();
   private readonly followUps = new Map<string, FollowUpRecord>();
@@ -633,6 +656,37 @@ export class InMemoryCommercialRepository implements CommercialRepository {
       (row) => row.workspaceId === workspaceId && row.serviceId === serviceId,
     );
   }
+  async getQuestionnaireVersion(workspaceId: string, versionId: string) {
+    const row = this.questionnaires.get(versionId);
+    return row?.workspaceId === workspaceId ? row : undefined;
+  }
+  async duplicatePublishedToDraft(workspaceId: string, serviceId: string) {
+    const existingDraft = [...this.questionnaires.values()].find(
+      (row) =>
+        row.workspaceId === workspaceId &&
+        row.serviceId === serviceId &&
+        row.status === "draft",
+    );
+    if (existingDraft) return existingDraft;
+    const published = await this.getPublishedQuestionnaire(workspaceId, serviceId);
+    if (!published) {
+      throw new Error("No published questionnaire to duplicate.");
+    }
+    const versions = await this.listQuestionnaires(workspaceId, serviceId);
+    const versionNumber =
+      Math.max(0, ...versions.map((row) => row.versionNumber)) + 1;
+    const draft = {
+      ...published,
+      id: crypto.randomUUID(),
+      versionNumber,
+      status: "draft" as const,
+      jsonSchema: { ...published.jsonSchema },
+      uiSchema: { ...published.uiSchema },
+      questionMeta: { ...published.questionMeta },
+    };
+    this.questionnaires.set(draft.id, draft);
+    return draft;
+  }
   async createClient(record: ClientRecord) {
     this.clients.set(record.id, record);
     return record;
@@ -704,6 +758,26 @@ export class InMemoryCommercialRepository implements CommercialRepository {
   }
   async getResponse(workspaceId: string, opportunityId: string) {
     return this.responses.get(`${workspaceId}:${opportunityId}`);
+  }
+  async markResponseSubmitted(input: {
+    readonly workspaceId: string;
+    readonly opportunityId: string;
+    readonly questionnaireVersionId: string;
+    readonly submittedBy: string;
+  }) {
+    this.responseSubmissions.set(
+      `${input.workspaceId}:${input.opportunityId}:${input.questionnaireVersionId}`,
+      { submittedAt: new Date().toISOString(), submittedBy: input.submittedBy },
+    );
+  }
+  async getResponseSubmission(
+    workspaceId: string,
+    opportunityId: string,
+    questionnaireVersionId: string,
+  ) {
+    return this.responseSubmissions.get(
+      `${workspaceId}:${opportunityId}:${questionnaireVersionId}`,
+    );
   }
   async createSession(input: {
     readonly id: string;
@@ -1312,6 +1386,44 @@ export class PostgresCommercialRepository implements CommercialRepository {
     );
     return result.rows.map((row) => this.mapQuestionnaire(row));
   }
+  async getQuestionnaireVersion(workspaceId: string, versionId: string) {
+    const result = await this.db.query<Record<string, unknown>>(
+      `select * from public.catalog_questionnaire_versions
+        where workspace_id = $1 and id = $2`,
+      [workspaceId, versionId],
+    );
+    const row = result.rows[0];
+    return row ? this.mapQuestionnaire(row) : undefined;
+  }
+  async duplicatePublishedToDraft(workspaceId: string, serviceId: string) {
+    const existingDraft = await this.db.query<Record<string, unknown>>(
+      `select * from public.catalog_questionnaire_versions
+        where workspace_id = $1 and service_id = $2 and status = 'draft'`,
+      [workspaceId, serviceId],
+    );
+    const draftRow = existingDraft.rows[0];
+    if (draftRow) return this.mapQuestionnaire(draftRow);
+    const published = await this.getPublishedQuestionnaire(workspaceId, serviceId);
+    if (!published) {
+      throw new Error("No published questionnaire to duplicate.");
+    }
+    const versions = await this.listQuestionnaires(workspaceId, serviceId);
+    const versionNumber =
+      Math.max(0, ...versions.map((row) => row.versionNumber)) + 1;
+    const id = crypto.randomUUID();
+    const record: QuestionnaireVersionRecord = {
+      id,
+      workspaceId,
+      serviceId,
+      versionNumber,
+      status: "draft",
+      jsonSchema: published.jsonSchema,
+      uiSchema: published.uiSchema,
+      questionMeta: published.questionMeta,
+    };
+    await this.createQuestionnaire(record);
+    return record;
+  }
   private mapQuestionnaire(
     row: Record<string, unknown>,
   ): QuestionnaireVersionRecord {
@@ -1528,6 +1640,44 @@ export class PostgresCommercialRepository implements CommercialRepository {
       [workspaceId, opportunityId],
     );
     return result.rows[0]?.answers;
+  }
+  async markResponseSubmitted(input: {
+    readonly workspaceId: string;
+    readonly opportunityId: string;
+    readonly questionnaireVersionId: string;
+    readonly submittedBy: string;
+  }) {
+    await this.db.query(
+      `update public.catalog_questionnaire_responses
+          set submitted_at = now(), submitted_by = $4
+        where workspace_id = $1 and opportunity_id = $2 and questionnaire_version_id = $3`,
+      [
+        input.workspaceId,
+        input.opportunityId,
+        input.questionnaireVersionId,
+        input.submittedBy,
+      ],
+    );
+  }
+  async getResponseSubmission(
+    workspaceId: string,
+    opportunityId: string,
+    questionnaireVersionId: string,
+  ) {
+    const result = await this.db.query<{
+      submitted_at: string;
+      submitted_by: string;
+    }>(
+      `select submitted_at, submitted_by from public.catalog_questionnaire_responses
+        where workspace_id = $1 and opportunity_id = $2 and questionnaire_version_id = $3`,
+      [workspaceId, opportunityId, questionnaireVersionId],
+    );
+    const row = result.rows[0];
+    if (!row?.submitted_at || !row.submitted_by) return undefined;
+    return {
+      submittedAt: postgresTimestamp(row.submitted_at),
+      submittedBy: String(row.submitted_by),
+    };
   }
   async createSession(input: {
     readonly id: string;

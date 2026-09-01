@@ -178,22 +178,26 @@ function ServiceDetail() {
       </section>
       {draft && (
         <section className="flow-panel">
-          <h2>Draft questionnaire v{draft.versionNumber}</h2>
-          <p>
-            Portable JSON Schema with conditional legal-review owner when legal
-            review is required.
-          </p>
-          <Button
-            onClick={async () => {
-              if (!client) return;
-              await client.publishQuestionnaire(draft.id);
-              setMessage("Published. Responses will bind to this version.");
-              const next = await client.getService(serviceId);
-              setQuestionnaires(next.questionnaires);
-            }}
+          <h2>Questionnaire</h2>
+          <p>Draft version {draft.versionNumber} ready to edit and publish.</p>
+          <a
+            href={`/${workspace}/admin/services/${serviceId}/questionnaire`}
+            className="flow-btn flow-btn--primary"
           >
-            Publish questionnaire
-          </Button>
+            Open questionnaire builder
+          </a>
+        </section>
+      )}
+      {!draft && published && (
+        <section className="flow-panel">
+          <h2>Questionnaire</h2>
+          <p>Published version {published.versionNumber}.</p>
+          <a
+            href={`/${workspace}/admin/services/${serviceId}/questionnaire`}
+            className="flow-btn flow-btn--secondary"
+          >
+            View questionnaire
+          </a>
         </section>
       )}
       {message && <p role="status">{message}</p>}

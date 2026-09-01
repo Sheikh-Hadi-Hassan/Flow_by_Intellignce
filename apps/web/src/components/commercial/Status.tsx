@@ -55,6 +55,7 @@ export function OpportunityNav({
   const links = [
     { href: base, label: "Overview" },
     { href: `${base}/discovery`, label: "Discovery" },
+    { href: `${base}/questionnaire`, label: "Questionnaire" },
     { href: `${base}/missing`, label: "Missing information" },
     { href: `${base}/brief`, label: "Brief" },
     { href: `${base}/approvals`, label: "Approvals" },

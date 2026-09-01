@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/require-await, @typescript-eslint/no-base-to-string -- demo store is synchronous behind async API shape */
 import {
   brandStrategyQuestionnaireV1,
+  answersToDraftFactStatements,
   calculateScope,
+  compileBuilderDocument,
+  parseBuilderDocument,
   FixtureDiscoveryExtractor,
   generateProjectPlan,
   nextProjectStatus,
@@ -9,6 +12,7 @@ import {
   scopeWritesFromVerifiedFact,
   validateQuestionnaireResponse,
 } from "@flow/commercial";
+import type { QuestionnaireBuilderDocument } from "@flow/commercial";
 
 import {
   NORTHSTAR_ACME_NOTES,
@@ -56,6 +60,7 @@ interface DemoState {
   resourcePlan: ResourcePlanRecord | null;
   guards: OpportunityBundle["guards"][number][];
   extractionRuns: NonNullable<OpportunityBundle["extractionRuns"]>;
+  submitted?: boolean;
 }
 
 function seed(): DemoState {
@@ -332,7 +337,29 @@ export function createNorthstarCommercialApi() {
       const state = load();
       return { service: state.service };
     },
-    updateDraftQuestionnaire: async () => load().questionnaire,
+    updateDraftQuestionnaire: async (
+      _versionId: string,
+      body: {
+        jsonSchema?: Record<string, unknown>;
+        uiSchema?: Record<string, unknown>;
+        questionMeta?: Record<string, unknown>;
+        builder?: QuestionnaireBuilderDocument;
+      },
+    ) => {
+      const state = load();
+      if (body.builder) {
+        const compiled = compileBuilderDocument(body.builder);
+        state.questionnaire = {
+          ...state.questionnaire,
+          jsonSchema: compiled.jsonSchema,
+          uiSchema: compiled.uiSchema,
+          questionMeta: compiled.questionMeta,
+        };
+        save(state);
+      }
+      return state.questionnaire;
+    },
+    duplicateQuestionnaireDraft: async () => load().questionnaire,
     publishQuestionnaire: async () => load().questionnaire,
     listClients: async () => [load().client],
     createClient: async () => {
@@ -361,6 +388,32 @@ export function createNorthstarCommercialApi() {
         throw new Error(validated.errors.join(" "));
       }
       state.answers = answers;
+      save(state);
+      return bundle(state);
+    },
+    submitAnswers: async (id: string, answers: Record<string, unknown>) => {
+      void id;
+      const state = load();
+      const validated = validateQuestionnaireResponse(
+        brandStrategyQuestionnaireV1,
+        answers,
+        { enforceRequired: true },
+      );
+      if (!validated.valid) {
+        throw new Error(validated.errors.join(" "));
+      }
+      state.answers = answers;
+      state.submitted = true;
+      const builder = parseBuilderDocument(state.questionnaire);
+      for (const fact of answersToDraftFactStatements(builder, answers)) {
+        state.facts.push({
+          id: `ns-fact-${state.facts.length + 1}`,
+          candidateFact: fact.statement,
+          category: fact.category,
+          confidenceBps: 10_000,
+          status: "draft",
+        });
+      }
       save(state);
       return bundle(state);
     },

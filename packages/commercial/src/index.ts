@@ -15,3 +15,7 @@ export * from "./project-plan-generation.js";
 export * from "./resource-plan-lifecycle.js";
 export * from "./capacity-engine.js";
 export * from "./recommendation-engine.js";
+export * from "./finance-calculations.js";
+export * from "./time-entry-lifecycle.js";
+export * from "./expense-lifecycle.js";
+export * from "./invoice-lifecycle.js";

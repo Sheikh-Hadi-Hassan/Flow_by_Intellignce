@@ -63,6 +63,18 @@ const FOUNDER_PERMISSION_KEYS = [
   "resource.plan.publish",
   "resource.cost.read",
   "resource.work.read",
+  "finance.time.own",
+  "finance.time.read",
+  "finance.time.approve",
+  "finance.expense.own",
+  "finance.expense.read",
+  "finance.expense.approve",
+  "finance.invoice.read",
+  "finance.invoice.manage",
+  "finance.invoice.approve",
+  "finance.payment.record",
+  "finance.report.read",
+  "finance.profitability.read",
   "commercial.audit.read",
 ] as const;
 

@@ -124,7 +124,7 @@ Pre-commit: no `sb_secret_`, JWTs, or database URLs in staged source files.
 
 ## 25. Push result
 
-_To be recorded after push._
+Pushed to `origin/feat/phase-6-financial-operations` at `b21d864` (2026-09-01).
 
 ## 26. Remaining blockers
 

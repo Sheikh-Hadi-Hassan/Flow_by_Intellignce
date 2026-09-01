@@ -107,8 +107,11 @@ PASS — no secrets in staged quality-system paths.
 
 ## 13. Commits
 
-_To be recorded after push._
+| Commit | Message |
+|--------|---------|
+| `b4bc304` | chore(cursor): add evidence-enforced agent rules and hooks |
+| `8b5ccec` | test(ui): add visual accessibility and component quality gates |
 
 ## 14. Push result
 
-_To be recorded after push._
+Pushed to `origin/chore/cursor-quality-system` at `8b5ccec` (2026-09-01).

@@ -1,0 +1,34 @@
+---
+description: Visual quality standards — reject engineering fixtures as finished UI
+globs: apps/web/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Flow Visual Quality
+
+## Reject as completed UI
+
+- Raw bullet lists and bare links as record lists
+- Exposed internal enum values (e.g. `founder_review`, `pending_client_acceptance`)
+- Large creation forms dominating list pages
+- Placeholder reports and fake metrics
+- Decorative charts without data
+- Text collisions, uncontrolled whitespace, desktop-only layouts
+- Empty demo states in the primary investor journey
+- Generic CRUD pages, inaccessible controls, unexplained disabled controls
+- Instructional text pretending to be intelligence
+
+## Require before visual PASS
+
+- Meaningful hierarchy, responsive behavior (320–1440px)
+- Loading, empty, and error states with real actions
+- User-readable labels (not snake_case enums)
+- Evidence-based AI output with Proof labels
+- Screenshots at 320, 375, 430, 768, 1440 widths
+- Light, dark, and custom accent verification
+- Independent UI critic score ≥ 8/10
+- **Explicit product-owner visual approval** recorded in evidence manifest
+
+## Known defects (not accepted baselines)
+
+Raw client/opportunity forms, team bullet list, empty My Work, placeholder Reports, weak Mission Control viz, excessive whitespace, static Ask Flow content.

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/command-guard.mjs",
+        "failClosed": false
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": ".cursor/hooks/secret-guard.mjs",
+        "failClosed": false
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/edit-quality.mjs"
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/closure-guard.mjs",
+        "loop_limit": 1
+      }
+    ]
+  }
+}

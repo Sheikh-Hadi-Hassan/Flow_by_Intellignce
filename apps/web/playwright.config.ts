@@ -11,6 +11,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"], ["html", { open: "never" }]],
+  snapshotPathTemplate: "{testDir}/visual/snapshots/{testFilePath}/{arg}{ext}",
   use: {
     baseURL,
     trace: "retain-on-failure",

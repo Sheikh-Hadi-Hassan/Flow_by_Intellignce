@@ -44,6 +44,28 @@ export function projectBadge(status: string) {
   return "default" as const;
 }
 
+export function financeBadge(status: string) {
+  if (status === "paid" || status === "approved" || status === "invoiced") {
+    return "success" as const;
+  }
+  if (
+    status === "overdue" ||
+    status === "rejected" ||
+    status === "changes_requested"
+  ) {
+    return "warning" as const;
+  }
+  if (
+    status === "founder_review" ||
+    status === "submitted" ||
+    status === "issued" ||
+    status === "partially_paid"
+  ) {
+    return "essential" as const;
+  }
+  return "default" as const;
+}
+
 export function OpportunityNav({
   workspace,
   opportunityId,

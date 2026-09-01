@@ -19,6 +19,7 @@ describe("lifecycle-nav", () => {
       `/${workspace}/admin/opportunities`,
       `/${workspace}/admin/lifecycle/projects`,
       `/${workspace}/admin/team`,
+      `/${workspace}/admin/finance`,
       `/${workspace}/work`,
       `/${workspace}/admin/lifecycle/reporting`,
     ]);

@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
   Briefcase,
+  DollarSign,
   FolderKanban,
   LayoutDashboard,
   Users,
@@ -55,6 +56,12 @@ export function founderLifecycleNav(workspace: string): LifecycleNavItem[] {
       icon: UsersRound,
     },
     {
+      id: "finance",
+      label: "Finance",
+      href: `${base}/finance`,
+      icon: DollarSign,
+    },
+    {
       id: "mywork",
       label: "My Work",
       href: `/${workspace}/work`,
@@ -101,10 +108,15 @@ export function isLifecycleNavActive(
       );
     case "team":
       return pathname.includes("/admin/team");
+    case "finance":
+      return pathname.includes("/admin/finance");
     case "mywork":
-      return pathname.endsWith("/work");
+      return pathname.endsWith("/work") || pathname.includes("/work/");
     case "reports":
-      return pathname.includes("/lifecycle/reporting");
+      return (
+        pathname.includes("/lifecycle/reporting") ||
+        pathname.includes("/admin/finance/reports")
+      );
     default:
       return pathname === item.href || pathname.startsWith(`${item.href}/`);
   }

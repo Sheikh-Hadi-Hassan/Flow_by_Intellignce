@@ -55,6 +55,17 @@ function ReportingHub() {
             <span className="flow-priority-card__meta">Published assignments</span>
           </Link>
         </li>
+        <li className="flow-record-list__item">
+          <Link
+            href={`${base}/finance/reports`}
+            className="flow-record-list__link"
+          >
+            <span className="flow-record-list__name">Financial reports</span>
+            <span className="flow-priority-card__meta">
+              Receivables, aging, and summary
+            </span>
+          </Link>
+        </li>
       </ul>
     </MissionScreen>
   );

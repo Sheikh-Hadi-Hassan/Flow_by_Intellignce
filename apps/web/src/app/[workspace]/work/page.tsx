@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -31,6 +32,20 @@ function MyWorkPage() {
         title="My assignments"
         description="Published workload assigned to you."
       />
+      <nav className="flow-stepper" aria-label="Work sections">
+        <Link href={`/${workspace}/work`} className="flow-stepper__step">
+          Assignments
+        </Link>
+        <Link href={`/${workspace}/work/time`} className="flow-stepper__step">
+          Submit time
+        </Link>
+        <Link
+          href={`/${workspace}/work/expenses`}
+          className="flow-stepper__step"
+        >
+          Submit expenses
+        </Link>
+      </nav>
       <div className="flow-panel" data-testid="my-work-list">
         {items.length === 0 ? (
           <p>No published assignments yet.</p>

@@ -110,7 +110,17 @@ Pre-commit: no `sb_secret_`, JWTs, or database URLs in staged source files.
 
 ## 24. Commits
 
-_To be recorded after push._
+| Commit | Message |
+| ------ | ------- |
+| `d261391` | docs(finance): define Phase 6 financial operations contract |
+| `9ae6885` | chore(db): add governed financial operations schema |
+| `1445d54` | feat(finance): add time expense invoice and payment engine |
+| `91f59ed` | feat(finance): add finance persistence layer |
+| `da07ad3` | feat(finance): expose workspace finance API endpoints |
+| `85f2ae1` | feat(experience): integrate financial operations into Flow |
+| `6fe3a4e` | feat(experience): add Mission Control and Ask Flow finance signals |
+| `4a013d3` | test(finance): verify authenticated financial lifecycle |
+| `743ea02` | docs(phase-6): record financial operations closure |
 
 ## 25. Push result
 

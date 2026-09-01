@@ -46,6 +46,7 @@
   --color-text-primary: #171717;
   --color-text-secondary: #5f6875;
   --color-text-muted: #8b939f;
+  --color-text-tertiary: #8b939f;
 
   --color-border: #d9dee7;
   --color-border-strong: #b8c0cc;
@@ -98,6 +99,7 @@
   --color-text-primary: #f2f4f7;
   --color-text-secondary: #a3aab4;
   --color-text-muted: #6b7280;
+  --color-text-tertiary: #6b7280;
 
   --color-border: #3a4049;
   --color-border-strong: #525a66;

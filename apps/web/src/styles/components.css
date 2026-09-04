@@ -84,6 +84,12 @@
   color: var(--color-text-primary);
 }
 
+.flow-btn:focus-visible,
+.flow-icon-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .flow-field {
   display: flex;
   flex-direction: column;
@@ -160,6 +166,12 @@
   border-color: var(--color-warning);
   background: var(--color-warning-bg);
   color: var(--color-warning);
+}
+
+.flow-badge--danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .flow-badge--essential {

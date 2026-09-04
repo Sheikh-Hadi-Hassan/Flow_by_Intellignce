@@ -1,0 +1,517 @@
+.flow-ask-global {
+  --ask-dock-width: min(820px, calc(100vw - 32px));
+  --ask-dock-height: var(--ask-flow-dock-height, 72px);
+  --ask-dock-pad: 6px;
+  --ask-dock-bottom: var(
+    --ask-flow-dock-bottom,
+    max(16px, env(safe-area-inset-bottom, 0px))
+  );
+  --ask-side: 112px;
+  --ask-tile: 56px;
+  --ask-tool: 44px;
+  --ask-tool-gap: 8px;
+  --ask-zone-inset: 8px;
+  --ask-inner-height: calc(var(--ask-dock-height) - (var(--ask-dock-pad) * 2));
+  --ask-housing: #2f2f2d;
+  --ask-well: #111111;
+  --ask-ink: #ececec;
+  --ask-muted: #b8b8b4;
+  position: fixed;
+  left: 50%;
+  bottom: var(--ask-dock-bottom);
+  z-index: 40;
+  width: var(--ask-dock-width);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  pointer-events: none;
+}
+
+.flow-ask-global > * {
+  pointer-events: auto;
+}
+
+.flow-ask-global--full {
+  inset: var(--shell-header-height, 68px) 0 0;
+  left: 0;
+  width: 100%;
+  transform: none;
+  padding: 16px 24px max(16px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  justify-content: flex-end;
+  background: var(--color-bg-canvas);
+}
+
+.flow-ask-global__suggestions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.flow-ask-global__suggestions[hidden] {
+  display: none;
+}
+
+.flow-ask-global__suggestion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(640px, 100%);
+  min-height: 40px;
+  padding: 10px 16px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.flow-ask-global__suggestion--on,
+.flow-ask-global__suggestion:hover,
+.flow-ask-global__suggestion:focus-visible {
+  border-color: var(--color-text-primary);
+}
+
+.flow-ask-global__suggestion:focus-visible {
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.flow-ask-global__suggestion-arrow {
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+}
+
+.flow-ask-global__dock {
+  box-sizing: border-box;
+  height: var(--ask-dock-height);
+  padding: var(--ask-dock-pad);
+  border-radius: 22px;
+  background: var(--ask-housing);
+  box-shadow: 0 6px 16px rgba(20, 20, 18, 0.12);
+}
+
+.flow-ask-global--open .flow-ask-global__dock {
+  height: auto;
+  min-height: var(--ask-dock-height);
+}
+
+.flow-ask-global__row {
+  display: grid;
+  grid-template-columns: var(--ask-side) minmax(0, 1fr) var(--ask-side);
+  align-items: center;
+  min-height: var(--ask-inner-height);
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--ask-well);
+}
+
+.flow-ask-global__zone {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--ask-inner-height);
+  padding-inline: var(--ask-zone-inset);
+}
+
+.flow-ask-global__zone--start {
+  justify-content: flex-start;
+}
+
+.flow-ask-global__zone--end {
+  justify-content: flex-end;
+  gap: var(--ask-tool-gap);
+}
+
+.flow-ask-global__tile {
+  display: grid;
+  place-items: center;
+  width: var(--ask-tile);
+  height: var(--ask-tile);
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--color-brand);
+  color: #111111;
+  cursor: pointer;
+}
+
+.flow-ask-global__tile svg {
+  display: block;
+  transform: translateY(0.5px);
+}
+
+.flow-ask-global__tile:hover,
+.flow-ask-global__tile:active {
+  filter: brightness(0.96);
+}
+
+.flow-ask-global__tile:focus-visible {
+  outline: 1px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.flow-ask-global__composer {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  height: var(--ask-inner-height);
+  margin: 0;
+  cursor: text;
+}
+
+.flow-ask-global__input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: calc((var(--ask-inner-height) - 22px) / 2) 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ask-ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  cursor: text;
+}
+
+.flow-ask-global__input::placeholder {
+  color: var(--ask-muted);
+}
+
+.flow-ask-global__row:focus-within {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 14%, transparent);
+}
+
+.flow-ask-global--open .flow-ask-global__composer,
+.flow-ask-global--open .flow-ask-global__input {
+  height: auto;
+  min-height: var(--ask-inner-height);
+  max-height: 96px;
+}
+
+.flow-ask-global--open .flow-ask-global__input {
+  overflow-y: auto;
+}
+
+.flow-ask-global__tool {
+  display: grid;
+  place-items: center;
+  width: var(--ask-tool);
+  height: var(--ask-tool);
+  padding: 0;
+  border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ask-ink);
+  cursor: pointer;
+}
+
+.flow-ask-global__tool:hover {
+  background: color-mix(in srgb, #fff 8%, transparent);
+}
+
+.flow-ask-global__tool:active,
+.flow-ask-global__tool[data-state="pressed"] {
+  background: color-mix(in srgb, #fff 12%, transparent);
+}
+
+.flow-ask-global__tool:focus-visible {
+  outline: 1px solid var(--ask-ink);
+  outline-offset: 2px;
+}
+
+.flow-ask-global__tool[data-state="listening"] {
+  border-color: var(--ask-ink);
+}
+
+.flow-ask-global__tool[data-state="loading"] {
+  opacity: 0.7;
+}
+
+.flow-ask-global__tool:disabled,
+.flow-ask-global__tool[data-state="disabled"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.flow-ask-global [data-tooltip] {
+  position: relative;
+}
+
+.flow-ask-global [data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 70;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.flow-ask-global [data-tooltip]:hover::after,
+.flow-ask-global [data-tooltip]:focus-visible::after {
+  opacity: 1;
+}
+
+.flow-ask-global__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-height: min(46vh, calc(100dvh - 14rem));
+  margin-bottom: 12px;
+  padding: var(--space-5);
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  box-shadow: 0 6px 16px rgba(20, 20, 18, 0.08);
+}
+
+.flow-ask-global--full .flow-ask-global__panel {
+  flex: 1;
+  max-height: none;
+}
+
+.flow-ask-global--full .flow-ask-global__dock {
+  width: min(820px, 100%);
+  margin: 0 auto;
+}
+
+.flow-ask-global__panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-ask-global__scope {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-ask-global__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.flow-ask-global__icon:focus-visible {
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.flow-ask-global__turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.flow-ask-global__question {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.flow-ask-global__versions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+
+.flow-ask-global__versions button {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.flow-ask-global__versions button[aria-pressed="true"] {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+}
+
+.flow-ask-global__answer {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.flow-ask-global__stale {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.flow-ask-global__caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  background: var(--color-brand);
+  vertical-align: text-bottom;
+}
+
+.flow-ask-global__related,
+.flow-ask-global__choices,
+.flow-ask-global__actions,
+.flow-ask-global__follow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.flow-ask-global__related a,
+.flow-ask-global__choices button,
+.flow-ask-global__actions button,
+.flow-ask-global__follow a,
+.flow-ask-global__edit button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.flow-ask-global__actions button[aria-pressed="true"] {
+  border-color: var(--color-text-primary);
+}
+
+.flow-ask-global__versions button:focus-visible,
+.flow-ask-global__related a:focus-visible,
+.flow-ask-global__choices button:focus-visible,
+.flow-ask-global__actions button:focus-visible,
+.flow-ask-global__follow a:focus-visible,
+.flow-ask-global__edit button:focus-visible {
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.flow-ask-global__edit input:focus-visible {
+  border-color: var(--color-brand);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand) 25%, transparent);
+}
+
+.flow-ask-global__edit {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.flow-ask-global__edit input {
+  flex: 1;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+[data-theme="dark"] .flow-ask-global {
+  --ask-housing: #2a2a28;
+}
+
+[data-theme="dark"] .flow-ask-global__dock {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .flow-ask-global__panel,
+[data-theme="dark"] .flow-ask-global__suggestion {
+  background: #1c1c1a;
+  border-color: #3f3e3a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-ask-global__caret {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .flow-ask-global {
+    --ask-dock-width: calc(100vw - 16px);
+    --ask-dock-height: var(--ask-flow-dock-height, 64px);
+    --ask-dock-pad: 5px;
+    --ask-dock-bottom: var(
+      --ask-flow-dock-bottom,
+      max(8px, env(safe-area-inset-bottom, 0px))
+    );
+    --ask-side: 96px;
+    --ask-tile: 48px;
+    --ask-tool: 44px;
+    --ask-zone-inset: 4px;
+  }
+
+  .flow-ask-global__tile {
+    border-radius: 12px;
+  }
+
+  .flow-ask-global__tool {
+    border-radius: 10px;
+  }
+
+  .flow-ask-global__suggestions {
+    width: 100%;
+  }
+
+  .flow-ask-global__input {
+    font-size: 12px;
+    line-height: 16px;
+    padding: calc((var(--ask-inner-height) - 32px) / 2) 2px;
+    white-space: pre-wrap;
+    overflow: hidden;
+  }
+}

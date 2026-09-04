@@ -1,0 +1,2029 @@
+/**
+ * MC-02R canvas stylesheet.
+ *
+ * The canvas components use these prefixes:
+ *   flow-canvas, flow-canvas-head, flow-canvas-hero, flow-canvas-field,
+ *   flow-canvas-dock, flow-canvas-panels / flow-canvas-panel, flow-canvas-queue.
+ *
+ * Every SVG path that is a line (not a filled area) must set fill: none.
+ * Without that, the browser default fill is black and the chart expands into
+ * a giant filled shape. Every plot also needs an explicit height so the SVG
+ * cannot grow with its viewBox.
+ */
+
+.flow-canvas {
+  --canvas-max: 1280px;
+  --canvas-gutter: var(--space-8);
+  --canvas-head: 48px;
+  --canvas-paper: color-mix(in srgb, var(--color-bg-canvas) 88%, #fdfcfa);
+  --canvas-rule: color-mix(in srgb, var(--color-border) 55%, transparent);
+  --canvas-ink: #1c1c1c;
+  --canvas-dock: #5c5c5c;
+  --canvas-dock-bar: #111111;
+  --canvas-dock-text: #ececec;
+  --canvas-dock-muted: #c4c4c4;
+  --color-text-secondary: #4a524c;
+
+  min-height: 100vh;
+  background: var(--canvas-paper);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  font-family: var(--font-flow-sans), "Space Grotesk", sans-serif;
+}
+
+.flow-canvas button,
+.flow-canvas input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.flow-canvas-microlabel {
+  display: block;
+  font-family: var(--font-flow-mono), "Space Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.flow-canvas-head {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--canvas-head);
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--canvas-paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--canvas-rule);
+}
+
+.flow-canvas-head__inner {
+  width: 100%;
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: 0 var(--canvas-gutter);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.flow-canvas-head .flow-wordmark {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.flow-canvas-head__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.flow-canvas-head__workspace {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.flow-canvas-head__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-left: var(--space-2);
+}
+
+.flow-canvas-head__link {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--color-text-secondary) 82%, var(--canvas-paper));
+  text-decoration: none;
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-canvas-head__link:hover {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.flow-canvas-head__link--on {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  border-bottom-color: var(--color-text-primary);
+}
+
+.flow-canvas-head__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.flow-canvas-head__search {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 28px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.flow-canvas-head__search:hover {
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-head__control {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.flow-canvas-head__control:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-subtle);
+}
+
+.flow-canvas-head__appearance {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.flow-canvas-head__palette {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--space-2));
+  z-index: 50;
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--canvas-rule);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.flow-canvas-head__swatch {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.flow-canvas-head__swatch[aria-pressed="true"] {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.flow-canvas-head__notes {
+  flex-direction: column;
+  width: min(280px, calc(100vw - var(--space-8)));
+  gap: var(--space-3);
+}
+
+.flow-canvas-head__note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-head__note-time {
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-head__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-text-primary);
+}
+
+.flow-canvas-head__avatar {
+  width: 26px;
+  height: 26px;
+  margin-left: var(--space-2);
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-bg-inset);
+}
+
+.flow-canvas-head__menu,
+.flow-canvas-head__drawer,
+.flow-canvas-head__drawer-workspace,
+.flow-canvas-head__drawer-nav {
+  display: none;
+}
+
+.flow-canvas-hero__value--copy {
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  max-width: 18ch;
+}
+
+.flow-canvas-demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+  padding: var(--space-6) 0 var(--space-10);
+  border-top: 1px solid var(--canvas-rule);
+}
+
+.flow-canvas-demo__btn {
+  padding: 4px 10px;
+  border: 1px solid var(--canvas-rule);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.flow-canvas-demo__btn--on {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.flow-canvas-dock__panel-control--full {
+  display: grid;
+}
+
+.flow-canvas-load {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8) 0;
+}
+
+.flow-canvas-load__line {
+  display: block;
+  height: 16px;
+  width: min(640px, 100%);
+}
+
+.flow-canvas-load__line--sm {
+  height: 12px;
+  width: 180px;
+}
+
+.flow-canvas-load__line--hero {
+  height: 48px;
+  width: min(280px, 70%);
+}
+
+.flow-canvas-load__plot {
+  display: block;
+  height: 176px;
+  width: 100%;
+  margin-top: var(--space-4);
+}
+
+/* ── Sheet ──────────────────────────────────────────────────────── */
+
+.flow-canvas__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.flow-canvas__sheet {
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: 0 var(--canvas-gutter);
+}
+
+.flow-canvas__viewport {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(900px - var(--canvas-head));
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-4);
+}
+
+.flow-canvas__frame {
+  display: contents;
+}
+
+.flow-canvas__context {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-5);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas__context-title {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────── */
+
+.flow-canvas-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.flow-canvas-hero__value {
+  margin: 0;
+  font-size: clamp(3.25rem, 5.6vw, 5rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-flow-sans), "Space Grotesk", sans-serif;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-hero__label {
+  margin: var(--space-3) 0 0;
+  max-width: 36rem;
+  font-size: 17px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-hero__insight {
+  margin: var(--space-4) auto 0;
+  max-width: 40rem;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: color-mix(in srgb, var(--color-text-secondary) 88%, transparent);
+  font-style: italic;
+}
+
+.flow-canvas-hero__band {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  text-align: left;
+}
+
+.flow-canvas-hero__statement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.flow-canvas-hero__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-hero__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-canvas-hero__legend-bar {
+  width: 8px;
+  height: 12px;
+  background: color-mix(in srgb, var(--color-text-primary) 18%, transparent);
+}
+
+.flow-canvas-hero__legend-line {
+  width: 14px;
+  height: 2px;
+  background: var(--color-text-primary);
+}
+
+.flow-canvas-hero__modes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.flow-canvas-mode {
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.flow-canvas-mode:hover {
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-mode--on {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  border-bottom-color: var(--color-text-primary);
+}
+
+/* ── Hero chart ─────────────────────────────────────────────────── */
+
+.flow-canvas__stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.flow-canvas-field {
+  min-width: 0;
+}
+
+.flow-canvas-field__plot {
+  position: relative;
+  height: 292px;
+  max-height: 292px;
+  overflow: hidden;
+  outline: none;
+}
+
+.flow-canvas-field__svg {
+  display: block;
+  width: 100%;
+  height: 292px;
+  max-height: 292px;
+  overflow: hidden;
+}
+
+.flow-canvas-field__guide {
+  fill: none;
+  stroke: var(--canvas-rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.flow-canvas-field__guide--base {
+  stroke: color-mix(in srgb, var(--color-border) 80%, transparent);
+}
+
+.flow-canvas-field__bar {
+  fill: color-mix(in srgb, var(--color-text-primary) 22%, transparent);
+}
+
+.flow-canvas-field__bar--quiet {
+  fill: color-mix(in srgb, var(--color-text-primary) 7%, transparent);
+}
+
+.flow-canvas-field__bar--marked {
+  fill: color-mix(in srgb, var(--color-text-primary) 38%, transparent);
+}
+
+.flow-canvas-field__cursor {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.flow-canvas-field__line {
+  fill: none;
+  stroke: var(--color-text-primary);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.flow-canvas-field__mark {
+  fill: var(--color-brand);
+  stroke: var(--canvas-paper);
+  stroke-width: 2;
+}
+
+.flow-canvas-field__axis {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 4.5rem;
+  pointer-events: none;
+}
+
+.flow-canvas-field__axis span {
+  position: absolute;
+  right: 0;
+  font-family: var(--font-flow-mono), "Space Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-canvas-field__note {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 11rem;
+  padding: 4px 8px 5px;
+  border: 1px solid var(--canvas-rule);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--canvas-paper) 88%, transparent);
+  text-align: right;
+  pointer-events: none;
+  transform: translate(-8px, calc(-100% - 8px));
+}
+
+.flow-canvas-field__note-value {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-field__note-text {
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-field__readout {
+  position: absolute;
+  top: var(--space-2);
+  transform: translateX(8px);
+  min-width: 180px;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 2px solid var(--color-brand);
+  background: color-mix(in srgb, var(--canvas-paper) 92%, transparent);
+  pointer-events: none;
+}
+
+.flow-canvas-field__readout--flip {
+  transform: translateX(calc(-100% - 8px));
+  text-align: right;
+  border-left: 0;
+  border-right: 2px solid var(--color-brand);
+}
+
+.flow-canvas-field__readout-date {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-field__readout-row,
+.flow-canvas-field__readout-event {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-canvas-field__months {
+  position: relative;
+  height: 20px;
+  margin-top: var(--space-1);
+}
+
+.flow-canvas-field__months span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-flow-mono), "Space Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+/* ── Ask Flow dock ──────────────────────────────────────────────── */
+
+.flow-canvas-dock {
+  position: absolute;
+  left: 50%;
+  bottom: -112px;
+  z-index: 20;
+  width: min(560px, calc(100% - var(--space-8)));
+  transform: translateX(-50%);
+}
+
+.flow-canvas-dock__housing {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 7px 8px 8px;
+  border-radius: 16px;
+  background: var(--canvas-dock);
+  box-shadow: 0 18px 40px rgba(16, 19, 16, 0.18);
+}
+
+.flow-canvas-dock__chips {
+  display: flex;
+  gap: 6px;
+}
+
+.flow-canvas-dock__chip {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, #000 32%, transparent);
+  color: var(--canvas-dock-muted);
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.flow-canvas-dock__chip-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-canvas-dock__chip-mark {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: #111;
+}
+
+.flow-canvas-dock__chip:hover {
+  color: var(--canvas-dock-text);
+}
+
+.flow-canvas-dock__bar {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 6px 0 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--canvas-dock-bar);
+}
+
+.flow-canvas-dock__tile {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  min-height: 52px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: var(--canvas-ink);
+  background: var(--color-brand);
+}
+
+.flow-canvas-dock__prompt,
+.flow-canvas-dock__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--canvas-dock-muted);
+  text-align: center;
+}
+
+.flow-canvas-dock__prompt {
+  cursor: pointer;
+}
+
+.flow-canvas-dock__prompt:hover,
+.flow-canvas-dock__input {
+  color: var(--canvas-dock-text);
+}
+
+.flow-canvas-dock__input {
+  outline: none;
+}
+
+.flow-canvas-dock__input::placeholder {
+  color: var(--canvas-dock-muted);
+}
+
+.flow-canvas-dock__action {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--canvas-dock-text);
+  cursor: pointer;
+}
+
+.flow-canvas-dock__action:hover {
+  background: color-mix(in srgb, #fff 8%, transparent);
+}
+
+.flow-canvas-dock__action--live {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.flow-canvas-dock__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--space-2));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  max-height: min(46vh, calc(100dvh - 12rem));
+  padding: var(--space-5);
+  overflow-y: auto;
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--canvas-rule);
+  box-shadow: var(--shadow-md);
+}
+
+.flow-canvas-dock--full .flow-canvas-dock__panel {
+  position: fixed;
+  left: 18%;
+  right: 18%;
+  top: 72px;
+  bottom: 8px;
+  height: auto;
+  max-height: none;
+  overflow-y: auto;
+  z-index: 60;
+}
+
+.flow-canvas-dock__panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.flow-canvas-dock__panel-scope {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-dock__panel-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+}
+
+.flow-canvas-dock__tool {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.flow-canvas-dock__panel-control {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--canvas-rule);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.flow-canvas-dock__heading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-dock__suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.flow-canvas-dock__suggestion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--canvas-rule);
+  border-radius: var(--radius-md);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.flow-canvas-dock__suggestion:hover {
+  border-color: var(--color-brand-border);
+}
+
+.flow-canvas-dock__suggestion-prompt {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-dock__suggestion-answer {
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+/* ── Signal panels ──────────────────────────────────────────────── */
+
+.flow-canvas-panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--canvas-rule);
+  margin-top: 20px;
+  padding-top: var(--space-6);
+}
+
+.flow-canvas-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0 var(--space-6) var(--space-4) 0;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.flow-canvas-panel + .flow-canvas-panel {
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--canvas-rule);
+}
+
+.flow-canvas-panel:hover {
+  text-decoration: none;
+}
+
+.flow-canvas-panel__value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-panel:hover .flow-canvas-panel__value {
+  color: var(--color-brand);
+}
+
+.flow-canvas-panel__delta {
+  font-size: 11px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--color-brand) 42%, #0c1a10);
+}
+
+.flow-canvas-panel__note {
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-panel .flow-canvas-microlabel,
+.flow-canvas-panel .flow-canvas-panel__note {
+  color: #2d342f;
+}
+
+.flow-canvas-panel__chart {
+  display: block;
+  width: 100%;
+  height: 44px;
+  max-height: 44px;
+  overflow: hidden;
+}
+
+.flow-canvas-panel__bar {
+  fill: color-mix(in srgb, var(--color-text-primary) 18%, transparent);
+}
+
+.flow-canvas-panel__bar--now {
+  fill: var(--color-text-primary);
+}
+
+.flow-canvas-panel__floor {
+  fill: none;
+  stroke: var(--canvas-rule);
+  stroke-width: 1;
+}
+
+.flow-canvas-panel__step {
+  fill: none;
+  stroke: var(--color-text-primary);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.flow-canvas-panel__now {
+  fill: var(--color-text-primary);
+}
+
+.flow-canvas-panel__ageing {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 44px;
+  justify-content: center;
+}
+
+.flow-canvas-panel__age-row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) 4.4rem;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-canvas-panel__age-label,
+.flow-canvas-panel__age-value {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-canvas-panel__age-value {
+  text-align: right;
+}
+
+.flow-canvas-panel__age-track {
+  display: block;
+  height: 4px;
+  overflow: hidden;
+  background: var(--color-bg-inset);
+  border-radius: var(--radius-full);
+}
+
+.flow-canvas-panel__age-fill {
+  display: block;
+  height: 100%;
+  background: color-mix(in srgb, var(--color-text-primary) 28%, transparent);
+}
+
+.flow-canvas-panel__age-fill--over {
+  background: var(--color-text-primary);
+}
+
+.flow-canvas-panel__age-fill--due {
+  background: color-mix(in srgb, var(--color-text-primary) 45%, transparent);
+}
+
+.flow-canvas-panel__age-fill--later {
+  background: color-mix(in srgb, var(--color-text-primary) 16%, transparent);
+}
+
+.flow-canvas-panel__gauge-wrap {
+  position: relative;
+  height: 44px;
+}
+
+.flow-canvas-panel__gauge {
+  display: block;
+  width: 80px;
+  height: 44px;
+  overflow: hidden;
+}
+
+.flow-canvas-panel__gauge-track,
+.flow-canvas-panel__gauge-fill {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.flow-canvas-panel__gauge-track {
+  stroke: var(--color-bg-inset);
+}
+
+.flow-canvas-panel__gauge-fill {
+  stroke: var(--color-text-primary);
+}
+
+.flow-canvas-panel__gauge-value {
+  position: absolute;
+  left: 40px;
+  bottom: 2px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ── Decision queue ─────────────────────────────────────────────── */
+
+.flow-canvas-queue {
+  margin-top: var(--space-10);
+  border-top: 1px solid var(--canvas-rule);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-12);
+}
+
+.flow-canvas-queue__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.flow-canvas-queue__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-queue__count {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-queue__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-1) var(--space-6);
+  align-items: baseline;
+  min-height: 44px;
+  padding: var(--space-5) 0 var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.flow-canvas-queue__row:hover {
+  text-decoration: none;
+}
+
+.flow-canvas-queue__client {
+  grid-column: 1 / -1;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-queue__statement {
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-queue__row:hover .flow-canvas-queue__statement {
+  color: var(--color-brand);
+}
+
+.flow-canvas-queue__value {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-queue__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-brand);
+  text-decoration: none;
+}
+
+.flow-canvas-queue__more:hover {
+  text-decoration: underline;
+}
+
+.flow-canvas-queue__item {
+  border-bottom: 1px solid var(--canvas-rule);
+}
+
+.flow-canvas-queue__item[open] .flow-canvas-queue__statement {
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-queue summary {
+  list-style: none;
+}
+
+.flow-canvas-queue summary::-webkit-details-marker {
+  display: none;
+}
+
+.flow-canvas-queue__detail {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0 0 var(--space-6);
+}
+
+.flow-canvas-queue__copy,
+.flow-canvas-queue__meta {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-queue__copy .flow-canvas-microlabel {
+  margin-bottom: 4px;
+}
+
+.flow-canvas-queue__impacts,
+.flow-canvas-queue__evidence {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flow-canvas-queue__impacts li,
+.flow-canvas-queue__evidence li {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--canvas-rule);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-queue__impacts li span:first-child {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.flow-canvas-queue__evidence a {
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-queue__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.flow-canvas-queue__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: inset 0 -1px 0 var(--color-text-primary);
+  cursor: pointer;
+}
+
+.flow-canvas-queue__action:hover {
+  color: var(--color-brand);
+  box-shadow: inset 0 -1px 0 var(--color-brand);
+  text-decoration: none;
+}
+
+/* MC-02R-04 editorial body. First-viewport rules above stay locked. */
+
+.flow-canvas-body {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-12);
+}
+
+.flow-canvas-op {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--canvas-rule);
+}
+
+.flow-canvas-op__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.flow-canvas-op__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-op__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-op__group + .flow-canvas-op__group {
+  margin-top: var(--space-6);
+}
+
+.flow-canvas-op__group .flow-canvas-microlabel {
+  margin-bottom: var(--space-2);
+}
+
+.flow-canvas-op__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px var(--space-6);
+  align-items: baseline;
+  min-height: 44px;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--canvas-rule);
+  color: inherit;
+  text-decoration: none;
+}
+
+.flow-canvas-op__row:hover {
+  text-decoration: none;
+}
+
+.flow-canvas-op a.flow-canvas-op__row:hover .flow-canvas-op__name {
+  color: var(--color-brand);
+}
+
+.flow-canvas-op__kicker {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-op__name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-op__note {
+  grid-column: 1;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-op__value {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-op__row--stack .flow-canvas-op__value {
+  grid-row: 2;
+}
+
+.flow-canvas-meter {
+  grid-column: 1 / -1;
+  display: block;
+  height: 2px;
+  margin-top: 8px;
+  background: var(--canvas-rule);
+}
+
+.flow-canvas-meter__fill {
+  display: block;
+  height: 100%;
+  background: var(--canvas-ink);
+}
+
+.flow-canvas-op__legend {
+  margin: var(--space-4) 0 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-pulse {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  min-height: 88px;
+  padding-top: var(--space-2);
+}
+
+.flow-canvas-pulse__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.flow-canvas-pulse__bar {
+  width: 6px;
+  background: var(--canvas-ink);
+}
+
+.flow-canvas-pulse__bar--pipeline {
+  opacity: 0.35;
+}
+
+.flow-canvas-pulse__label {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-ops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flow-canvas-ops__row {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: var(--space-4);
+  min-height: 44px;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--canvas-rule);
+  color: inherit;
+  text-decoration: none;
+}
+
+.flow-canvas-ops__row:hover {
+  text-decoration: none;
+}
+
+.flow-canvas-ops__row:hover .flow-canvas-ops__summary {
+  color: var(--color-brand);
+}
+
+.flow-canvas-ops__time {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.flow-canvas-ops__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.flow-canvas-op__name,
+.flow-canvas-op__note,
+.flow-canvas-ops__summary {
+  overflow-wrap: anywhere;
+}
+
+.flow-canvas-ops__summary {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.flow-canvas-ops__meta {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .flow-canvas-panel__delta {
+  color: color-mix(in srgb, var(--color-brand) 28%, #f4f1ea);
+}
+
+[data-theme="dark"] .flow-canvas-meter__fill,
+[data-theme="dark"] .flow-canvas-pulse__bar {
+  background: #f4f1ea;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flow-canvas-hero__value {
+    animation: flow-canvas-rise 400ms var(--ease-standard) both;
+  }
+
+  .flow-canvas-hero__label,
+  .flow-canvas-hero__insight {
+    animation: flow-canvas-rise 250ms var(--ease-standard) 60ms both;
+  }
+
+  .flow-canvas-hero__band {
+    animation: flow-canvas-rise 250ms var(--ease-standard) 120ms both;
+  }
+
+  .flow-canvas-field {
+    animation: flow-canvas-rise 250ms var(--ease-standard) 180ms both;
+  }
+
+  .flow-canvas-panels {
+    animation: flow-canvas-rise 250ms var(--ease-standard) 240ms both;
+  }
+
+  .flow-canvas-queue {
+    animation: flow-canvas-rise 250ms var(--ease-standard) 300ms both;
+  }
+
+  .flow-canvas-body .flow-canvas-op {
+    animation: flow-canvas-rise 250ms var(--ease-standard) both;
+  }
+
+  .flow-canvas-body .flow-canvas-op:nth-child(1) { animation-delay: 340ms; }
+  .flow-canvas-body .flow-canvas-op:nth-child(2) { animation-delay: 400ms; }
+  .flow-canvas-body .flow-canvas-op:nth-child(3) { animation-delay: 460ms; }
+  .flow-canvas-body .flow-canvas-op:nth-child(4) { animation-delay: 520ms; }
+
+  .flow-canvas-head__link,
+  .flow-canvas-mode,
+  .flow-canvas-queue__row,
+  .flow-canvas-queue__action,
+  .flow-canvas-panel,
+  .flow-canvas-op__row,
+  .flow-canvas-dock__chip,
+  .flow-canvas-dock__action {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: var(--duration-fast, 180ms);
+    transition-timing-function: var(--ease-standard, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+}
+
+@keyframes flow-canvas-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Dark desktop translation (MC-02R-02) ─────────────────────────
+ * Colour only. Light composition, spacing, type and dock geometry stay locked.
+ */
+[data-theme="dark"] .flow-canvas {
+  --canvas-paper: #141413;
+  --canvas-rule: color-mix(in srgb, #c8c4bc 16%, transparent);
+  --canvas-ink: #141413;
+  --canvas-dock: #3a3a38;
+  --canvas-dock-bar: #111111;
+  --canvas-dock-text: #f3f1ec;
+  --canvas-dock-muted: #d2cec6;
+  --color-text-primary: #f4f1ea;
+  --color-text-secondary: #c4c0b6;
+  --color-bg-surface: #1c1c1a;
+  --color-bg-subtle: #222220;
+  --color-bg-inset: #2a2a28;
+  --color-border: #3f3e3a;
+  --color-border-strong: #5a564e;
+  --color-brand-border: color-mix(in srgb, var(--color-brand) 42%, #1c1c1a);
+  --color-brand-subtle: color-mix(in srgb, var(--color-brand) 16%, #1c1c1a);
+  --color-brand-surface: color-mix(in srgb, var(--color-brand) 14%, #1c1c1a);
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .flow-canvas .flow-canvas-panel .flow-canvas-microlabel,
+[data-theme="dark"] .flow-canvas .flow-canvas-panel .flow-canvas-panel__note {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .flow-canvas-head__link {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .flow-canvas-field__bar {
+  fill: color-mix(in srgb, var(--color-text-primary) 28%, transparent);
+}
+
+[data-theme="dark"] .flow-canvas-field__bar--quiet {
+  fill: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+}
+
+[data-theme="dark"] .flow-canvas-field__bar--marked {
+  fill: color-mix(in srgb, var(--color-text-primary) 46%, transparent);
+}
+
+[data-theme="dark"] .flow-canvas-field__guide {
+  stroke: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+}
+
+[data-theme="dark"] .flow-canvas-field__guide--base {
+  stroke: color-mix(in srgb, var(--color-text-primary) 22%, transparent);
+}
+
+[data-theme="dark"] .flow-canvas-field__note,
+[data-theme="dark"] .flow-canvas-field__readout {
+  background: #1c1c1a;
+  border: 1px solid #3f3e3a;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] .flow-canvas-dock {
+  box-shadow: none;
+}
+
+[data-theme="dark"] .flow-canvas-dock__housing {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .flow-canvas-dock__input:focus-visible,
+[data-theme="dark"] .flow-canvas-dock__prompt:focus-visible,
+[data-theme="dark"] .flow-canvas-dock__chip:focus-visible,
+[data-theme="dark"] .flow-canvas-dock__action:focus-visible,
+[data-theme="dark"] .flow-canvas-dock__panel-control:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .flow-canvas-dock__panel {
+  background: #1c1c1a;
+  border-color: #3f3e3a;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .flow-canvas-dock__suggestion {
+  background: #222220;
+  border-color: #3f3e3a;
+}
+
+[data-theme="dark"] .flow-canvas-dock__suggestion:hover,
+[data-theme="dark"] .flow-canvas-dock__suggestion:focus-visible {
+  border-color: var(--color-brand);
+}
+
+[data-theme="dark"] .flow-canvas .flow-ask-response {
+  background: #222220;
+  border-color: #4a4842;
+}
+
+[data-theme="dark"] .flow-canvas .flow-mc-receipt {
+  border-top-color: #5a564e;
+}
+
+[data-theme="dark"] .flow-canvas .flow-mc-receipt__source {
+  color: var(--color-text-primary);
+}
+
+/* ── MC-02R-03: 375px light mobile composition ─────────────────────
+ * Layout only, max-width 720px. 1440 light and dark rules above are
+ * unchanged. Dark colour tokens still inherit if the theme is toggled;
+ * this milestone does not polish a dark mobile canvas.
+ */
+@media (max-width: 1180px) and (min-width: 721px) {
+  .flow-canvas-panels {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .flow-canvas-panel:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .flow-canvas-panel:nth-child(n + 3) {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--canvas-rule);
+  }
+}
+
+@media (max-width: 720px) {
+  .flow-canvas {
+    --canvas-gutter: var(--space-4);
+    --canvas-head: 48px;
+  }
+
+  .flow-canvas-head {
+    height: auto;
+    min-height: var(--canvas-head);
+  }
+
+  .flow-canvas-head__inner {
+    gap: var(--space-2);
+    min-height: var(--canvas-head);
+  }
+
+  .flow-canvas-head__menu {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-left: -8px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  .flow-canvas-head__menu:focus-visible,
+  .flow-canvas-head__control:focus-visible,
+  .flow-canvas-head__link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .flow-canvas-head__workspace,
+  .flow-canvas-head__nav,
+  .flow-canvas-head__search,
+  .flow-canvas-head__ask {
+    display: none;
+  }
+
+  .flow-canvas-head__drawer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: 0 var(--canvas-gutter) var(--space-4);
+    border-top: 1px solid var(--canvas-rule);
+  }
+
+  .flow-canvas-head__drawer-workspace {
+    display: block;
+    margin: var(--space-3) 0 0;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  .flow-canvas-head__drawer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-4);
+  }
+
+  .flow-canvas-head__drawer-nav .flow-canvas-head__link {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .flow-canvas-head__drawer-nav .flow-canvas-head__link--on {
+    color: var(--color-text-primary);
+  }
+
+  .flow-canvas-head__control,
+  .flow-canvas-head__avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flow-canvas__viewport {
+    min-height: 0;
+    padding-top: var(--space-4);
+    padding-bottom: 0;
+  }
+
+  .flow-canvas__frame {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - var(--canvas-head));
+  }
+
+  .flow-canvas__context {
+    margin-bottom: var(--space-4);
+  }
+
+  .flow-canvas-hero {
+    margin-bottom: var(--space-3);
+  }
+
+  .flow-canvas-hero__value {
+    font-size: 2.75rem;
+  }
+
+  .flow-canvas-hero__label {
+    font-size: 15px;
+    max-width: none;
+  }
+
+  .flow-canvas-hero__band {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .flow-canvas-hero__modes {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 calc(var(--canvas-gutter) * -1);
+    padding: 0 var(--canvas-gutter);
+  }
+
+  .flow-canvas-hero__modes::-webkit-scrollbar {
+    display: none;
+  }
+
+  .flow-canvas-mode {
+    flex-shrink: 0;
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  .flow-canvas__stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    justify-content: flex-end;
+    padding-bottom: 156px;
+  }
+
+  .flow-canvas-field__plot,
+  .flow-canvas-field__svg {
+    height: 176px;
+    max-height: 176px;
+  }
+
+  .flow-canvas-field__axis {
+    width: 3rem;
+  }
+
+  .flow-canvas-field__plot {
+    overflow: visible;
+  }
+
+  .flow-canvas-field__note {
+    right: 3rem !important;
+    max-width: 7.75rem;
+    padding: 3px 6px 4px;
+    transform: translate(-12px, calc(-100% + 12px));
+  }
+
+  .flow-canvas-field__readout {
+    min-width: 148px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .flow-canvas-dock {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    width: auto;
+    transform: none;
+    z-index: 30;
+  }
+
+  .flow-canvas-dock--open {
+    inset: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    background: var(--canvas-paper);
+  }
+
+  .flow-canvas-dock--open .flow-canvas-dock__panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    flex: 1 1 auto;
+    width: auto;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: var(--space-4);
+    overflow-y: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--canvas-paper);
+  }
+
+  .flow-canvas-dock--open .flow-canvas-dock__housing {
+    flex-shrink: 0;
+    margin: 0 12px max(10px, env(safe-area-inset-bottom));
+  }
+
+  .flow-canvas-dock--full .flow-canvas-dock__panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    height: auto;
+    max-height: none;
+  }
+
+  .flow-canvas-dock__panel-control--full {
+    display: none;
+  }
+
+  .flow-canvas-dock__panel-head {
+    flex-wrap: wrap;
+  }
+
+  .flow-canvas-dock__panel-tools {
+    margin-left: 0;
+    width: 100%;
+    order: 3;
+  }
+
+  .flow-canvas-dock__suggestions {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-canvas-dock__prompt,
+  .flow-canvas-dock__input,
+  .flow-canvas-dock__action,
+  .flow-canvas-dock__panel-control {
+    min-height: 40px;
+  }
+
+  .flow-canvas-dock__action {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flow-canvas-dock__prompt:focus-visible,
+  .flow-canvas-dock__input:focus-visible,
+  .flow-canvas-dock__chip:focus-visible,
+  .flow-canvas-dock__action:focus-visible,
+  .flow-canvas-dock__panel-control:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .flow-canvas-panels {
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    padding-bottom: 7.5rem;
+  }
+
+  .flow-canvas-panel {
+    padding: 0 var(--space-3) var(--space-4) 0;
+  }
+
+  .flow-canvas-panel + .flow-canvas-panel {
+    padding-left: var(--space-3);
+  }
+
+  .flow-canvas-panel:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .flow-canvas-panel:nth-child(n + 3) {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--canvas-rule);
+  }
+
+  .flow-canvas-panel__value {
+    font-size: var(--text-xl);
+  }
+
+  .flow-canvas-panel__delta,
+  .flow-canvas-queue__more {
+    color: color-mix(in srgb, var(--color-brand) 38%, #0c1a10);
+    font-weight: 600;
+  }
+
+  .flow-canvas-panel__age-row {
+    grid-template-columns: 3.4rem minmax(0, 1fr) 3.6rem;
+    gap: 4px;
+  }
+
+  .flow-canvas-queue {
+    margin-top: var(--space-6);
+    padding-bottom: 8rem;
+  }
+
+  .flow-canvas-queue__title {
+    font-size: var(--text-base);
+  }
+
+  .flow-canvas-queue__row {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4) 0;
+  }
+
+  .flow-canvas-queue__client {
+    overflow-wrap: anywhere;
+  }
+
+  .flow-canvas-queue__statement {
+    font-size: var(--text-base);
+  }
+
+  .flow-canvas-queue__value {
+    font-size: var(--text-base);
+  }
+
+  .flow-canvas .flow-mc__inner {
+    padding-left: var(--canvas-gutter);
+    padding-right: var(--canvas-gutter);
+    padding-bottom: 7rem;
+  }
+
+  .flow-canvas .flow-mc-state {
+    padding: var(--space-8) 0 7rem;
+    min-height: calc(100dvh - var(--canvas-head) - 6rem);
+  }
+
+  .flow-canvas-load {
+    min-height: calc(100dvh - var(--canvas-head) - 6rem);
+  }
+
+  .flow-canvas .flow-mc-state__title {
+    font-size: var(--text-xl);
+  }
+
+  .flow-canvas-demo {
+    padding-bottom: 8rem;
+  }
+
+  .flow-canvas-body {
+    padding-bottom: 8rem;
+  }
+
+  .flow-canvas-op__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .flow-canvas-op__title {
+    font-size: var(--text-base);
+  }
+
+  .flow-canvas-op__row {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 44px;
+  }
+
+  .flow-canvas-op__value {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .flow-canvas-ops__row {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 44px;
+  }
+
+  .flow-canvas-queue__row {
+    min-height: 44px;
+  }
+
+  .flow-canvas-queue__action {
+    min-height: 44px;
+  }
+}

@@ -1,0 +1,43 @@
+---
+description: Testing gates and phase closure requirements
+globs: apps/**/e2e/**/*,**/*.test.{ts,tsx,mjs},docs/quality/**/*
+alwaysApply: false
+---
+
+# Flow Testing and Closure
+
+## Quality gates (run before closure)
+
+```bash
+npx pnpm@11.16.0 install
+npx pnpm@11.16.0 typecheck
+npx pnpm@11.16.0 lint
+npx pnpm@11.16.0 test
+NODE_ENV=production npx pnpm@11.16.0 build
+node --test .cursor/hooks/tests/*.test.mjs
+```
+
+## E2E requirements
+
+- `--workers=1` for phase journeys
+- Zero skipped mandatory tests
+- Authenticated journey requires credentials in `.env.local`
+- Visual regression baselines require explicit PO approval marker
+
+## Closure evidence manifest
+
+Required fields in `.cursor/quality/evidence-manifest.json`:
+
+- Per-category verdicts (functionality, visual, accessibility, security, data-integrity, browser, performance)
+- `commandsRun`, `testCounts`, `skippedTestCount`
+- `screenshotPaths`, `criticReports`
+- `productOwnerVisualApproval` (must be explicit for visual PASS)
+
+## Independent reviewers
+
+Before closure, invoke relevant subagents:
+
+- `flow-ui-critic` — visual audit
+- `flow-functional-reviewer` — journey verification
+- `flow-security-reviewer` — auth/RLS/secrets
+- `flow-investor-demo-reviewer` — demo journey quality

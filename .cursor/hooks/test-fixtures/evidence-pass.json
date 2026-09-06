@@ -1,0 +1,29 @@
+{
+  "overallVerdict": "PASS",
+  "verdicts": {
+    "functionality": "PASS",
+    "visual": "PASS",
+    "accessibility": "PASS",
+    "security": "PASS",
+    "dataIntegrity": "PASS",
+    "browser": "PASS",
+    "performance": "PASS"
+  },
+  "commandsRun": ["pnpm typecheck", "pnpm test", "pnpm build"],
+  "testCounts": { "passed": 204, "failed": 0, "total": 204 },
+  "skippedTestCount": 0,
+  "screenshotPaths": [
+    "docs/quality/evidence/unapproved-current-state/01-mission-control.png",
+    "docs/quality/evidence/unapproved-current-state/02-finance-hub.png"
+  ],
+  "criticReports": [
+    "docs/quality/critic-reports/ui-critic.md",
+    "docs/quality/critic-reports/functional-reviewer.md"
+  ],
+  "productOwnerVisualApproval": true,
+  "productOwnerVisualApprovalRecordedAt": "2026-09-01T12:00:00.000Z",
+  "secretScanPassed": true,
+  "browserConsoleErrors": false,
+  "builderAgentId": "builder-1",
+  "evaluatorAgentIds": ["ui-critic-1", "functional-reviewer-1"]
+}

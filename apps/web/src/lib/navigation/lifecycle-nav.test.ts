@@ -60,6 +60,7 @@ describe("lifecycle-nav", () => {
       "Setup plan",
       "Services",
       "Settings",
+      "Building blocks",
     ]);
   });
 

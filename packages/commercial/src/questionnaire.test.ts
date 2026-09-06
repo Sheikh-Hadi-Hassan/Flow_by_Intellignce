@@ -38,6 +38,22 @@ describe("questionnaire versioning", () => {
     expect(result.valid).toBe(true);
   });
 
+  it("reuses compiled schema validators across repeated calls", () => {
+    const answers = {
+      brandMaturity: "emerging",
+      primaryAudience: "Plant managers",
+      successMetric: "Pipeline",
+    };
+    expect(
+      validateQuestionnaireResponse(brandStrategyQuestionnaireV1, answers, {
+        enforceRequired: false,
+      }).valid,
+    ).toBe(true);
+    expect(
+      validateQuestionnaireResponse(brandStrategyQuestionnaireV1, answers).valid,
+    ).toBe(true);
+  });
+
   it("does not require conditional fields when the trigger is false", () => {
     const result = validateQuestionnaireResponse(brandStrategyQuestionnaireV1, {
       brandMaturity: "established",

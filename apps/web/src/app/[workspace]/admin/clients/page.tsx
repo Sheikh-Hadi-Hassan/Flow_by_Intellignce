@@ -1,16 +1,20 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-misused-promises */
 
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
+import { useParams } from "next/navigation";
 
 import { CommercialRoute } from "../../../../components/commercial/CommercialRoute";
+import { CrmCoreDirectory } from "../../../../components/crm-core/CrmCoreScreens";
+import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { Button } from "../../../../components/ui/Button";
 import { FormField, TextInput } from "../../../../components/ui/FormField";
 import { SectionHeader } from "../../../../components/ui/Display";
 import { useCommercialClient } from "../../../../lib/commercial/use-commercial";
 import type { CommercialClientRecord } from "../../../../lib/commercial/api";
+import { isMissionDemoWorkspace } from "../../../../lib/mission-control/store";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function ClientsList() {
   const workspace = useParams().workspace as string;
@@ -85,6 +89,16 @@ function ClientsList() {
 }
 
 export default function Page() {
+  const workspace = useParams().workspace as string;
+  if (isMissionDemoWorkspace(workspace)) {
+    return (
+      <WorkspaceGate workspace={workspace} requireTwin variant="founder">
+        <Suspense fallback={null}>
+          <CrmCoreDirectory workspace={workspace} />
+        </Suspense>
+      </WorkspaceGate>
+    );
+  }
   return (
     <CommercialRoute>
       <ClientsList />

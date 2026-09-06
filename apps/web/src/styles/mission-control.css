@@ -1,0 +1,1338 @@
+/*
+ * Mission Control layout.
+ *
+ * Uses only the tokens already defined in tokens.css — no new colours, spacing
+ * or type sizes. The structure is deliberately different from the rest of the
+ * app: an instrument bar instead of a permanent sidebar, one dominant answer,
+ * a full-width operational field separated by hairlines rather than a wall of
+ * equal cards, and a docked command bar.
+ */
+
+.flow-mc {
+  --mc-bar-height: 56px;
+  --mc-dock-height: 68px;
+  --mc-max: 1440px;
+  --mc-gutter: var(--space-4);
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .flow-mc {
+    --mc-gutter: var(--space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .flow-mc {
+    --mc-gutter: var(--space-8);
+  }
+}
+
+.flow-mc__inner {
+  width: 100%;
+  max-width: var(--mc-max);
+  margin: 0 auto;
+  padding: 0 var(--mc-gutter);
+}
+
+.flow-mc__main {
+  flex: 1;
+  padding-bottom: calc(var(--mc-dock-height) + var(--space-8));
+}
+
+/* ── Instrument bar ─────────────────────────────────────────────── */
+
+.flow-mc-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--color-bg-surface) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.flow-mc-bar__inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  min-height: var(--mc-bar-height);
+}
+
+.flow-mc-bar__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.flow-mc-bar__identity .flow-wordmark {
+  font-size: var(--text-lg);
+}
+
+.flow-mc-bar__divider {
+  width: 1px;
+  height: 16px;
+  background: var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+.flow-mc-bar__workspace {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 22ch;
+}
+
+/*
+ * Below 1024px the nav drops to its own scrollable row rather than being
+ * hidden — Mission Control has no sidebar, so this is the only way out of the
+ * screen on a phone.
+ */
+.flow-mc-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  order: 3;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--space-2);
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.flow-mc-bar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .flow-mc-bar__nav {
+    order: 0;
+    width: auto;
+    overflow-x: visible;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-left: var(--space-2);
+  }
+}
+
+.flow-mc-bar__nav-link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-bar__nav-link:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.flow-mc-bar__nav-link--active {
+  background: var(--color-brand-surface);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.flow-mc-bar__spacer {
+  flex: 1;
+  min-width: var(--space-2);
+}
+
+.flow-mc-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.flow-mc-bar__search {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 200px;
+  padding: 0 var(--space-3);
+  height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-bar__search:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.flow-mc-bar__search kbd {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+}
+
+@media (min-width: 768px) {
+  .flow-mc-bar__search {
+    display: flex;
+  }
+}
+
+.flow-mc-bar__ask {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  height: 34px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-brand-border);
+  border-radius: var(--radius-full);
+  background: var(--color-brand-surface);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.flow-mc-bar__ask:hover {
+  background: var(--color-brand-surface-hover);
+}
+
+@media (min-width: 480px) {
+  .flow-mc-bar__ask {
+    display: inline-flex;
+  }
+}
+
+.flow-mc-bar__bell {
+  position: relative;
+}
+
+.flow-mc-bar__bell-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 15px;
+  text-align: center;
+}
+
+.flow-mc-bar__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-surface);
+  border: 1px solid var(--color-brand-border);
+  color: var(--color-text-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Accent picker lives in the bar so theming is reachable from Mission Control. */
+.flow-mc-accents {
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
+  padding-right: var(--space-1);
+}
+
+@media (min-width: 1024px) {
+  .flow-mc-accents {
+    display: flex;
+  }
+}
+
+.flow-mc-accents__swatch {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-strong);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-accents__swatch:hover {
+  transform: scale(1.15);
+}
+
+.flow-mc-accents__swatch[aria-pressed="true"] {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ── Dominant answer ────────────────────────────────────────────── */
+
+.flow-mc-answer {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .flow-mc-answer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--space-8);
+    padding: var(--space-10) 0 var(--space-8);
+  }
+}
+
+.flow-mc-answer__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.flow-mc-answer__headline {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin: 0;
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  .flow-mc-answer__headline {
+    font-size: 2.75rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .flow-mc-answer__headline {
+    font-size: 3.25rem;
+  }
+}
+
+.flow-mc-answer__because {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  max-width: 62ch;
+}
+
+.flow-mc-answer__proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.flow-mc-answer__action {
+  margin: var(--space-5) 0 0;
+}
+
+.flow-mc-answer__impact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  min-width: 220px;
+}
+
+.flow-mc-answer__impact-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-answer__impact-value {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.flow-mc-answer__impact-note {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Signal strip ───────────────────────────────────────────────── */
+
+.flow-mc-signals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 640px) {
+  .flow-mc-signals {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .flow-mc-signals {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+.flow-mc-signal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-4) var(--space-5) 0;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-signal:hover {
+  background: var(--color-bg-subtle);
+  text-decoration: none;
+}
+
+.flow-mc-signal:last-child {
+  border-right: none;
+}
+
+/* Hairlines only between cells — the strip's own edges come from the section. */
+@media (min-width: 640px) {
+  .flow-mc-signal:nth-child(4n) {
+    border-right: none;
+  }
+  .flow-mc-signal:nth-last-child(-n + 4) {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .flow-mc-signal:nth-child(2n) {
+    border-right: none;
+  }
+  .flow-mc-signal:nth-last-child(-n + 2) {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .flow-mc-signal {
+    border-bottom: none;
+  }
+  .flow-mc-signal:nth-child(4n) {
+    border-right: 1px solid var(--color-border);
+  }
+  .flow-mc-signal:last-child {
+    border-right: none;
+  }
+}
+
+.flow-mc-signal__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-signal__value {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.flow-mc-signal__value--positive {
+  color: var(--color-text-primary);
+}
+
+.flow-mc-signal__value--caution {
+  color: var(--color-warning);
+}
+
+.flow-mc-signal__value--critical {
+  color: var(--color-danger);
+}
+
+.flow-mc-signal__caption {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.flow-mc-signal__delta {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  margin-top: var(--space-1);
+}
+
+.flow-mc-signal__delta--gain {
+  color: var(--color-success);
+}
+
+.flow-mc-signal__delta--loss {
+  color: var(--color-danger);
+}
+
+.flow-mc-signal__delta--neutral {
+  color: var(--color-text-secondary);
+}
+
+/* Sparkline drawn from real seeded values — never decorative. */
+.flow-mc-spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 22px;
+  margin-top: var(--space-2);
+}
+
+.flow-mc-spark__bar {
+  flex: 1;
+  min-height: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--color-brand) 32%, transparent);
+}
+
+.flow-mc-spark__bar--last {
+  background: var(--color-brand);
+}
+
+/* ── Operational field ──────────────────────────────────────────── */
+
+.flow-mc-field {
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-8) 0;
+}
+
+@media (min-width: 1024px) {
+  .flow-mc-field {
+    grid-template-columns: minmax(0, 3fr) minmax(300px, 1fr);
+    gap: var(--space-10);
+  }
+}
+
+.flow-mc-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+.flow-mc-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.flow-mc-block__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.flow-mc-block__title {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.flow-mc-block__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.flow-mc-block__meta:hover {
+  color: var(--color-text-primary);
+}
+
+/* Rows separated by hairlines rather than boxed into equal cards. */
+.flow-mc-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-mc-rows > li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.flow-mc-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.flow-mc-row:hover {
+  text-decoration: none;
+}
+
+.flow-mc-row:hover .flow-mc-row__name {
+  color: var(--color-brand);
+}
+
+.flow-mc-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.flow-mc-row__name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-row__sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.flow-mc-row__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.flow-mc-row__value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.flow-mc-row__note {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/*
+ * Rows whose supporting text is too long to sit beside the label in a narrow
+ * column. Stacking beats truncating an amount the founder needs to read.
+ */
+.flow-mc-row--stacked {
+  display: block;
+}
+
+.flow-mc-row--stacked .flow-mc-row__side {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  text-align: left;
+  margin-top: var(--space-2);
+}
+
+.flow-mc-row--stacked .flow-mc-row__note {
+  white-space: normal;
+}
+
+.flow-mc-row__note--caution {
+  color: var(--color-warning);
+}
+
+.flow-mc-row__note--critical {
+  color: var(--color-danger);
+}
+
+.flow-mc-row__note--positive {
+  color: var(--color-success);
+}
+
+/* Utilisation meter inside a capacity row. */
+.flow-mc-meter {
+  width: 100%;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-inset);
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+.flow-mc-meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-brand);
+}
+
+.flow-mc-meter__fill--caution {
+  background: var(--color-warning);
+}
+
+.flow-mc-meter__fill--critical {
+  background: var(--color-danger);
+}
+
+.flow-mc-meter__fill--positive {
+  background: var(--color-success);
+}
+
+/* ── Decisions ──────────────────────────────────────────────────── */
+
+.flow-mc-decisions {
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-mc-decision {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.flow-mc-decision:first-child {
+  border-top: none;
+  padding-top: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  .flow-mc-decision {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: var(--space-6);
+  }
+}
+
+.flow-mc-decision__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.flow-mc-decision__client {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-decision__title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin: 0 0 var(--space-2);
+  text-wrap: pretty;
+}
+
+.flow-mc-decision__body {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  max-width: 72ch;
+}
+
+.flow-mc-decision__why {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  max-width: 72ch;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-brand-border);
+}
+
+.flow-mc-decision__impacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  list-style: none;
+  padding: 0;
+}
+
+.flow-mc-impact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  min-width: 0;
+}
+
+.flow-mc-impact__value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.flow-mc-impact__value--gain {
+  color: var(--color-success);
+}
+
+.flow-mc-impact__value--loss {
+  color: var(--color-danger);
+}
+
+.flow-mc-impact__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-decision__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-subtle);
+  align-self: start;
+}
+
+.flow-mc-decision__owner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-mc-decision__owner-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.flow-mc-decision__owner-name {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.flow-mc-decision__rec {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.flow-mc-decision__rec-why {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Every AI claim carries its sources inline — no unattributed assertions. */
+.flow-mc-receipt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border-strong);
+}
+
+.flow-mc-receipt__head {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-receipt__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.flow-mc-receipt__item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+
+.flow-mc-receipt__source {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.flow-mc-receipt__source:hover {
+  color: var(--color-brand);
+}
+
+.flow-mc-receipt__meta {
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-authority {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-authority__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  background: var(--color-guard-pending);
+}
+
+.flow-mc-authority__dot--allow {
+  background: var(--color-guard-allow);
+}
+
+.flow-mc-authority__dot--deny {
+  background: var(--color-guard-deny);
+}
+
+/* ── Activity field ─────────────────────────────────────────────── */
+
+.flow-mc-pulse {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+  align-items: end;
+  height: 120px;
+  padding-top: var(--space-4);
+}
+
+.flow-mc-pulse__col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  height: 100%;
+  position: relative;
+}
+
+.flow-mc-pulse__pair {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+}
+
+.flow-mc-pulse__bar {
+  width: 40%;
+  max-width: 22px;
+  min-height: 3px;
+  border-radius: 2px 2px 0 0;
+}
+
+.flow-mc-pulse__bar--pipeline {
+  background: color-mix(in srgb, var(--color-brand) 34%, transparent);
+}
+
+.flow-mc-pulse__bar--delivery {
+  background: var(--color-brand);
+}
+
+/* Marks a day that carries a noted event. */
+.flow-mc-pulse__note {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-warning);
+}
+
+.flow-mc-pulse__note-swatch {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-warning);
+}
+
+.flow-mc-pulse__label {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.flow-mc-pulse__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.flow-mc-pulse__key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-mc-pulse__swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--color-brand);
+}
+
+.flow-mc-pulse__swatch--muted {
+  background: color-mix(in srgb, var(--color-brand) 38%, transparent);
+}
+
+.flow-mc-activity {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flow-mc-activity > li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Time column sizes to its widest label so relative dates cannot collide. */
+.flow-mc-activity__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-3) 0;
+  text-decoration: none;
+  color: inherit;
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .flow-mc-activity__row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+.flow-mc-activity__row:hover .flow-mc-activity__summary {
+  color: var(--color-brand);
+}
+
+.flow-mc-activity__time {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  padding-top: 1px;
+}
+
+.flow-mc-activity__summary {
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-activity__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flow-mc-activity__marker {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.flow-mc-activity__marker--positive {
+  background: var(--color-success);
+}
+.flow-mc-activity__marker--caution {
+  background: var(--color-warning);
+}
+.flow-mc-activity__marker--critical {
+  background: var(--color-danger);
+}
+
+/* ── Ask Flow dock ──────────────────────────────────────────────── */
+
+.flow-mc-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--color-bg-surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--color-border);
+}
+
+.flow-mc-dock__inner {
+  width: 100%;
+  max-width: var(--mc-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--mc-gutter);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.flow-mc-dock__prompt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 42px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-dock__prompt:hover {
+  border-color: var(--color-brand-border);
+  color: var(--color-text-primary);
+}
+
+.flow-mc-dock__prompt-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-mc-dock__context {
+  display: none;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .flow-mc-dock__context {
+    display: flex;
+  }
+}
+
+.flow-mc-dock__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.flow-mc-dock__tool {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface);
+}
+
+.flow-mc-dock__panel {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+}
+
+.flow-mc-dock__panel-inner {
+  width: 100%;
+  max-width: var(--mc-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--mc-gutter);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.flow-mc-dock__suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (min-width: 900px) {
+  .flow-mc-dock__suggestions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.flow-mc-dock__suggestion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.flow-mc-dock__suggestion:hover {
+  border-color: var(--color-brand-border);
+}
+
+.flow-mc-dock__suggestion-prompt {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.flow-mc-dock__suggestion-answer {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+/* ── Non-ready states ───────────────────────────────────────────── */
+
+.flow-mc-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 56ch;
+  padding: var(--space-12) 0;
+}
+
+.flow-mc-state__title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.flow-mc-state__detail {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.flow-mc-state__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+.flow-mc-skeleton {
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-subtle) 0%,
+    var(--color-bg-inset) 50%,
+    var(--color-bg-subtle) 100%
+  );
+  background-size: 200% 100%;
+  animation: flow-mc-shimmer 1.4s var(--ease-standard) infinite;
+}
+
+@keyframes flow-mc-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

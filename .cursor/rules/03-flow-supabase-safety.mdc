@@ -1,0 +1,41 @@
+---
+description: Supabase project safety — allowed project, migration discipline, RLS
+globs: supabase/**/*,packages/database/**/*,apps/api/**/*
+alwaysApply: false
+---
+
+# Flow Supabase Safety
+
+## Allowed project
+
+```text
+zuvtnmmnwohrapaecsuj
+```
+
+Never access the retired apptech project. Never expose secrets or service-role keys in browser code.
+
+## Migration discipline
+
+Before applying any migration:
+
+```bash
+npx supabase@2.116.0 migration list --linked
+npx supabase@2.116.0 db push --dry-run
+```
+
+- Confirm linked project is `zuvtnmmnwohrapaecsuj`
+- Dry-run must show only intended migration(s)
+- Never reset, repair, or destructively modify migration history
+- Additive migrations only; no destructive alteration of prior migrations
+
+## New tenant tables
+
+- RLS enabled on every table
+- `workspace_id` on tenant-owned records
+- Permission-aware policies
+- Cross-tenant denial verified
+- Indexes on foreign keys and common list queries
+
+## Financial data
+
+All monetary values: `bigint` minor units + ISO 4217 currency. Percentages: integer basis points. Durations: integer minutes.

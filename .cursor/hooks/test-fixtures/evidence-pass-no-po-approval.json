@@ -1,0 +1,22 @@
+{
+  "overallVerdict": "PASS",
+  "verdicts": {
+    "functionality": "PASS",
+    "visual": "PASS",
+    "accessibility": "PASS",
+    "security": "PASS",
+    "dataIntegrity": "PASS",
+    "browser": "PASS",
+    "performance": "PASS"
+  },
+  "commandsRun": ["pnpm test"],
+  "testCounts": { "passed": 10, "failed": 0, "total": 10 },
+  "skippedTestCount": 0,
+  "screenshotPaths": ["docs/quality/evidence/example.png"],
+  "criticReports": ["docs/quality/critic-reports/ui-critic.md"],
+  "productOwnerVisualApproval": false,
+  "secretScanPassed": true,
+  "browserConsoleErrors": false,
+  "builderAgentId": "builder-1",
+  "evaluatorAgentIds": ["builder-1"]
+}

@@ -41,6 +41,11 @@ packages/*/src/**/*.d.ts.map
 # Next.js
 .next/
 out/
+apps/web/storybook-static/
+
+# Cursor quality runtime artifacts
+.cursor/quality/edit-audit.log
+.cursor/quality/closure-request.json
 
 # NestJS
 tmp/

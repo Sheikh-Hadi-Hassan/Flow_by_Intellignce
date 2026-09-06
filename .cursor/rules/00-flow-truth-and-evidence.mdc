@@ -1,0 +1,45 @@
+---
+description: Evidence-based truth standards — never claim PASS without deterministic proof
+alwaysApply: true
+---
+
+# Flow Truth and Evidence
+
+## Verdict rules
+
+- Never claim **PASS** from compilation, route existence, or screenshots alone.
+- Unknown or unverified means **PARTIAL**.
+- Never invent metrics, actions, data, test results, or browser evidence.
+- The agent that builds a feature must not be its only evaluator.
+- Every closure claim must reference a command result, browser artifact, test, database query, or explicit product-owner approval.
+
+## Mandatory verdict categories
+
+Separate every phase or feature verdict into:
+
+| Category | Required evidence |
+|----------|-------------------|
+| Functionality | Tests, API responses, persistence checks |
+| Visual design | Screenshots, critic report, PO approval |
+| Accessibility | axe results + keyboard review |
+| Security | RLS, auth, cross-tenant denial |
+| Data integrity | Migration evidence, calculation tests |
+| Browser verification | Playwright journey, console clean |
+| Performance | Build metrics or explicit N/A |
+
+**Overall PASS** requires every mandatory category to be **PASS**. Any PARTIAL, FAIL, or unverified category blocks overall PASS.
+
+## Closure workflow
+
+1. Create `.cursor/quality/evidence-manifest.json` with all verdicts and artifacts.
+2. Create `.cursor/quality/closure-request.json` only when ready for closure guard review.
+3. Never forge evidence in the manifest.
+
+## Prohibited claims
+
+```text
+❌ "All tests pass" without running tests
+❌ "UI looks good" without critic review
+❌ "Migration applied" without migration list output
+❌ "No security issues" without RLS verification
+```

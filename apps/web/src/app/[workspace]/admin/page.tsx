@@ -1,23 +1,34 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
-import { MissionControl } from "../../../components/os/MissionControl";
-import { FounderShell } from "../../../components/shell/AppShell";
+import { MissionControlCanvas } from "../../../components/mission/canvas/MissionControlCanvas";
+import { MissionControlScreen } from "../../../components/mission/MissionControlScreen";
 import { WorkspaceGate } from "../../../components/shell/WorkspaceGate";
+import { isMissionDemoWorkspace } from "../../../lib/mission-control/store";
 import { useWorkspaceSessionActions } from "../../../lib/workspace/session-actions";
 
 function FounderHome() {
   const workspace = useParams().workspace as string;
   const { session } = useWorkspaceSessionActions(workspace);
+  const searchParams = useSearchParams();
+  const variant = searchParams.get("variant");
+  const qa = searchParams.get("qa");
 
   if (!session || !session.twin) return null;
 
-  return (
-    <FounderShell workspace={workspace} session={session}>
-      <MissionControl session={session} />
-    </FounderShell>
-  );
+  const legacyQa =
+    isMissionDemoWorkspace(workspace) && variant === "legacy" && qa === "1";
+
+  if (legacyQa) {
+    return <MissionControlScreen workspace={workspace} />;
+  }
+
+  if (isMissionDemoWorkspace(workspace)) {
+    return <MissionControlCanvas workspace={workspace} />;
+  }
+
+  return <MissionControlScreen workspace={workspace} />;
 }
 
 export default function AdminHomePage() {

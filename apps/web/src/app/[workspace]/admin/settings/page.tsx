@@ -5,12 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { NORTHSTAR_WORKSPACE_NAME } from "../../../../content/demo/northstar";
-import { FounderShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { Button } from "../../../../components/ui/Button";
 import { SectionHeader, StatusBadge } from "../../../../components/ui/Display";
 import { FormField, TextInput } from "../../../../components/ui/FormField";
 import { useTheme } from "../../../../lib/theme/context";
+import { playInteractionSoundLazy } from "../../../../lib/sound/lazy";
+import { useSoundPreference } from "../../../../lib/sound/store";
 import { useWorkspaceApi } from "../../../../lib/workspace/context";
 import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
 import { applyAccent } from "../../../../lib/prototype/storage";
@@ -28,6 +29,7 @@ function SettingsPage() {
   const router = useRouter();
   const workspace = params.workspace as string;
   const { theme, setTheme } = useTheme();
+  const { sound, setSound } = useSoundPreference();
   const { signOut } = useWorkspaceApi();
   const { updateSession, session, isApiBacked } =
     useWorkspaceSessionActions(workspace);
@@ -54,7 +56,6 @@ function SettingsPage() {
   };
 
   return (
-    <FounderShell workspace={workspace} session={session}>
       <div className={styles.settingsColumn}>
         <SectionHeader
           eyebrow="Settings"
@@ -103,6 +104,28 @@ function SettingsPage() {
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
+          </FormField>
+        </section>
+
+        <section className="flow-settings-section">
+          <h2>Sound</h2>
+          <FormField label="Interface sounds" htmlFor="sound-pref">
+            <select
+              id="sound-pref"
+              className="flow-select"
+              value={sound}
+              onChange={(e) => {
+                const next = e.target.value as "on" | "off";
+                setSound(next);
+                if (next === "on") void playInteractionSoundLazy("success");
+              }}
+            >
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+            <p className="flow-field__help">
+              Subtle synthesized cues for sending, listening, and completion.
+            </p>
           </FormField>
         </section>
 
@@ -158,6 +181,16 @@ function SettingsPage() {
         </section>
 
         <p className={styles.settingsModuleLink}>
+          <Link href={`/${workspace}/admin/settings/business`}>
+            Business Registry
+          </Link>
+        </p>
+        <p className={styles.settingsModuleLink}>
+          <Link href={`/${workspace}/admin/building-blocks`}>
+            Building blocks
+          </Link>
+        </p>
+        <p className={styles.settingsModuleLink}>
           <Link href={`/${workspace}/admin/settings/modules`}>
             View module recommendations
           </Link>
@@ -176,7 +209,6 @@ function SettingsPage() {
           </section>
         ) : null}
       </div>
-    </FounderShell>
   );
 }
 

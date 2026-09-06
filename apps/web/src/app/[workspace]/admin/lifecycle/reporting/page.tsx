@@ -24,7 +24,7 @@ function ReportingHub() {
       }
       secondaryActions={
         <Link href={base} className="flow-btn flow-btn--secondary flow-btn--sm">
-          Mission Control
+          Bird Eye View
         </Link>
       }
       copilot={{

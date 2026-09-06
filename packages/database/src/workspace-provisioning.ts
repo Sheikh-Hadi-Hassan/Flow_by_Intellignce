@@ -64,6 +64,20 @@ const FOUNDER_PERMISSION_KEYS = [
   "resource.cost.read",
   "resource.work.read",
   "commercial.audit.read",
+  "building_block.read",
+  "building_block.configure",
+  "building_block.approve",
+  "building_block.suspend",
+  "crm.duplicate.propose",
+  "crm.duplicate.merge",
+  "organization.read",
+  "organization.update_profile",
+  "location.read",
+  "location.manage",
+  "registry.document.manage",
+  "registry.tax.manage",
+  "registry.signatory.manage",
+  "registry.compliance.manage",
 ] as const;
 
 export async function provisionWorkspaceForUser(

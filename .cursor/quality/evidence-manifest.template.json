@@ -1,0 +1,22 @@
+{
+  "overallVerdict": "PARTIAL",
+  "verdicts": {
+    "functionality": "PARTIAL",
+    "visual": "PARTIAL",
+    "accessibility": "PARTIAL",
+    "security": "PARTIAL",
+    "dataIntegrity": "PARTIAL",
+    "browser": "PARTIAL",
+    "performance": "PARTIAL"
+  },
+  "commandsRun": [],
+  "testCounts": { "passed": 0, "failed": 0, "total": 0 },
+  "skippedTestCount": 0,
+  "screenshotPaths": [],
+  "criticReports": [],
+  "productOwnerVisualApproval": false,
+  "secretScanPassed": true,
+  "browserConsoleErrors": false,
+  "builderAgentId": "",
+  "evaluatorAgentIds": []
+}

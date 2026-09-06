@@ -5,6 +5,7 @@ import {
   InMemoryProposalContractRepository,
   InMemoryResourceCapacityRepository,
   InMemoryWorkspacePhase1Repository,
+  InMemoryBuildingBlockStore,
   PostgresCommercialRepository,
   PostgresProjectEngineRepository,
   PostgresProposalContractRepository,
@@ -20,6 +21,7 @@ import {
   type ProposalContractRepository,
   type ResourceCapacityRepository,
   type WorkspacePhase1Repository,
+  type BuildingBlockStore,
 } from "@flow/database";
 import {
   assertProductionRuntimeConfig,
@@ -35,6 +37,7 @@ export const COMMERCIAL_REPOSITORY = Symbol("COMMERCIAL_REPOSITORY");
 export const PROPOSAL_CONTRACT_REPOSITORY = Symbol("PROPOSAL_CONTRACT_REPOSITORY");
 export const PROJECT_ENGINE_REPOSITORY = Symbol("PROJECT_ENGINE_REPOSITORY");
 export const RESOURCE_CAPACITY_REPOSITORY = Symbol("RESOURCE_CAPACITY_REPOSITORY");
+export const BUILDING_BLOCK_STORE = Symbol("BUILDING_BLOCK_STORE");
 
 export interface PersistenceStack {
   readonly identityRepository: FlowIdentityRepository;
@@ -43,6 +46,7 @@ export interface PersistenceStack {
   readonly proposalContractRepository: ProposalContractRepository;
   readonly projectEngineRepository: ProjectEngineRepository;
   readonly resourceCapacityRepository: ResourceCapacityRepository;
+  readonly buildingBlockStore: BuildingBlockStore;
   readonly dispose?: () => Promise<void>;
 }
 
@@ -60,13 +64,15 @@ export function createPersistenceStack(): PersistenceStack {
       );
     }
     const inMemoryIdentity = createFlowIdentityTestRepository();
+    const commercialRepository = new InMemoryCommercialRepository();
     return {
       identityRepository: asFlowIdentityRepository(inMemoryIdentity),
       phase1Repository: new InMemoryWorkspacePhase1Repository(),
-      commercialRepository: new InMemoryCommercialRepository(),
+      commercialRepository,
       proposalContractRepository: new InMemoryProposalContractRepository(),
       projectEngineRepository: new InMemoryProjectEngineRepository(),
       resourceCapacityRepository: new InMemoryResourceCapacityRepository(),
+      buildingBlockStore: new InMemoryBuildingBlockStore(commercialRepository),
     };
   }
 
@@ -76,13 +82,15 @@ export function createPersistenceStack(): PersistenceStack {
     options: "-c timezone=UTC",
   });
   const sql = createPostgresSqlExecutor(pool);
+  const commercialRepository = new PostgresCommercialRepository(sql);
   return {
     identityRepository: new PostgresFlowIdentityRepository(sql),
     phase1Repository: new PostgresWorkspacePhase1Repository(sql),
-    commercialRepository: new PostgresCommercialRepository(sql),
+    commercialRepository,
     proposalContractRepository: new PostgresProposalContractRepository(sql),
     projectEngineRepository: new PostgresProjectEngineRepository(sql),
     resourceCapacityRepository: new PostgresResourceCapacityRepository(sql),
+    buildingBlockStore: new InMemoryBuildingBlockStore(commercialRepository),
     dispose: () => pool.end(),
   };
 }

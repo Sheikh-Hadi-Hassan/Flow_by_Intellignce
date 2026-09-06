@@ -1,0 +1,22 @@
+{
+  "overallVerdict": "PARTIAL",
+  "verdicts": {
+    "functionality": "PASS",
+    "visual": "PARTIAL",
+    "accessibility": "PARTIAL",
+    "security": "PASS",
+    "dataIntegrity": "PASS",
+    "browser": "PARTIAL",
+    "performance": "PASS"
+  },
+  "commandsRun": ["pnpm test"],
+  "testCounts": { "passed": 10, "failed": 0, "total": 10 },
+  "skippedTestCount": 0,
+  "screenshotPaths": ["docs/quality/evidence/unapproved-current-state/example.png"],
+  "criticReports": ["docs/quality/critic-reports/ui-critic-example.md"],
+  "productOwnerVisualApproval": false,
+  "secretScanPassed": true,
+  "browserConsoleErrors": false,
+  "builderAgentId": "builder-1",
+  "evaluatorAgentIds": ["critic-1", "builder-1"]
+}

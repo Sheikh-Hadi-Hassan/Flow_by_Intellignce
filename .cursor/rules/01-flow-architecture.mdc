@@ -1,0 +1,16 @@
+---
+description: Flow module boundaries, Action Wall, and tenant isolation
+globs: apps/**/*.{ts,tsx},packages/**/*.ts
+alwaysApply: false
+---
+
+# Flow Architecture
+
+- Inspect before modifying. Read relevant `.codex/skills/flow-*/SKILL.md` before architectural work.
+- Respect module boundaries: commercial, database, api, web, experience layers stay separate.
+- Never bypass the Action Wall for approvals or side effects.
+- Never expose cross-tenant data. Every tenant table needs `workspace_id` and RLS.
+- Workspace-scoped API routes: `/api/v1/workspaces/:workspaceId/...`
+- LLMs never perform authoritative monetary calculations — use `@flow/commercial` deterministic functions.
+- Northstar demo data stays isolated from authenticated workspaces (sessionStorage, no live DB writes).
+- Prefer extending existing patterns over new abstractions.

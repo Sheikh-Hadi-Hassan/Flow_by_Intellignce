@@ -8,21 +8,26 @@ import {
 import {
   brandStrategyQuestionnaireV1,
   calculateScope,
+  compileBuilderDocument,
   createDiscoveryProviderFromEnv,
   discoveryCompleteness,
   DISCOVERY_EXTRACTION_PROMPT_VERSION,
   DISCOVERY_EXTRACTION_SCHEMA_VERSION,
   mapExtractionResultToDrafts,
   nextJourneyStatus,
+  parseBuilderDocument,
   requiredQuestionKeys,
   sanitizeSourceText,
   scopeWritesFromVerifiedFact,
   sourceFingerprint,
   timelineDaysFromText,
+  validateBuilderDocument,
   validateQuestionnaireResponse,
+  answersToDraftFactStatements,
   buildMinimalTwinSummary,
   type JourneyGuardInput,
   type JourneyStatus,
+  type QuestionnaireBuilderDocument,
 } from "@flow/commercial";
 import type { CommercialRepository } from "@flow/database";
 import type { WorkspacePhase1Repository } from "@flow/database";
@@ -212,16 +217,52 @@ export class CommercialService {
     identity: TrustedExecutionContext,
     versionId: string,
     patch: {
-      readonly jsonSchema: Record<string, unknown>;
-      readonly uiSchema: Record<string, unknown>;
-      readonly questionMeta: Record<string, unknown>;
+      readonly jsonSchema?: Record<string, unknown>;
+      readonly uiSchema?: Record<string, unknown>;
+      readonly questionMeta?: Record<string, unknown>;
+      readonly builder?: QuestionnaireBuilderDocument;
     },
   ) {
     this.assert(identity, "catalog.manage");
+    let nextPatch = {
+      jsonSchema: patch.jsonSchema ?? {},
+      uiSchema: patch.uiSchema ?? {},
+      questionMeta: patch.questionMeta ?? {},
+    };
+    if (patch.builder) {
+      const builderErrors = validateBuilderDocument(patch.builder);
+      if (builderErrors.length > 0) {
+        throw new BadRequestException(builderErrors.join(" "));
+      }
+      const compiled = compileBuilderDocument(patch.builder);
+      nextPatch = compiled;
+    }
+    if (
+      !nextPatch.jsonSchema ||
+      typeof nextPatch.jsonSchema !== "object" ||
+      Array.isArray(nextPatch.jsonSchema)
+    ) {
+      throw new BadRequestException("Questionnaire schema must be an object.");
+    }
+    const probe = validateQuestionnaireResponse(
+      {
+        version: 1,
+        jsonSchema: nextPatch.jsonSchema,
+        uiSchema: nextPatch.uiSchema,
+        questionMeta: nextPatch.questionMeta as typeof brandStrategyQuestionnaireV1.questionMeta,
+      },
+      {},
+      { enforceRequired: false },
+    );
+    if (!probe.valid) {
+      throw new BadRequestException(
+        `Invalid questionnaire schema: ${probe.errors.join(" ")}`,
+      );
+    }
     const updated = await this.repo.updateDraftQuestionnaire(
       identity.workspaceId,
       versionId,
-      patch,
+      nextPatch,
     );
     await this.audit(
       identity,
@@ -231,6 +272,25 @@ export class CommercialService {
       { versionNumber: updated.versionNumber },
     );
     return updated;
+  }
+
+  async duplicateQuestionnaireDraft(
+    identity: TrustedExecutionContext,
+    serviceId: string,
+  ) {
+    this.assert(identity, "catalog.manage");
+    const draft = await this.repo.duplicatePublishedToDraft(
+      identity.workspaceId,
+      serviceId,
+    );
+    await this.audit(
+      identity,
+      "catalog.questionnaire.duplicate",
+      "questionnaire",
+      draft.id,
+      { versionNumber: draft.versionNumber },
+    );
+    return draft;
   }
 
   async publishQuestionnaire(
@@ -452,6 +512,13 @@ export class CommercialService {
       this.repo.getTimelineConstraint(identity.workspaceId, opportunityId),
       this.repo.listExtractionRuns(identity.workspaceId, opportunityId),
     ]);
+    const questionnaireSubmission = questionnaire
+      ? await this.repo.getResponseSubmission(
+          identity.workspaceId,
+          opportunityId,
+          questionnaire.id,
+        )
+      : undefined;
     return {
       opportunity,
       facts,
@@ -461,6 +528,9 @@ export class CommercialService {
       costs,
       questionnaire,
       answers,
+      ...(questionnaireSubmission
+        ? { questionnaireSubmission }
+        : {}),
       sources,
       audits,
       requirements,
@@ -506,6 +576,131 @@ export class CommercialService {
       opportunityId,
       questionnaireVersionId: published.id,
       answers,
+    });
+    return this.refreshJourney(identity, opportunityId);
+  }
+
+  async submitAnswers(
+    identity: TrustedExecutionContext,
+    opportunityId: string,
+    answers: Record<string, unknown>,
+    idempotencyKey?: string,
+  ) {
+    this.assert(identity, "opportunity.manage");
+    if (idempotencyKey) {
+      const replay = await this.repo.consumeIdempotency({
+        workspaceId: identity.workspaceId,
+        key: idempotencyKey,
+        requestClass: "questionnaire.submit",
+        fingerprint: opportunityId,
+      });
+      if (replay === "replay") {
+        return this.getOpportunityBundle(identity, opportunityId);
+      }
+    }
+    const opportunity = await this.requireOpportunity(identity, opportunityId);
+    const published = await this.repo.getPublishedQuestionnaire(
+      identity.workspaceId,
+      opportunity.serviceId,
+    );
+    if (!published) {
+      throw new BadRequestException(
+        "No published questionnaire for this service.",
+      );
+    }
+    const existingSubmission = await this.repo.getResponseSubmission(
+      identity.workspaceId,
+      opportunityId,
+      published.id,
+    );
+    if (existingSubmission) {
+      return this.getOpportunityBundle(identity, opportunityId);
+    }
+    const document = {
+      version: published.versionNumber,
+      jsonSchema: published.jsonSchema,
+      uiSchema: published.uiSchema,
+      questionMeta:
+        published.questionMeta as typeof brandStrategyQuestionnaireV1.questionMeta,
+    };
+    const validated = validateQuestionnaireResponse(document, answers, {
+      enforceRequired: true,
+    });
+    if (!validated.valid) {
+      throw new BadRequestException(validated.errors.join(" "));
+    }
+    await this.repo.saveResponse({
+      workspaceId: identity.workspaceId,
+      opportunityId,
+      questionnaireVersionId: published.id,
+      answers,
+    });
+    await this.repo.markResponseSubmitted({
+      workspaceId: identity.workspaceId,
+      opportunityId,
+      questionnaireVersionId: published.id,
+      submittedBy: identity.userId,
+    });
+    const builder = parseBuilderDocument({
+      jsonSchema: published.jsonSchema,
+      uiSchema: published.uiSchema,
+      questionMeta: published.questionMeta,
+    });
+    const draftFacts = answersToDraftFactStatements(builder, answers);
+    if (draftFacts.length > 0) {
+      const sessionId = crypto.randomUUID();
+      await this.repo.createSession({
+        id: sessionId,
+        workspaceId: identity.workspaceId,
+        opportunityId,
+        title: "Questionnaire submission",
+      });
+      const sourceId = crypto.randomUUID();
+      await this.repo.addSource({
+        id: sourceId,
+        workspaceId: identity.workspaceId,
+        sessionId,
+        sourceKind: "questionnaire",
+        originalText: JSON.stringify(answers, null, 2),
+        contentType: "text/plain",
+      });
+      const runId = crypto.randomUUID();
+      const now = new Date().toISOString();
+      await this.repo.createExtractionRun({
+        id: runId,
+        workspaceId: identity.workspaceId,
+        opportunityId,
+        sourceId,
+        sourceFingerprint: sourceFingerprint(JSON.stringify(answers)),
+        promptVersion: "questionnaire-submit-v1",
+        schemaVersion: "questionnaire-v1",
+        provider: "questionnaire",
+        model: "deterministic",
+        status: "reviewed",
+        attemptCount: 1,
+        idempotencyKey: idempotencyKey ?? `questionnaire:${opportunityId}:${published.id}`,
+        usageMetadata: {},
+        createdBy: identity.userId,
+        createdAt: now,
+        updatedAt: now,
+      });
+      for (const fact of draftFacts) {
+        await this.repo.saveFact({
+          id: crypto.randomUUID(),
+          workspaceId: identity.workspaceId,
+          opportunityId,
+          sourceId,
+          extractionRunId: runId,
+          candidateFact: fact.statement,
+          category: fact.category,
+          confidenceBps: 10_000,
+          status: "draft",
+        });
+      }
+    }
+    await this.audit(identity, "questionnaire.submit", "opportunity", opportunityId, {
+      questionnaireVersionId: published.id,
+      answerCount: Object.keys(answers).length,
     });
     return this.refreshJourney(identity, opportunityId);
   }

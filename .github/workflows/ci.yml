@@ -24,3 +24,59 @@ jobs:
       - run: pnpm blm:eval:validate
       - run: pnpm test
       - run: pnpm format:check
+
+  quality-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.16.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm quality:hooks:test
+      - run: pnpm quality:secret-scan
+      - run: pnpm --filter @flow/web build-storybook
+      - name: Verify visual baseline not changed without approval
+        run: |
+          if git diff --name-only origin/${{ github.base_ref || 'main' }} -- 'apps/web/e2e/visual/snapshots/**' 2>/dev/null | grep -q .; then
+            if [ ! -f .cursor/quality/visual-baseline-approved.json ]; then
+              echo "Visual snapshots changed without product-owner approval marker"
+              exit 1
+            fi
+            node -e "const f=require('./.cursor/quality/visual-baseline-approved.json'); if(!f.approved) process.exit(1)"
+          fi
+      - name: Verify no skipped mandatory Playwright tests in CI config
+        run: |
+          if grep -r "test.skip" apps/web/e2e/accessibility/ | grep -v "Baseline not approved" | grep -v "visual-regression"; then
+            echo "Unexpected unconditional test.skip in accessibility tests"
+            exit 1
+          fi
+
+  accessibility:
+    runs-on: ubuntu-latest
+    needs: verify
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.16.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @flow/commercial build
+      - run: NODE_ENV=production pnpm --filter @flow/web build
+      - run: pnpm --filter @flow/web exec playwright install chromium
+      - name: Start web server
+        run: |
+          NODE_ENV=production pnpm --filter @flow/web start --port 3000 &
+          npx wait-on http://localhost:3000 --timeout 120000
+      - run: pnpm --filter @flow/web test:a11y
+        env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: {
       "@flow/commercial": "../../packages/commercial/dist",
+      "@flow/contracts": "../../packages/contracts/dist",
     },
   },
 };

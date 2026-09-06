@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
-import { workspacePlaceholder } from "../../lib/prototype/context";
+import { usePrototype, workspacePlaceholder } from "../../lib/prototype/context";
 import { isDemoWorkspaceSlug } from "../../lib/workspace/demo";
 import { useUnifiedWorkspaceSession } from "../../lib/workspace/context";
 import { FounderShell, PublicShell } from "./AppShell";
@@ -21,6 +21,7 @@ export function WorkspaceGate({
   variant?: "workspace" | "founder";
 }) {
   const router = useRouter();
+  const { startDemo } = usePrototype();
   const { session, mismatch, isResolving, isApiBacked, error } =
     useUnifiedWorkspaceSession(workspace);
 
@@ -28,7 +29,10 @@ export function WorkspaceGate({
     if (isResolving) return;
     if (mismatch) return;
     if (!session) {
+      // Following the demo link before the home page hydrates skips its click
+      // handler, so seed the isolated demo here rather than dead-ending.
       if (isDemoWorkspaceSlug(workspace)) {
+        startDemo();
         return;
       }
       router.replace(isApiBacked || error ? "/sign-in" : "/sign-up");
@@ -45,6 +49,7 @@ export function WorkspaceGate({
     requireTwin,
     router,
     session,
+    startDemo,
     workspace,
   ]);
 
@@ -65,17 +70,15 @@ export function WorkspaceGate({
     );
   }
 
-  if (!isResolving && !session) {
+  // The effect above seeds the demo in this gap, so it is a wait, not a dead end.
+  const seedingDemo = !session && isDemoWorkspaceSlug(workspace);
+
+  if (!isResolving && !session && !seedingDemo) {
     return (
       <PublicShell>
         <div style={{ maxWidth: "var(--onboarding-max)", margin: "0 auto" }}>
           <EmptyState>
-            {isDemoWorkspaceSlug(workspace) ? (
-              <>
-                Northstar is an isolated local demo.{" "}
-                <a href="/">Start the demo from the home page</a>.
-              </>
-            ) : error ? (
+            {error ? (
               <>
                 {error}. <a href="/sign-in">Sign in</a> to continue.
               </>
@@ -91,7 +94,7 @@ export function WorkspaceGate({
     );
   }
 
-  if (isResolving && variant === "founder") {
+  if ((isResolving || seedingDemo) && variant === "founder") {
     return (
       <FounderShell
         workspace={workspace}
@@ -107,6 +110,14 @@ export function WorkspaceGate({
   }
 
   if (!session) return null;
+
+  if (variant === "founder") {
+    return (
+      <FounderShell workspace={workspace} session={session}>
+        {children}
+      </FounderShell>
+    );
+  }
 
   return <>{children}</>;
 }

@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 
-import { FounderShell } from "../../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../../components/shell/WorkspaceGate";
 import { ModuleRecommendationList } from "../../../../../components/founder/ModuleRecommendationList";
 import { SectionHeader } from "../../../../../components/ui/Display";
@@ -16,7 +15,7 @@ function ModulesPage() {
   if (!session) return null;
 
   return (
-    <FounderShell workspace={workspace} session={session}>
+    <>
       <SectionHeader
         eyebrow="Settings"
         title="Recommended modules"
@@ -27,7 +26,7 @@ function ModulesPage() {
         deferredIds={session.deferredModuleIds}
         onToggleDeferred={toggleDeferredModule}
       />
-    </FounderShell>
+    </>
   );
 }
 

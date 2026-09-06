@@ -40,7 +40,10 @@
     "blm:eval:certify": "pnpm --filter @flow/blm-evaluation build && pnpm --filter @flow/blm-evaluation eval:certify",
     "blm:eval:b0": "pnpm --filter @flow/blm-evaluation build && pnpm --filter @flow/blm-evaluation eval:b0",
     "blm:eval:model": "pnpm --filter @flow/blm-evaluation build && pnpm --filter @flow/blm-evaluation eval:model",
-    "blm:smoke:groq": "pnpm --filter @flow/blm-provider-groq build && pnpm --filter @flow/blm-provider-groq smoke:live"
+    "blm:smoke:groq": "pnpm --filter @flow/blm-provider-groq build && pnpm --filter @flow/blm-provider-groq smoke:live",
+    "quality:hooks:test": "node --test .cursor/hooks/tests/*.test.mjs",
+    "quality:secret-scan": "node .cursor/hooks/secret-scan.mjs",
+    "quality:gate": "pnpm typecheck && pnpm lint && pnpm test && pnpm quality:hooks:test && pnpm quality:secret-scan"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

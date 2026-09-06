@@ -35,6 +35,9 @@
 
   --duration-fast: 120ms;
   --duration-normal: 200ms;
+  --duration-loop: 1800ms;
+  --duration-enter: 200ms;
+  --duration-exit: 140ms;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
 
   --color-bg-canvas: #f7f8fa;
@@ -113,6 +116,25 @@
   --color-danger-bg: #2a1015;
   --color-info-bg: #1e2a44;
   --color-overlay: rgba(0, 0, 0, 0.64);
+
+  /*
+   * Light-theme semantic foregrounds land between 3.2:1 and 3.8:1 on the dark
+   * canvas, below the 4.5:1 AA minimum for body text. These are the same hues
+   * lightened to clear it.
+   */
+  --color-success: #3dd68c;
+  --color-warning: #e0a458;
+  --color-danger: #f2778a;
+  --color-info: #6ea8fe;
+
+  --color-proof-fact: #3dd68c;
+  --color-proof-inference: #6ea8fe;
+  --color-proof-recommendation: #b794f6;
+  --color-proof-assumption: #e0a458;
+
+  --color-guard-allow: #3dd68c;
+  --color-guard-deny: #f2778a;
+  --color-guard-pending: #e0a458;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -13,7 +13,13 @@ export function StatusBadge({
   variant = "default",
 }: {
   children: ReactNode;
-  variant?: "default" | "demo" | "success" | "warning" | "essential";
+  variant?:
+    | "default"
+    | "demo"
+    | "success"
+    | "warning"
+    | "danger"
+    | "essential";
 }) {
   return (
     <span className={`flow-badge flow-badge--${variant}`}>{children}</span>

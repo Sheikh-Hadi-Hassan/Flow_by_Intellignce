@@ -1,8 +1,10 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { parseBuilderDocument, unansweredQuestionnaireFields } from "@flow/commercial";
 
 import { CommercialRoute } from "../../../../../../components/commercial/CommercialRoute";
 import { OpportunityNav } from "../../../../../../components/commercial/Status";
@@ -31,21 +33,46 @@ function Missing() {
   }, [api, opportunityId]);
 
   if (!bundle) return null;
-  const missing = bundle.followUps.filter((row) => row.required && !row.answer);
+  const missingFollowUps = bundle.followUps.filter((row) => row.required && !row.answer);
+  const questionnaireGaps =
+    bundle.questionnaire && !bundle.questionnaireSubmission
+      ? unansweredQuestionnaireFields(
+          parseBuilderDocument(bundle.questionnaire),
+          bundle.answers ?? {},
+        )
+      : [];
+  const hasGaps = missingFollowUps.length > 0 || questionnaireGaps.length > 0;
 
   return (
     <>
       <SectionHeader
         eyebrow="Missing information"
         title="Questions still needed"
-        description="Required follow-ups block ready-for-brief until answered."
+        description="Required questionnaire responses and follow-ups block ready-for-brief until complete."
       />
       <OpportunityNav workspace={workspace} opportunityId={opportunityId} />
-      <StatusBadge variant={missing.length ? "warning" : "success"}>
-        {missing.length
-          ? "Missing information"
-          : "Required follow-ups complete"}
+      <StatusBadge variant={hasGaps ? "warning" : "success"}>
+        {hasGaps ? "Missing information" : "Required inputs complete"}
       </StatusBadge>
+      {questionnaireGaps.length > 0 && (
+        <section className="flow-panel">
+          <h2 className="flow-panel__title">Questionnaire</h2>
+          <p className="flow-muted">
+            Required questionnaire fields are unanswered or not yet submitted.
+          </p>
+          <ul className="flow-list">
+            {questionnaireGaps.map((field) => (
+              <li key={field.id}>{field.label}</li>
+            ))}
+          </ul>
+          <Link
+            href={`/${workspace}/admin/opportunities/${opportunityId}/questionnaire`}
+            className="flow-btn flow-btn--secondary"
+          >
+            Complete questionnaire
+          </Link>
+        </section>
+      )}
       {bundle.followUps.map((row) => (
         <section key={row.id} className="flow-panel">
           <FormField label={row.prompt} htmlFor={row.id}>

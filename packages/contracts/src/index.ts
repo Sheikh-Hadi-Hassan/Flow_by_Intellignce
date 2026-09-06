@@ -10,3 +10,4 @@ export * from "./organization-tools.js";
 export * from "./module-registry.js";
 export * from "./module-tools.js";
 export * from "./entity-registry.js";
+export * from "./building-blocks/index.js";

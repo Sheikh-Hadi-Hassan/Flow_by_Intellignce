@@ -40,15 +40,13 @@ function AnswerPage() {
     void api.getOpportunity(opportunityId).then((next) => {
       setBundle(next);
       setAnswers(next.answers ?? {});
-      setSubmitted(
-        Boolean(next.facts.some((fact) => fact.status === "draft" && fact.category)),
-      );
+      setSubmitted(Boolean(next.questionnaireSubmission));
     });
   }, [api, opportunityId]);
 
   useEffect(() => {
     if (!api) return;
-    const autosaveClient = createAutosave(async (value) => {
+    const autosaveClient = createAutosave<Record<string, unknown>>(async (value) => {
       setAutosave("saving");
       try {
         const next = await api.saveAnswers(opportunityId, value);
@@ -89,9 +87,15 @@ function AnswerPage() {
       return;
     }
     setValidationErrors([]);
-    const next = await api.submitAnswers(opportunityId, answers);
-    setBundle(next);
-    setSubmitted(true);
+    try {
+      const next = await api.submitAnswers(opportunityId, answers);
+      setBundle(next);
+      setSubmitted(true);
+    } catch (error) {
+      setValidationErrors([
+        error instanceof Error ? error.message : "Unable to submit questionnaire.",
+      ]);
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { CommercialRoute } from "../../../../../../components/commercial/CommercialRoute";
+import { DemoLifecycleStatus } from "../../../../../../components/commercial/DemoLifecycleStatus";
 import {
   OpportunityNav,
   projectBadge,
@@ -23,7 +24,11 @@ function ProjectPage() {
   const [project, setProject] = useState<ProjectDetailRecord | null>(null);
   const [timeline, setTimeline] = useState<{
     status: string;
-    progress: { totalTasks: number; assignedTasks: number; percentComplete: number };
+    progress: {
+      totalTasks: number;
+      assignedTasks: number;
+      percentComplete: number;
+    };
   } | null>(null);
   const [auditCount, setAuditCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +50,8 @@ function ProjectPage() {
   async function refresh(projectId: string) {
     if (!api) return;
     const rows = await api.listProjects(opportunityId);
-    const latest = rows.find((row) => row.id === projectId) ?? rows.at(-1) ?? null;
+    const latest =
+      rows.find((row) => row.id === projectId) ?? rows.at(-1) ?? null;
     setProject(latest);
     if (latest) {
       setTimeline(await api.getTimeline(latest.id));
@@ -61,7 +67,9 @@ function ProjectPage() {
       setProject(created);
       await refresh(created.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to create project.");
+      setError(
+        err instanceof Error ? err.message : "Unable to create project.",
+      );
     }
   }
 
@@ -110,6 +118,7 @@ function ProjectPage() {
         description="Generated from an executed contract. Recommendations are drafts only — assign manually."
       />
       <OpportunityNav workspace={workspace} opportunityId={opportunityId} />
+      {workspace === "northstar-creative" && <DemoLifecycleStatus />}
       {error && <p role="alert">{error}</p>}
       {project && (
         <>
@@ -128,9 +137,7 @@ function ProjectPage() {
                 {timeline.progress.totalTasks} tasks assigned
               </p>
             )}
-            <p data-testid="project-audit-count">
-              Audit events: {auditCount}
-            </p>
+            <p data-testid="project-audit-count">Audit events: {auditCount}</p>
             <h4>Recommendation drafts (not auto-assigned)</h4>
             <ul>
               {project.recommendationDrafts.slice(0, 3).map((draft) => (
@@ -155,11 +162,16 @@ function ProjectPage() {
         </>
       )}
       <div className="flow-action-row">
-        <Button disabled={!api || Boolean(project)} onClick={() => void createProject()}>
+        <Button
+          disabled={!api || Boolean(project)}
+          onClick={() => void createProject()}
+        >
           Create project
         </Button>
         {project?.status === "draft" && (
-          <Button onClick={() => void submitForReview()}>Submit for review</Button>
+          <Button onClick={() => void submitForReview()}>
+            Submit for review
+          </Button>
         )}
         {project?.status === "in_review" && (
           <Button onClick={() => void approvePlan()}>Approve plan</Button>

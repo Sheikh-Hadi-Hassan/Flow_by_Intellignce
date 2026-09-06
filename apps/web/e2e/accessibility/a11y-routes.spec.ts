@@ -15,7 +15,7 @@ async function startNorthstarDemo(page: Page) {
 }
 
 const routes = [
-  { name: "Mission Control", path: `/${northstarSlug}/admin` },
+  { name: "Bird Eye View", path: `/${northstarSlug}/admin` },
   { name: "Pipeline", path: `/${northstarSlug}/admin/lifecycle/pipeline` },
   { name: "Delivery", path: `/${northstarSlug}/admin/lifecycle/delivery` },
   { name: "Team", path: `/${northstarSlug}/admin/team` },

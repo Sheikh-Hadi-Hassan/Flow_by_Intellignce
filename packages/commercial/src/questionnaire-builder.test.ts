@@ -10,10 +10,23 @@ import {
   validateBuilderDocument,
   answersToDraftFactStatements,
   isWhitespaceOnly,
+  unansweredQuestionnaireFields,
 } from "./questionnaire-builder.js";
-import { validateQuestionnaireResponse } from "./questionnaire.js";
+import { brandStrategyQuestionnaireV1, validateQuestionnaireResponse } from "./questionnaire.js";
 
 describe("questionnaire-builder", () => {
+  it("parses legacy enum fields into single-choice options", () => {
+    const parsed = parseBuilderDocument(brandStrategyQuestionnaireV1);
+    const maturity = parsed.questions.find((question) => question.id === "brandMaturity");
+    expect(maturity?.kind).toBe("single_choice");
+    expect(maturity?.choices?.map((choice) => choice.id)).toEqual([
+      "emerging",
+      "established",
+      "refresh",
+    ]);
+    expect(validateBuilderDocument(parsed)).toEqual([]);
+  });
+
   it("compiles short text and single choice to JSON Schema", () => {
     const doc = {
       version: 1,
@@ -144,5 +157,28 @@ describe("questionnaire-builder", () => {
     const facts = answersToDraftFactStatements(doc, { metric: "Increase leads" });
     expect(facts[0]?.statement).toContain("Success metric");
     expect(facts[0]?.category).toBe("outcome");
+  });
+
+  it("lists unanswered required questionnaire fields", () => {
+    const doc = {
+      version: 1,
+      questions: [
+        {
+          id: "audience",
+          kind: "short_text" as const,
+          label: "Primary audience",
+          required: true,
+        },
+        {
+          id: "metric",
+          kind: "short_text" as const,
+          label: "Success metric",
+          required: true,
+        },
+      ],
+    };
+    expect(unansweredQuestionnaireFields(doc, { audience: "Ops leaders" })).toEqual([
+      { id: "metric", label: "Success metric" },
+    ]);
   });
 });

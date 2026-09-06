@@ -630,4 +630,95 @@ describe("commercial API journey", () => {
       .set("X-Flow-Workspace-Id", otherWorkspaceId)
       .expect(403);
   });
+
+  it("submits questionnaire answers with audit trail and duplicate draft", async () => {
+    const auth = {
+      Authorization: "Bearer valid-unknown-token",
+      "x-flow-workspace-id": workspaceId,
+    };
+
+    const serviceRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/services`)
+      .set(auth)
+      .send({
+        name: "Questionnaire Submit Service",
+        pricingModel: "project",
+        currency: "USD",
+      })
+      .expect(201);
+    const serviceId = serviceRes.body.service.id as string;
+    const questionnaireId = serviceRes.body.questionnaire.id as string;
+
+    await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/questionnaires/${questionnaireId}/publish`,
+      )
+      .set(auth)
+      .expect(201);
+
+    const clientRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/clients`)
+      .set(auth)
+      .send({
+        name: "Questionnaire Client",
+        contactFirstName: "Sam",
+        contactLastName: "Rivera",
+      })
+      .expect(201);
+
+    const oppRes = await request(app.getHttpServer())
+      .post(`/api/v1/workspaces/${workspaceId}/commercial/opportunities`)
+      .set(auth)
+      .send({
+        clientId: clientRes.body.client.id,
+        contactId: clientRes.body.contact.id,
+        serviceId,
+        name: "Questionnaire opportunity",
+      })
+      .expect(201);
+    const opportunityId = oppRes.body.id as string;
+
+    const incomplete = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/answers/submit`,
+      )
+      .set(auth)
+      .send({ answers: { brandMaturity: "emerging" } });
+    expect(incomplete.status).toBeGreaterThanOrEqual(400);
+
+    const answers = {
+      brandMaturity: "emerging",
+      primaryAudience: "Plant managers",
+      successMetric: "Qualified pipeline",
+    };
+    const submitRes = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/answers/submit`,
+      )
+      .set({ ...auth, "Idempotency-Key": `submit-${opportunityId}` })
+      .send({ answers })
+      .expect(201);
+    expect(submitRes.body.questionnaireSubmission?.submittedAt).toBeTruthy();
+    expect(submitRes.body.facts.some((fact: { status: string }) => fact.status === "draft")).toBe(
+      true,
+    );
+
+    const replaySubmit = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/opportunities/${opportunityId}/answers/submit`,
+      )
+      .set({ ...auth, "Idempotency-Key": `submit-${opportunityId}` })
+      .send({ answers })
+      .expect(201);
+    expect(replaySubmit.body.questionnaireSubmission?.submittedAt).toBeTruthy();
+
+    const duplicateDraft = await request(app.getHttpServer())
+      .post(
+        `/api/v1/workspaces/${workspaceId}/commercial/services/${serviceId}/questionnaires/duplicate-draft`,
+      )
+      .set(auth)
+      .expect(201);
+    expect(duplicateDraft.body.status).toBe("draft");
+    expect(duplicateDraft.body.versionNumber).toBeGreaterThan(1);
+  });
 });

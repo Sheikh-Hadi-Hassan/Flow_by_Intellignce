@@ -13,6 +13,7 @@ import {
   PROPOSAL_CONTRACT_REPOSITORY,
   PROJECT_ENGINE_REPOSITORY,
   RESOURCE_CAPACITY_REPOSITORY,
+  BUILDING_BLOCK_STORE,
   createPersistenceStack,
 } from "../database/persistence.providers.js";
 
@@ -49,6 +50,10 @@ const authStack = createAuthenticationStack(
       useValue: persistenceStack.resourceCapacityRepository,
     },
     {
+      provide: BUILDING_BLOCK_STORE,
+      useValue: persistenceStack.buildingBlockStore,
+    },
+    {
       provide: FlowRequestIdentityResolver,
       useValue: authStack.identityResolver,
     },
@@ -66,6 +71,7 @@ const authStack = createAuthenticationStack(
     PROPOSAL_CONTRACT_REPOSITORY,
     PROJECT_ENGINE_REPOSITORY,
     RESOURCE_CAPACITY_REPOSITORY,
+    BUILDING_BLOCK_STORE,
     FlowRequestIdentityResolver,
     RepositoryAuthorizationProvider,
     WorkspaceService,

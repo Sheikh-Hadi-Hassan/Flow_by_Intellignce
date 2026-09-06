@@ -24,8 +24,8 @@ export function founderLifecycleNav(workspace: string): LifecycleNavItem[] {
   return [
     {
       id: "mission",
-      label: "Mission Control",
-      shortLabel: "Mission",
+      label: "Bird Eye View",
+      shortLabel: "Bird Eye",
       href: base,
       icon: LayoutDashboard,
       exact: true,
@@ -76,6 +76,7 @@ export function founderUtilityNav(workspace: string) {
     { href: `${base}/setup`, label: "Setup plan" },
     { href: `${base}/services`, label: "Services" },
     { href: `${base}/settings`, label: "Settings" },
+    { href: `${base}/building-blocks`, label: "Building blocks" },
   ];
 }
 

@@ -10,6 +10,7 @@ import {
   verifyAllDraftFacts,
   waitForCommercialReady,
 } from "./helpers/commercial-journey";
+import { publishQuestionnaireFromBuilder } from "./helpers/questionnaire-journey";
 import { prepareCommercialApiProxy, signInThroughUi } from "./helpers/supabase-auth";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -121,8 +122,7 @@ test.describe("authenticated commercial golden path", () => {
       await expect(page.locator("#minutes-0")).toHaveValue("2400", {
         timeout: 30_000,
       });
-      await page.getByRole("button", { name: "Publish questionnaire" }).click();
-      await expect(page.getByText("Questionnaire published")).toBeVisible();
+      await publishQuestionnaireFromBuilder(page);
 
       await page.goto(`/${workspace.slug}/admin/clients`);
       await waitForCommercialReady(page);

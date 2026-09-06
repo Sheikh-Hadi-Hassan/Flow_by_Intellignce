@@ -295,13 +295,29 @@ function legacySchemaToBuilder(input: {
             typeof (meta as { labels?: { en?: string } }).labels?.en === "string"
           ? (meta as { labels: { en: string } }).labels.en
           : id;
+    const schemaRecord = schema as Record<string, unknown>;
+    const kind = inferKind(schemaRecord);
+    const enumValues = Array.isArray(schemaRecord.enum)
+      ? schemaRecord.enum.filter((value): value is string => typeof value === "string")
+      : [];
+    const metaKind =
+      typeof meta === "object" && meta && "kind" in meta
+        ? (meta as { kind: QuestionKind }).kind
+        : undefined;
+    const resolvedKind = metaKind ?? kind;
     questions.push({
       id,
-      kind: inferKind(schema as Record<string, unknown>),
+      kind: resolvedKind,
       label,
       required: required.has(id),
-      ...(typeof meta === "object" && meta && "kind" in meta
-        ? { kind: (meta as { kind: QuestionKind }).kind }
+      ...(enumValues.length > 0 &&
+      (resolvedKind === "single_choice" || resolvedKind === "multiple_choice")
+        ? {
+            choices: enumValues.map((value) => ({
+              id: value,
+              label: value,
+            })),
+          }
         : {}),
     });
   }
@@ -431,4 +447,28 @@ function formatAnswerForFact(question: BuilderQuestion, value: unknown): string 
 
 export function isWhitespaceOnly(value: unknown): boolean {
   return typeof value === "string" && value.trim().length === 0;
+}
+
+export function unansweredQuestionnaireFields(
+  document: QuestionnaireBuilderDocument,
+  answers: Record<string, unknown>,
+): readonly { readonly id: string; readonly label: string }[] {
+  const missing: { id: string; label: string }[] = [];
+  for (const question of document.questions) {
+    if (!isAnswerField(question.kind) || !question.required) continue;
+    if (question.visibleWhen) {
+      const trigger = answers[question.visibleWhen.questionId];
+      if (trigger !== question.visibleWhen.equals) continue;
+    }
+    const value = answers[question.id];
+    if (
+      value == null ||
+      value === "" ||
+      isWhitespaceOnly(value) ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
+      missing.push({ id: question.id, label: question.label });
+    }
+  }
+  return missing;
 }

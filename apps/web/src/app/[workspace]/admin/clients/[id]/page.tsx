@@ -1,15 +1,18 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { CommercialRoute } from "../../../../../components/commercial/CommercialRoute";
+import { CrmClient360 } from "../../../../../components/crm-core/CrmCoreScreens";
+import { WorkspaceGate } from "../../../../../components/shell/WorkspaceGate";
 import { SectionHeader } from "../../../../../components/ui/Display";
 import { useCommercialClient } from "../../../../../lib/commercial/use-commercial";
 import type {
   CommercialClientRecord,
   CommercialContactRecord,
 } from "../../../../../lib/commercial/api";
+import { isMissionDemoWorkspace } from "../../../../../lib/mission-control/store";
+import { useEffect, useState } from "react";
 
 function ClientDetail() {
   const workspace = useParams().workspace as string;
@@ -45,6 +48,15 @@ function ClientDetail() {
 }
 
 export default function Page() {
+  const workspace = useParams().workspace as string;
+  const clientId = useParams().id as string;
+  if (isMissionDemoWorkspace(workspace)) {
+    return (
+      <WorkspaceGate workspace={workspace} requireTwin variant="founder">
+        <CrmClient360 workspace={workspace} clientId={clientId} />
+      </WorkspaceGate>
+    );
+  }
   return (
     <CommercialRoute>
       <ClientDetail />

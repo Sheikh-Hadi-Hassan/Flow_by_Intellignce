@@ -512,6 +512,13 @@ export class CommercialService {
       this.repo.getTimelineConstraint(identity.workspaceId, opportunityId),
       this.repo.listExtractionRuns(identity.workspaceId, opportunityId),
     ]);
+    const questionnaireSubmission = questionnaire
+      ? await this.repo.getResponseSubmission(
+          identity.workspaceId,
+          opportunityId,
+          questionnaire.id,
+        )
+      : undefined;
     return {
       opportunity,
       facts,
@@ -521,6 +528,9 @@ export class CommercialService {
       costs,
       questionnaire,
       answers,
+      ...(questionnaireSubmission
+        ? { questionnaireSubmission }
+        : {}),
       sources,
       audits,
       requirements,
@@ -652,7 +662,7 @@ export class CommercialService {
         sessionId,
         sourceKind: "questionnaire",
         originalText: JSON.stringify(answers, null, 2),
-        contentType: "application/json",
+        contentType: "text/plain",
       });
       const runId = crypto.randomUUID();
       const now = new Date().toISOString();

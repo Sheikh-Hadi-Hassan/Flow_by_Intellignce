@@ -2,6 +2,10 @@ import { expect, type Page } from "@playwright/test";
 
 import type { ProvisionedCommercialWorkspace } from "./commercial-workspace";
 import { prepareCommercialApiProxy, signInThroughUi } from "./supabase-auth";
+import {
+  fillDefaultQuestionnaireAnswers,
+  publishQuestionnaireFromBuilder,
+} from "./questionnaire-journey";
 
 export async function waitForCommercialReady(page: Page) {
   await expect(page.getByTestId("commercial-data-pending")).toHaveCount(0, {
@@ -70,8 +74,7 @@ export async function reachApprovedBrief(input: {
   await expect(page.locator("#minutes-0")).toHaveValue("2400", {
     timeout: 30_000,
   });
-  await page.getByRole("button", { name: "Publish questionnaire" }).click();
-  await expect(page.getByText("Questionnaire published")).toBeVisible();
+  await publishQuestionnaireFromBuilder(page);
 
   await page.goto(`/${workspace.slug}/admin/clients`);
   await waitForCommercialReady(page);
@@ -91,15 +94,7 @@ export async function reachApprovedBrief(input: {
 
   const opportunityUrl = page.url();
 
-  await page.getByLabel("Brand maturity").selectOption("emerging");
-  await page.getByLabel("Primary audience").fill("Operations leaders");
-  await page.getByLabel("Success metric").fill("Qualified pipeline");
-  await Promise.all([
-    page.waitForResponse(
-      (response) => response.url().includes("/answers") && response.ok(),
-    ),
-    page.getByLabel("Success metric").blur(),
-  ]);
+  await fillDefaultQuestionnaireAnswers(page);
 
   await page.goto(`${opportunityUrl}/discovery`);
   await waitForCommercialReady(page);

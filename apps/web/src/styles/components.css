@@ -508,6 +508,23 @@
   border-bottom: none;
 }
 
+/* Inline links sit inside running text, so they need a non-color distinction */
+.flow-resource-list li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.flow-resource-list li:last-child {
+  border-bottom: none;
+}
+
+.flow-resource-list a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px;
+}
+
 .flow-module-list {
   display: flex;
   flex-direction: column;

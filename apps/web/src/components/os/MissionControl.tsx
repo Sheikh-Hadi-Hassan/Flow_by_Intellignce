@@ -85,7 +85,7 @@ export function MissionControl({ session }: { session: PrototypeSession }) {
 
   return (
     <MissionScreen
-      lifecycle="Mission Control"
+      lifecycle="Bird Eye View"
       title={`Good ${greeting}, ${founderName}`}
       why="Your operating picture for today — what needs a decision before anything else."
       decision={

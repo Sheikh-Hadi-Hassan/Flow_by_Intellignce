@@ -213,6 +213,10 @@ export interface OpportunityBundle {
   }[];
   readonly questionnaire?: QuestionnaireVersion;
   readonly answers?: Record<string, unknown>;
+  readonly questionnaireSubmission?: {
+    readonly submittedAt: string;
+    readonly submittedBy: string;
+  };
   readonly sources: readonly { readonly id?: string; readonly originalText: string }[];
   readonly requirements: readonly {
     readonly key: string;

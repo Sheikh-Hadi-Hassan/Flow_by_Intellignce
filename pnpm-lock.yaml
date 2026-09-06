@@ -123,6 +123,9 @@ importers:
       '@flow/commercial':
         specifier: workspace:*
         version: link:../../packages/commercial
+      '@flow/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@rjsf/core':
         specifier: ^5.24.8
         version: 5.24.13(@rjsf/utils@5.24.13(react@19.2.8))(react@19.2.8)

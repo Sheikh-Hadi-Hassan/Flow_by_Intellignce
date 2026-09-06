@@ -137,7 +137,7 @@ export function answerAskFlow(input: {
         return {
           supported: true,
           answer: "Create a client, then start a discovery opportunity.",
-          proof: "Mission Control priority queue is empty.",
+          proof: "Bird Eye View priority queue is empty.",
           records: [
             { label: "Clients", href: `/${workspace}/admin/clients` },
           ],

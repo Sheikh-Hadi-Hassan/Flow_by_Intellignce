@@ -8,6 +8,10 @@ import {
   provisionCommercialWorkspace,
 } from "./helpers/commercial-workspace";
 import { waitForCommercialReady } from "./helpers/commercial-journey";
+import {
+  fillDefaultQuestionnaireAnswers,
+  publishQuestionnaireFromBuilder,
+} from "./helpers/questionnaire-journey";
 import { prepareCommercialApiProxy, signInThroughUi } from "./helpers/supabase-auth";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -47,57 +51,116 @@ test.describe("questionnaire production journey", () => {
     });
 
     try {
-      await prepareCommercialApiProxy(page, workspace);
+      await prepareCommercialApiProxy(page, {
+        apiBase,
+        apiAuth: workspace.apiAuth,
+      });
       await signInThroughUi(page, {
         appUrl,
         email: workspace.email,
-        password: e2ePassword,
+        password: workspace.password,
+        workspaceSlug: workspace.slug,
       });
-      await waitForCommercialReady(page, workspace.slug);
 
-      await page.goto(`${appUrl}/${workspace.slug}/admin/services`, {
-        waitUntil: "networkidle",
+      await page.goto(`/${workspace.slug}/admin/services`, {
+        waitUntil: "domcontentloaded",
       });
-      await page.screenshot({ path: join(screenshotDir, "01-questionnaire-list.png"), fullPage: true });
-
-      await page.getByRole("link", { name: /services/i }).first().click();
-      const serviceLink = page.locator("a[href*='/admin/services/']").first();
-      await serviceLink.click();
-      await page.getByRole("link", { name: /questionnaire builder/i }).click();
-      await page.screenshot({ path: join(screenshotDir, "02-builder-empty.png"), fullPage: true });
-
-      await page.getByRole("button", { name: "Add question" }).click();
-      await page.screenshot({ path: join(screenshotDir, "03-builder-question-types.png"), fullPage: true });
-      await page.getByRole("button", { name: "Publish" }).click();
-      await page.getByRole("button", { name: "Confirm publish" }).click();
-      await page.screenshot({ path: join(screenshotDir, "10-published-version.png"), fullPage: true });
-
-      await page.goto(`${appUrl}/${workspace.slug}/admin/opportunities`, {
-        waitUntil: "networkidle",
+      await waitForCommercialReady(page);
+      await page.screenshot({
+        path: join(screenshotDir, "01-questionnaire-list.png"),
+        fullPage: true,
       });
-      await page.getByRole("link", { name: /opportunities/i }).first().click();
-      await page.locator("a[href*='/admin/opportunities/']").first().click();
+
+      await page.getByLabel("Service name").fill(`Questionnaire E2E ${workspace.runId}`);
+      await page.getByRole("button", { name: "Create service" }).click();
+      await page.waitForURL(/\/admin\/services\//);
+      await waitForCommercialReady(page);
+      await page.screenshot({
+        path: join(screenshotDir, "02-builder-entry.png"),
+        fullPage: true,
+      });
+
+      await publishQuestionnaireFromBuilder(page);
+      await page.screenshot({
+        path: join(screenshotDir, "10-published-version.png"),
+        fullPage: true,
+      });
+
+      await page.goto(`/${workspace.slug}/admin/clients`);
+      await waitForCommercialReady(page);
+      await page.getByLabel(/client name/i).fill(`Questionnaire Client ${workspace.runId}`);
+      await page.getByLabel(/primary contact first name/i).fill("E2E");
+      await page.getByLabel(/primary contact last name/i).fill("Tester");
+      await page.getByRole("button", { name: /create client/i }).click();
+      await page.waitForURL(/\/admin\/clients\//);
+
+      await page.goto(`/${workspace.slug}/admin/opportunities`);
+      await waitForCommercialReady(page);
+      await expect(page.locator("#opp-client option")).not.toHaveCount(0);
+      await expect(page.locator("#opp-service option")).not.toHaveCount(0);
+      await page.locator("#opp-name").fill(`Questionnaire Opp ${workspace.runId}`);
+      await Promise.all([
+        page.waitForURL(/\/admin\/opportunities\//),
+        page.getByRole("button", { name: /create opportunity/i }).click(),
+      ]);
+
+      const opportunityUrl = page.url();
       await page.getByRole("link", { name: "Questionnaire" }).click();
-      await page.screenshot({ path: join(screenshotDir, "11-answering-desktop.png"), fullPage: true });
+      await page.screenshot({
+        path: join(screenshotDir, "11-answering-desktop.png"),
+        fullPage: true,
+      });
 
       await page.setViewportSize({ width: 375, height: 812 });
-      await page.screenshot({ path: join(screenshotDir, "12-answering-mobile.png"), fullPage: true });
+      await page.screenshot({
+        path: join(screenshotDir, "12-answering-mobile.png"),
+        fullPage: true,
+      });
 
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.getByLabel(/Primary audience/i).fill("Growth marketers");
-      await page.getByLabel(/Success metric/i).fill("Qualified leads");
-      await page.getByRole("button", { name: "Save now" }).click();
-      await page.screenshot({ path: join(screenshotDir, "14-autosave.png"), fullPage: true });
+      await fillDefaultQuestionnaireAnswers(page);
+      await page.screenshot({
+        path: join(screenshotDir, "14-autosave.png"),
+        fullPage: true,
+      });
 
-      await page.reload({ waitUntil: "networkidle" });
-      await expect(page.getByLabel(/Primary audience/i)).toHaveValue("Growth marketers");
-      await page.screenshot({ path: join(screenshotDir, "15-reload-resume.png"), fullPage: true });
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await waitForCommercialReady(page);
+      await expect(page.getByLabel(/Primary audience/i)).toHaveValue("Operations leaders");
+      await page.screenshot({
+        path: join(screenshotDir, "15-reload-resume.png"),
+        fullPage: true,
+      });
 
-      await page.getByRole("button", { name: "Submit questionnaire" }).click();
-      await page.screenshot({ path: join(screenshotDir, "16-submitted.png"), fullPage: true });
+      await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes("/answers/submit") && response.ok(),
+          { timeout: 30_000 },
+        ),
+        page.getByRole("button", { name: "Submit questionnaire" }).click(),
+      ]);
+      await expect(page.getByText(/Submitted\./i)).toBeVisible({ timeout: 15_000 });
+      await page.screenshot({
+        path: join(screenshotDir, "16-submitted.png"),
+        fullPage: true,
+      });
 
-      await page.getByRole("link", { name: /discovery evidence/i }).click();
-      await page.screenshot({ path: join(screenshotDir, "17-discovery-evidence.png"), fullPage: true });
+      await page.goto(`${opportunityUrl}/missing`);
+      await waitForCommercialReady(page);
+      await expect(page.getByRole("link", { name: "Complete questionnaire" })).toHaveCount(0);
+      await expect(page.getByText(/Who internally approves the brief/i)).toBeVisible();
+      await page.screenshot({
+        path: join(screenshotDir, "13-missing-complete.png"),
+        fullPage: true,
+      });
+
+      await page.getByRole("link", { name: "Discovery", exact: true }).click();
+      await waitForCommercialReady(page);
+      await page.screenshot({
+        path: join(screenshotDir, "17-discovery-evidence.png"),
+        fullPage: true,
+      });
 
       expect(
         consoleErrors.filter(
@@ -118,10 +181,9 @@ test.describe("questionnaire northstar journey", () => {
   test("northstar questionnaire builder and answer flow", async ({ page }) => {
     await page.goto(appUrl, { waitUntil: "domcontentloaded" });
     await page.getByRole("link", { name: "Explore the Northstar demo" }).click();
-    await page.goto(`${appUrl}/northstar-creative/admin/services/ns-svc-brand`, {
-      waitUntil: "networkidle",
+    await page.goto(`${appUrl}/northstar-creative/admin/services/ns-svc-brand/questionnaire`, {
+      waitUntil: "domcontentloaded",
     });
-    await page.getByRole("link", { name: /questionnaire/i }).click();
-    await expect(page.getByText(/Version/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Version 1" })).toBeVisible();
   });
 });

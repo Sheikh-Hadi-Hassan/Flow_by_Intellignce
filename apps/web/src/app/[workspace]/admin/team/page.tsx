@@ -34,7 +34,7 @@ function TeamPage() {
         {resources.length === 0 ? (
           <p>No resources yet. Add team members from your workspace settings.</p>
         ) : (
-          <ul>
+          <ul className="flow-resource-list">
             {resources.map((resource) => (
               <li key={resource.id}>
                 <Link href={`/${workspace}/admin/team/${resource.id}`}>

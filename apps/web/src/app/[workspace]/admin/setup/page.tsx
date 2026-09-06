@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 
-import { FounderShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { ModuleRecommendationList } from "../../../../components/founder/ModuleRecommendationList";
 import { SectionHeader, ProgressBar } from "../../../../components/ui/Display";
@@ -22,7 +21,7 @@ function SetupPage() {
   const checklist = getSetupChecklist(session);
 
   return (
-    <FounderShell workspace={workspace} session={session}>
+    <>
       <SectionHeader
         eyebrow="Setup"
         title="Workspace setup plan"
@@ -61,7 +60,7 @@ function SetupPage() {
           ))}
         </ul>
       </section>
-    </FounderShell>
+    </>
   );
 }
 

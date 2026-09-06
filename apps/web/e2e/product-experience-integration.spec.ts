@@ -76,10 +76,12 @@ test.describe("Product experience integration — Northstar journey", () => {
     const diag = attachDiagnostics(page);
     await startNorthstarDemo(page);
 
-    await expect(page.getByRole("heading", { name: /Good /i })).toBeVisible({
-      timeout: 30_000,
-    });
-    await expect(page.getByText("Lifecycle pipeline")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /decisions need you/i }),
+    ).toBeVisible({ timeout: 30_000 });
+    await expect(
+      page.getByRole("region", { name: "Operating signals" }),
+    ).toBeVisible();
     await capture(page, "01-mission-control-light.png");
 
     await page.emulateMedia({ colorScheme: "dark" });
@@ -92,17 +94,15 @@ test.describe("Product experience integration — Northstar journey", () => {
     await page.goto(`${appUrl}/${northstarSlug}/admin`, {
       waitUntil: "domcontentloaded",
     });
-    await waitForCommercialReady(page);
-    await expect(page.getByRole("navigation", { name: "Mobile lifecycle" })).toBeVisible();
+    await expect(page.getByTestId("workspace-header")).toBeVisible();
     await capture(page, "03-mission-control-mobile.png");
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${appUrl}/${northstarSlug}/admin`, {
       waitUntil: "domcontentloaded",
     });
-    await waitForCommercialReady(page);
 
-    await page.getByRole("link", { name: "Pipeline" }).click();
+    await page.getByRole("link", { name: "Pipeline", exact: true }).click();
     await page.waitForURL(new RegExp(`/${northstarSlug}/admin/opportunities`));
     await capture(page, "04-lifecycle-pipeline.png");
 
@@ -146,14 +146,16 @@ test.describe("Product experience integration — Northstar journey", () => {
     await waitForCommercialReady(page);
     await capture(page, "10-my-work.png");
 
-    await page.goto(`${appUrl}/${northstarSlug}/admin`, {
+    await page.goto(`${appUrl}/${northstarSlug}/admin/opportunities`, {
       waitUntil: "domcontentloaded",
     });
     await waitForCommercialReady(page);
-    await page.getByRole("button", { name: "Open Ask Flow" }).click();
-    await expect(page.getByRole("dialog", { name: /Ask Flow/i })).toBeVisible();
-    await page.getByRole("button", { name: "Next action" }).click();
-    await expect(page.getByText(/Proof/i)).toBeVisible();
+    const composer = page.getByLabel("Ask anything about your business");
+    await composer.fill("Why is $356K exposed?");
+    await composer.press("Enter");
+    await expect(page.getByText("Answered from")).toBeVisible({
+      timeout: 10_000,
+    });
     await capture(page, "11-ask-flow-proof.png");
 
     await page.goto(`${appUrl}/${northstarSlug}/admin/settings`, {

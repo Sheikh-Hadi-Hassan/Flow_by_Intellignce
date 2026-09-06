@@ -303,6 +303,14 @@ function bundle(state: DemoState): OpportunityBundle {
     guards: state.guards,
     questionnaire: state.questionnaire,
     answers: state.answers,
+    ...(state.submitted
+      ? {
+          questionnaireSubmission: {
+            submittedAt: new Date().toISOString(),
+            submittedBy: "northstar-demo",
+          },
+        }
+      : {}),
     sources: state.sources,
     extractionRuns: state.extractionRuns,
     ...(state.budget ? { budget: state.budget } : {}),
@@ -1055,7 +1063,7 @@ export function createNorthstarCommercialApi() {
   };
 }
 
-function northstarTeamSeed(): ResourceProfileRecord[] {
+export function northstarTeamSeed(): ResourceProfileRecord[] {
   return [
     {
       id: "ns-res-maya",

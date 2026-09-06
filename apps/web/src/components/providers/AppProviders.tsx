@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { PrototypeProvider } from "../../lib/prototype/context";
 import { ThemeProvider } from "../../lib/theme/context";
@@ -12,7 +12,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <ThemeProvider>
       <PrototypeProvider>
         <WorkspaceApiProvider>
-          <AskFlowProvider>{children}</AskFlowProvider>
+          <Suspense fallback={null}>
+            <AskFlowProvider>{children}</AskFlowProvider>
+          </Suspense>
         </WorkspaceApiProvider>
       </PrototypeProvider>
     </ThemeProvider>

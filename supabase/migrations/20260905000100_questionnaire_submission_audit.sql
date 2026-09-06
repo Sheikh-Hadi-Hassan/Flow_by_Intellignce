@@ -7,5 +7,8 @@ alter table public.discovery_sources
   drop constraint if exists discovery_sources_source_kind_check;
 
 alter table public.discovery_sources
-  add constraint discovery_sources_source_kind_check
+  drop constraint if exists discovery_sources_kind_check;
+
+alter table public.discovery_sources
+  add constraint discovery_sources_kind_check
   check (source_kind in ('meeting_notes', 'transcript', 'document', 'questionnaire'));

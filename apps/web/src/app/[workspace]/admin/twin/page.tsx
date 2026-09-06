@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 
-import { FounderShell } from "../../../../components/shell/AppShell";
 import { WorkspaceGate } from "../../../../components/shell/WorkspaceGate";
 import { TwinView } from "../../../../components/twin/TwinView";
 import { useWorkspaceSessionActions } from "../../../../lib/workspace/session-actions";
@@ -13,11 +12,7 @@ function TwinPage() {
   const { session } = useWorkspaceSessionActions(workspace);
   if (!session?.twin) return null;
 
-  return (
-    <FounderShell workspace={workspace} session={session}>
-      <TwinView twin={session.twin} />
-    </FounderShell>
-  );
+  return <TwinView twin={session.twin} />;
 }
 
 export default function AdminTwinPage() {

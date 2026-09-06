@@ -1,10 +1,13 @@
 import AjvImport from "ajv";
 import addFormatsImport from "ajv-formats";
 
+type AjvValidate = ((data: unknown) => boolean) & {
+  errors?: { instancePath: string; message?: string }[] | null;
+};
+
 type AjvInstance = {
-  compile: (schema: object) => ((data: unknown) => boolean) & {
-    errors?: { instancePath: string; message?: string }[] | null;
-  };
+  compile: (schema: object) => AjvValidate;
+  getSchema?: (key: string) => AjvValidate | undefined;
 };
 
 const Ajv =
@@ -146,7 +149,15 @@ export function validateQuestionnaireResponse(
           };
         })()
       : document.jsonSchema;
-  const validate = ajv.compile(schema);
+  const schemaId =
+    options.enforceRequired === false
+      ? undefined
+      : typeof document.jsonSchema.$id === "string"
+        ? document.jsonSchema.$id
+        : undefined;
+  const existing =
+    schemaId && ajv.getSchema ? ajv.getSchema(schemaId) : undefined;
+  const validate = existing ?? ajv.compile(schema);
   const valid = Boolean(validate(answers));
   const errors = (validate.errors ?? []).map(
     (error: { instancePath: string; message?: string }) =>

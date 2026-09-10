@@ -585,7 +585,10 @@ export class InMemoryCommercialRepository implements CommercialRepository {
   private readonly briefs = new Map<string, BriefVersionRecord>();
   private readonly guards: GuardDecisionRecord[] = [];
   private readonly audits: CommercialAuditRecord[] = [];
-  private readonly idempotency = new Set<string>();
+  private readonly idempotency = new Map<
+    string,
+    { readonly requestClass: string; readonly fingerprint: string }
+  >();
   private readonly extractionRuns = new Map<string, DiscoveryExtractionRunRecord>();
   private readonly sessions = new Map<
     string,
@@ -1154,8 +1157,20 @@ export class InMemoryCommercialRepository implements CommercialRepository {
     readonly fingerprint: string;
   }) {
     const token = `${input.workspaceId}:${input.key}`;
-    if (this.idempotency.has(token)) return "replay";
-    this.idempotency.add(token);
+    const existing = this.idempotency.get(token);
+    if (existing) {
+      if (
+        existing.requestClass !== input.requestClass ||
+        existing.fingerprint !== input.fingerprint
+      ) {
+        throw new Error("Idempotency key conflicts with a different request.");
+      }
+      return "replay";
+    }
+    this.idempotency.set(token, {
+      requestClass: input.requestClass,
+      fingerprint: input.fingerprint,
+    });
     return "new";
   }
   async createExtractionRun(record: DiscoveryExtractionRunRecord) {
@@ -2409,19 +2424,31 @@ export class PostgresCommercialRepository implements CommercialRepository {
     readonly requestClass: string;
     readonly fingerprint: string;
   }) {
-    const existing = await this.db.query<{ idempotency_key: string }>(
-      `select idempotency_key from flow_internal.request_idempotency_records
+    const inserted = await this.db.query<{ idempotency_key: string }>(
+      `insert into flow_internal.request_idempotency_records
+        (workspace_id, idempotency_key, request_class, request_fingerprint, status, expires_at)
+       values ($1,$2,$3,$4,'COMPLETED', now() + interval '24 hours')
+       on conflict (workspace_id, idempotency_key) do nothing
+       returning idempotency_key`,
+      [input.workspaceId, input.key, input.requestClass, input.fingerprint],
+    );
+    if (inserted.rows[0]) return "new";
+    const existing = await this.db.query<{
+      request_class: string;
+      request_fingerprint: string;
+    }>(
+      `select request_class, request_fingerprint
+         from flow_internal.request_idempotency_records
         where workspace_id = $1 and idempotency_key = $2`,
       [input.workspaceId, input.key],
     );
-    if (existing.rows[0]) return "replay";
-    await this.db.query(
-      `insert into flow_internal.request_idempotency_records
-        (workspace_id, idempotency_key, request_class, request_fingerprint, status, expires_at)
-       values ($1,$2,$3,$4,'COMPLETED', now() + interval '24 hours')`,
-      [input.workspaceId, input.key, input.requestClass, input.fingerprint],
-    );
-    return "new";
+    if (
+      existing.rows[0]?.request_class !== input.requestClass ||
+      existing.rows[0]?.request_fingerprint !== input.fingerprint
+    ) {
+      throw new Error("Idempotency key conflicts with a different request.");
+    }
+    return "replay";
   }
   async createExtractionRun(record: DiscoveryExtractionRunRecord) {
     await this.db.query(

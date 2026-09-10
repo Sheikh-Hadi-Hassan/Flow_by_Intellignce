@@ -43,7 +43,10 @@
     "blm:smoke:groq": "pnpm --filter @flow/blm-provider-groq build && pnpm --filter @flow/blm-provider-groq smoke:live",
     "quality:hooks:test": "node --test .cursor/hooks/tests/*.test.mjs",
     "quality:secret-scan": "node .cursor/hooks/secret-scan.mjs",
-    "quality:gate": "pnpm typecheck && pnpm lint && pnpm test && pnpm quality:hooks:test && pnpm quality:secret-scan"
+    "oss:governance:check": "node scripts/oss-governance.mjs",
+    "oss:governance:test": "node --test scripts/oss-governance.test.mjs",
+    "oss:governance:verify-remotes": "node scripts/oss-governance.mjs --verify-remotes",
+    "quality:gate": "pnpm oss:governance:check && pnpm typecheck && pnpm lint && pnpm test && pnpm quality:hooks:test && pnpm quality:secret-scan"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

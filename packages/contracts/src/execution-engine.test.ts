@@ -300,13 +300,18 @@ describe("ActionExecutionEngine", () => {
 
   it("J. preserves correlation ID through result and audit", async () => {
     const correlationId = "corr-shared" as CorrelationId;
+    const traceparent =
+      "00-11111111111111111111111111111111-2222222222222222-01";
     const result = await new ActionExecutionEngine(
       buildRegistry(),
       new StaticActionWall(),
-    ).execute(request({ correlationId }));
+    ).execute(request({ correlationId, traceparent }));
 
     expect(result.correlationId).toBe(correlationId);
     expect(result.auditEvent.correlationId).toBe(correlationId);
+    expect(result.auditEvent.occurredAt).not.toBe("1970-01-01T00:00:00.000Z");
+    expect(result.traceparent).toBe(traceparent);
+    expect(result.auditEvent.traceparent).toBe(traceparent);
   });
 
   it("K. creates audit events for denied requests", async () => {

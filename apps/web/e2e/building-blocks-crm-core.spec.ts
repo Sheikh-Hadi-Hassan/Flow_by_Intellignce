@@ -88,7 +88,9 @@ test.describe("BB-00 CRM Core reference", () => {
     await expect(rows).toHaveCount(52);
 
     await page.getByRole("link", { name: "Duplicates" }).click();
-    await expect(page.getByTestId("crm-duplicates")).toContainText("Brightline");
+    await expect(page.getByTestId("crm-duplicates")).toContainText(
+      "Brightline",
+    );
     await expect(
       page.getByRole("button", { name: "Merge requires approval" }),
     ).toBeDisabled();
@@ -119,12 +121,53 @@ test.describe("BB-00 CRM Core reference", () => {
     await expect(page.getByTestId("crm-state-loading")).toBeVisible();
     await page.goto(`${appUrl}/${northstarSlug}/admin/clients?state=error`);
     await expect(page.getByTestId("crm-state-error")).toBeVisible();
-    await page.goto(`${appUrl}/${northstarSlug}/admin/clients?state=restricted`);
+    await page.goto(
+      `${appUrl}/${northstarSlug}/admin/clients?state=restricted`,
+    );
     await expect(page.getByTestId("crm-state-restricted")).toBeVisible();
     await page.goto(`${appUrl}/${northstarSlug}/admin/clients?state=populated`);
     await expect(page.getByTestId("crm-directory")).toBeVisible();
     await page.goto(`${appUrl}/${northstarSlug}/admin/clients?state=dense`);
     await expect(page.getByTestId("crm-directory")).toBeVisible();
+  });
+
+  test("Flow CRM directory controls preserve the verified read-only dataset", async ({
+    page,
+  }) => {
+    await startDemo(page);
+    await activateCrm(page);
+    await page.goto(`${appUrl}/${northstarSlug}/admin/clients`);
+
+    const rows = page.getByTestId("crm-directory").locator("li");
+    await expect(rows).toHaveCount(52);
+    await expect(
+      page.getByRole("heading", { name: "Companies" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /create company/i }),
+    ).toHaveCount(0);
+
+    await page
+      .getByRole("searchbox", { name: "Search companies" })
+      .fill("Meridian");
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText("Meridian Health");
+
+    await page.getByRole("searchbox", { name: "Search companies" }).clear();
+    await page
+      .getByLabel("Relationship", { exact: true })
+      .selectOption("at_risk");
+    expect(await rows.count()).toBeGreaterThan(0);
+    for (const label of await rows.locator(".flow-badge").allTextContents()) {
+      expect(label).toBe("At Risk");
+    }
+
+    await page.getByLabel("Relationship", { exact: true }).selectOption("all");
+    await page.getByLabel("Sort", { exact: true }).selectOption("health");
+    const health = (
+      await rows.locator(".flow-crm-health b").allTextContents()
+    ).map(Number);
+    expect(health).toEqual([...health].sort((left, right) => right - left));
   });
 
   test("axe, overflow, and themes", async ({ page }) => {
@@ -174,9 +217,7 @@ test.describe("BB-00 CRM Core reference", () => {
     await capture(page, "05-directory-1440-dark.png");
 
     await setTheme(page, "light");
-    await page.goto(
-      `${appUrl}/${northstarSlug}/admin/clients/${meridianId}`,
-    );
+    await page.goto(`${appUrl}/${northstarSlug}/admin/clients/${meridianId}`);
     await expect(page.getByTestId("crm-360")).toBeVisible();
     await capture(page, "06-client-360-1440-light.png");
 

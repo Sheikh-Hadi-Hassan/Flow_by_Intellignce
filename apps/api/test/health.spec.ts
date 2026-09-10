@@ -44,5 +44,32 @@ describe("Health endpoint", () => {
       correlationId: "test-correlation",
     });
     expect(response.headers["x-correlation-id"]).toBe("test-correlation");
+    expect(response.headers.traceparent).toMatch(
+      /^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/,
+    );
+  });
+
+  it("preserves a valid incoming W3C trace and replaces invalid context", async () => {
+    const server = app.getHttpServer() as Parameters<typeof request>[0];
+    const incoming = "00-11111111111111111111111111111111-2222222222222222-01";
+    const traced = await request(server)
+      .get("/health")
+      .set("traceparent", incoming)
+      .set("tracestate", "flow=test")
+      .expect(200);
+
+    expect(traced.headers.traceparent).toMatch(
+      /^00-11111111111111111111111111111111-[0-9a-f]{16}-01$/,
+    );
+    expect(traced.headers.traceparent).not.toBe(incoming);
+    expect(traced.headers.tracestate).toBe("flow=test");
+
+    const invalid = await request(server)
+      .get("/health")
+      .set("traceparent", "not-a-trace")
+      .expect(200);
+    expect(invalid.headers.traceparent).toMatch(
+      /^00-[0-9a-f]{32}-[0-9a-f]{16}-00$/,
+    );
   });
 });

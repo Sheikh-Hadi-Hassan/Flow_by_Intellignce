@@ -5,15 +5,21 @@ import { useCallback, useEffect, useState } from "react";
 import type { DemoLifecycleSnapshot } from "../../lib/hackathon/demo-lifecycle";
 import { Button } from "../ui/Button";
 
-export function DemoLifecycleStatus() {
+export function DemoLifecycleStatus({
+  onProjectExists,
+}: {
+  readonly onProjectExists?: (exists: boolean) => void;
+}) {
   const [snapshot, setSnapshot] = useState<DemoLifecycleSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const response = await fetch("/api/demo/lifecycle", { cache: "no-store" });
     if (!response.ok) throw new Error("Demo lifecycle could not load.");
-    setSnapshot((await response.json()) as DemoLifecycleSnapshot);
-  }, []);
+    const next = (await response.json()) as DemoLifecycleSnapshot;
+    setSnapshot(next);
+    onProjectExists?.(Boolean(next.project));
+  }, [onProjectExists]);
 
   useEffect(() => {
     void refresh().catch((reason: Error) => setError(reason.message));
@@ -34,6 +40,7 @@ export function DemoLifecycleStatus() {
       return;
     }
     setSnapshot(body);
+    onProjectExists?.(Boolean(body.project));
   }
 
   if (!snapshot) return error ? <p role="alert">{error}</p> : null;

@@ -48,6 +48,14 @@ describe("commercial repository", () => {
     });
     expect(first).toBe("new");
     expect(second).toBe("replay");
+    await expect(
+      repo.consumeIdempotency({
+        workspaceId: "ws-a",
+        key: "k1",
+        requestClass: "approve",
+        fingerprint: "different",
+      }),
+    ).rejects.toThrow(/conflicts/);
   });
 
   it("writes workspace-scoped requirements and skips duplicate risks", async () => {

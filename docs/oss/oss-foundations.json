@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-07",
+  "legalReviewRequiredBeforeCommercialRelease": true,
+  "runtimePolicy": {
+    "maxConcurrentHeavyProfiles": 1,
+    "profiles": ["core", "crm", "studio", "sign", "ai", "automation", "demo"]
+  },
+  "flowAuthority": [
+    "workspace",
+    "membership",
+    "permissions",
+    "business_registry",
+    "services",
+    "questionnaires",
+    "discovery",
+    "approved_brief",
+    "commercial_calculations",
+    "proposal_truth",
+    "contract_truth",
+    "projects",
+    "tasks",
+    "employees",
+    "performance",
+    "invoices",
+    "document_versions",
+    "action_wall",
+    "blm",
+    "tool_registry",
+    "audit_evidence"
+  ],
+  "foundations": [
+    {
+      "id": "twenty-crm",
+      "required": true,
+      "status": "read_adapter_implemented_runtime_pending",
+      "upstreamRemote": "https://github.com/twentyhq/twenty.git",
+      "sourceRef": "refs/tags/twenty/v2.38.1",
+      "version": "2.38.1",
+      "commit": "2f318d55124a6557fb75eb5bf200ec4e20158389",
+      "license": {
+        "spdx": "AGPL-3.0-only",
+        "mixed": true,
+        "pinnedSource": "https://github.com/twentyhq/twenty/blob/2f318d55124a6557fb75eb5bf200ec4e20158389/LICENSE",
+        "notes": "Most source is AGPL-3.0 with an application exception; named toolkit packages are MIT; files marked @license Enterprise use Twenty's commercial license."
+      },
+      "selfHost": {
+        "method": "docker_compose",
+        "profile": "crm",
+        "documentation": "https://docs.twenty.com/developers/self-host/capabilities/docker-compose",
+        "minimumRamMiB": 2048,
+        "image": "twentycrm/twenty:v2.38.1",
+        "imageDigest": "sha256:6c95b4baf3fcd9746bb513514e058f6dee3da880594c348a9e61ae1619fbd6fd"
+      },
+      "flowContract": "FlowCrmProvider",
+      "providerAuthority": ["company", "contact", "opportunity"],
+      "forbiddenSourcePrefixes": [
+        "packages/twenty-front/src/modules/settings/enterprise/",
+        "packages/twenty-front/src/pages/settings/enterprise/",
+        "packages/twenty-server/src/engine/core-modules/enterprise/",
+        "packages/twenty-website/src/platform/enterprise/",
+        "packages/twenty-website/src/app/api/enterprise/",
+        "packages/twenty-website/src/app/[locale]/(site)/enterprise/"
+      ],
+      "forbiddenMarkers": ["@license Enterprise"]
+    },
+    {
+      "id": "penpot",
+      "required": true,
+      "status": "governed_not_integrated",
+      "upstreamRemote": "https://github.com/penpot/penpot.git",
+      "sourceRef": "refs/tags/2.17.0",
+      "version": "2.17.0",
+      "commit": "bdce5817ea86d028db29113d9ecdadcf07097b36",
+      "license": {
+        "spdx": "MPL-2.0",
+        "mixed": false,
+        "pinnedSource": "https://github.com/penpot/penpot/blob/bdce5817ea86d028db29113d9ecdadcf07097b36/LICENSE",
+        "notes": "MPL-2.0 file-level copyleft applies to the pinned source and modifications."
+      },
+      "selfHost": {
+        "method": "docker_compose",
+        "profile": "studio",
+        "documentation": "https://help.penpot.app/technical-guide/getting-started/"
+      },
+      "flowContract": "FlowStudioProvider",
+      "providerAuthority": ["visual_layout", "design_assets"],
+      "forbiddenSourcePrefixes": [],
+      "forbiddenMarkers": []
+    },
+    {
+      "id": "documenso-ce",
+      "required": true,
+      "status": "governed_not_integrated",
+      "upstreamRemote": "https://github.com/documenso/documenso.git",
+      "sourceRef": "refs/tags/v2.16.0",
+      "version": "2.16.0",
+      "commit": "3cf2963cd03d8b24770b7490bdb20e596baa5d65",
+      "license": {
+        "spdx": "AGPL-3.0-only",
+        "mixed": true,
+        "pinnedSource": "https://github.com/documenso/documenso/blob/3cf2963cd03d8b24770b7490bdb20e596baa5d65/LICENSE",
+        "notes": "Community Edition is AGPL-3.0; packages/ee is separately commercially licensed and excluded."
+      },
+      "selfHost": {
+        "method": "docker_compose",
+        "profile": "sign",
+        "documentation": "https://docs.documenso.com/docs/self-hosting",
+        "requiresSigningCertificate": true
+      },
+      "flowContract": "FlowSigningProvider",
+      "providerAuthority": ["signature_execution", "signature_evidence"],
+      "forbiddenSourcePrefixes": ["packages/ee/"],
+      "forbiddenMarkers": []
+    }
+  ],
+  "supportingOss": [
+    {
+      "id": "node",
+      "version": "22.21.0",
+      "license": "MIT",
+      "pinSource": "audited development runtime"
+    },
+    {
+      "id": "pnpm",
+      "version": "11.16.0",
+      "license": "MIT",
+      "pinSource": "package.json#packageManager"
+    },
+    {
+      "id": "next",
+      "version": "16.3.0",
+      "license": "MIT",
+      "pinSource": "pnpm-lock.yaml"
+    },
+    {
+      "id": "react",
+      "version": "19.2.8",
+      "license": "MIT",
+      "pinSource": "pnpm-lock.yaml"
+    },
+    {
+      "id": "nestjs",
+      "version": "11.1.28",
+      "license": "MIT",
+      "pinSource": "pnpm-lock.yaml"
+    },
+    {
+      "id": "supabase-cli",
+      "version": "2.116.0",
+      "license": "MIT",
+      "pinSource": "package.json and pnpm-lock.yaml"
+    },
+    {
+      "id": "ajv",
+      "version": "8.20.0",
+      "license": "MIT",
+      "pinSource": "pnpm-lock.yaml"
+    },
+    {
+      "id": "xstate",
+      "version": "5.32.6",
+      "license": "MIT",
+      "pinSource": "pnpm-lock.yaml"
+    },
+    {
+      "id": "postgres-twenty-runtime",
+      "version": "16.15",
+      "license": "PostgreSQL",
+      "pinSource": "infra/oss/twenty/compose.yml digest sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94"
+    },
+    {
+      "id": "redis-twenty-runtime",
+      "version": "7.4.11",
+      "license": "RSALv2-or-SSPLv1",
+      "pinSource": "infra/oss/twenty/compose.yml digest sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7"
+    }
+  ]
+}

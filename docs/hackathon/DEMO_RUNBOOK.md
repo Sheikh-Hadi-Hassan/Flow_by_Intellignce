@@ -8,7 +8,7 @@ Target replay time: under 8 minutes.
 BLM_PLANNER_ENABLED=1 \
 BLM_PLANNER_MODEL=qwen3:4b-instruct \
 BLM_PLANNER_TIMEOUT_MS=60000 \
-pnpm dev --port 3000
+pnpm --dir apps/web dev
 ```
 
 Open `http://localhost:3000`, select **Explore the Northstar demo**, and open Ask Flow.

@@ -6,11 +6,14 @@ import {
   InMemoryResourceCapacityRepository,
   InMemoryWorkspacePhase1Repository,
   InMemoryBuildingBlockStore,
+  InMemoryReliabilityStore,
+  PostgresActionAuditSink,
   PostgresCommercialRepository,
   PostgresProjectEngineRepository,
   PostgresProposalContractRepository,
   PostgresResourceCapacityRepository,
   PostgresFlowIdentityRepository,
+  PostgresReliabilityStore,
   PostgresWorkspacePhase1Repository,
   asFlowIdentityRepository,
   createFlowIdentityTestRepository,
@@ -23,6 +26,8 @@ import {
   type WorkspacePhase1Repository,
   type BuildingBlockStore,
 } from "@flow/database";
+import { InMemoryAuditSink } from "@flow/contracts";
+import type { AuditSink, ReliabilityStore } from "@flow/contracts";
 import {
   assertProductionRuntimeConfig,
   getDatabaseUrl,
@@ -34,10 +39,16 @@ export const WORKSPACE_PHASE1_REPOSITORY = Symbol(
   "WORKSPACE_PHASE1_REPOSITORY",
 );
 export const COMMERCIAL_REPOSITORY = Symbol("COMMERCIAL_REPOSITORY");
-export const PROPOSAL_CONTRACT_REPOSITORY = Symbol("PROPOSAL_CONTRACT_REPOSITORY");
+export const PROPOSAL_CONTRACT_REPOSITORY = Symbol(
+  "PROPOSAL_CONTRACT_REPOSITORY",
+);
 export const PROJECT_ENGINE_REPOSITORY = Symbol("PROJECT_ENGINE_REPOSITORY");
-export const RESOURCE_CAPACITY_REPOSITORY = Symbol("RESOURCE_CAPACITY_REPOSITORY");
+export const RESOURCE_CAPACITY_REPOSITORY = Symbol(
+  "RESOURCE_CAPACITY_REPOSITORY",
+);
 export const BUILDING_BLOCK_STORE = Symbol("BUILDING_BLOCK_STORE");
+export const RELIABILITY_STORE = Symbol("RELIABILITY_STORE");
+export const AUDIT_SINK = Symbol("AUDIT_SINK");
 
 export interface PersistenceStack {
   readonly identityRepository: FlowIdentityRepository;
@@ -47,6 +58,8 @@ export interface PersistenceStack {
   readonly projectEngineRepository: ProjectEngineRepository;
   readonly resourceCapacityRepository: ResourceCapacityRepository;
   readonly buildingBlockStore: BuildingBlockStore;
+  readonly reliabilityStore: ReliabilityStore;
+  readonly auditSink: AuditSink;
   readonly dispose?: () => Promise<void>;
 }
 
@@ -73,6 +86,8 @@ export function createPersistenceStack(): PersistenceStack {
       projectEngineRepository: new InMemoryProjectEngineRepository(),
       resourceCapacityRepository: new InMemoryResourceCapacityRepository(),
       buildingBlockStore: new InMemoryBuildingBlockStore(commercialRepository),
+      reliabilityStore: new InMemoryReliabilityStore(),
+      auditSink: new InMemoryAuditSink(),
     };
   }
 
@@ -91,6 +106,8 @@ export function createPersistenceStack(): PersistenceStack {
     projectEngineRepository: new PostgresProjectEngineRepository(sql),
     resourceCapacityRepository: new PostgresResourceCapacityRepository(sql),
     buildingBlockStore: new InMemoryBuildingBlockStore(commercialRepository),
+    reliabilityStore: new PostgresReliabilityStore(sql),
+    auditSink: new PostgresActionAuditSink(sql),
     dispose: () => pool.end(),
   };
 }

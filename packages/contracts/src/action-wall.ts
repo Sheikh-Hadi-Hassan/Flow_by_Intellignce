@@ -28,6 +28,7 @@ export interface ActionRequest<TInput = unknown> {
   readonly riskLevel: ActionRiskLevel;
   readonly evidence: readonly EvidenceReference[];
   readonly correlationId: CorrelationId;
+  readonly traceparent?: string;
   readonly approvalGrant?: ApprovalGrant;
   readonly metadata?: Readonly<Record<string, string | number | boolean>>;
 }

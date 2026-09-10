@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post } from "@nestjs/common";
+import { Body, Controller, Headers, Inject, Post } from "@nestjs/common";
 import {
   ActionExecutionEngine,
   ProviderBackedActionWall,
@@ -6,10 +6,12 @@ import {
   ToolRegistry,
 } from "@flow/contracts";
 import type { ActionRequest, CorrelationId } from "@flow/contracts";
+import type { AuditSink } from "@flow/contracts";
 import {
   createDevelopmentAuthenticationStack,
   parseRequestSource,
 } from "./security/flow-auth-context.js";
+import { AUDIT_SINK } from "./database/persistence.providers.js";
 
 interface ExecuteEchoBody {
   readonly message?: unknown;
@@ -21,7 +23,7 @@ export class InternalActionsController {
   private readonly engine: ActionExecutionEngine;
   private readonly identityResolver = this.authenticationStack.identityResolver;
 
-  constructor() {
+  constructor(@Inject(AUDIT_SINK) auditSink: AuditSink) {
     const registry = new ToolRegistry();
     registry.register(systemEchoTool);
     this.engine = new ActionExecutionEngine(
@@ -29,6 +31,7 @@ export class InternalActionsController {
       new ProviderBackedActionWall(
         this.authenticationStack.authorizationProvider,
       ),
+      auditSink,
     );
   }
 
@@ -39,6 +42,7 @@ export class InternalActionsController {
     @Headers("x-flow-workspace-id") workspaceIdHeader?: string,
     @Headers("x-flow-request-source") requestSourceHeader?: string,
     @Headers("x-correlation-id") correlationIdHeader?: string,
+    @Headers("traceparent") traceparentHeader?: string,
   ) {
     const correlationId = (correlationIdHeader ??
       "internal-api-proof") as CorrelationId;
@@ -72,6 +76,7 @@ export class InternalActionsController {
       riskLevel: "LOW",
       evidence: [],
       correlationId,
+      ...(traceparentHeader ? { traceparent: traceparentHeader } : {}),
       metadata: {
         route: "POST /internal/actions/execute",
         proofOnly: true,

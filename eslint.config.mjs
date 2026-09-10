@@ -57,7 +57,7 @@ export default [
     },
   },
   {
-    files: ["packages/commercial/scripts/**/*.mjs"],
+    files: ["packages/commercial/scripts/**/*.mjs", "scripts/**/*.mjs"],
     ...tseslint.configs.disableTypeChecked,
     languageOptions: {
       parserOptions: {

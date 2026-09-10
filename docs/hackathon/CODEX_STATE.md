@@ -1,7 +1,7 @@
 # Flow Investor Demo State
 
-Updated: 2026-09-06  
-Job: `FLOW-MVP-2H-01`  
+Updated: 2026-09-07
+Job: `FLOW-MVP-2H-01`
 Git baseline: `003add6`
 
 ## Path decision
@@ -38,7 +38,7 @@ The UI labels it **Delivery Performance Score (demo)**. It is delivery evidence 
 
 ## Runtime
 
-- Web: `http://localhost:3000`
+- Web: `http://localhost:3000` via `pnpm --dir apps/web dev`
 - Node: `v22.21.0`
 - pnpm: `11.16.0`
 - Ollama: `0.33.3`

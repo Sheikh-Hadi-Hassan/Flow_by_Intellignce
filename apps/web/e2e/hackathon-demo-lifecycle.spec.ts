@@ -33,6 +33,13 @@ test("replays the investor demo through three Ask mutations", async ({
   await request.post("/api/demo/lifecycle", { data: { action: "reset" } });
   await page.goto("/");
   await page.getByRole("link", { name: "Explore the Northstar demo" }).click();
+  await page.goto(
+    "/northstar-creative/admin/opportunities/ns-opp-acme-brand/project",
+  );
+  await expect(page.getByTestId("demo-performance-score")).toContainText(
+    "not scored",
+  );
+  await capture(page, "00-approved-intake.png");
 
   await submit(
     page,

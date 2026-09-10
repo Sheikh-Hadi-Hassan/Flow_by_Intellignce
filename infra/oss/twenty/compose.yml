@@ -1,0 +1,81 @@
+name: flow-twenty-v2381
+
+services:
+  server:
+    profiles: ["crm"]
+    image: twentycrm/twenty:v2.38.1@sha256:6c95b4baf3fcd9746bb513514e058f6dee3da880594c348a9e61ae1619fbd6fd
+    ports:
+      - "127.0.0.1:${TWENTY_PORT:-3020}:3000"
+    environment: &twenty-environment
+      NODE_PORT: 3000
+      SERVER_URL: http://localhost:${TWENTY_PORT:-3020}
+      PG_DATABASE_URL: postgres://postgres:${TWENTY_POSTGRES_PASSWORD:?required}@db:5432/twenty
+      REDIS_URL: redis://redis:6379
+      ENCRYPTION_KEY: ${TWENTY_ENCRYPTION_KEY:?required}
+      STORAGE_TYPE: local
+      IS_CONFIG_VARIABLES_IN_DB_ENABLED: "false"
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/healthz"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    mem_limit: 1800m
+    restart: unless-stopped
+
+  worker:
+    profiles: ["crm"]
+    image: twentycrm/twenty:v2.38.1@sha256:6c95b4baf3fcd9746bb513514e058f6dee3da880594c348a9e61ae1619fbd6fd
+    command: ["yarn", "worker:prod"]
+    environment:
+      <<: *twenty-environment
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    mem_limit: 1000m
+    restart: unless-stopped
+
+  db:
+    profiles: ["crm"]
+    image: postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
+    environment:
+      POSTGRES_DB: twenty
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${TWENTY_POSTGRES_PASSWORD:?required}
+    volumes:
+      - twenty-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d twenty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m
+    restart: unless-stopped
+
+  redis:
+    profiles: ["crm"]
+    image: redis:7@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7
+    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 256m
+    restart: unless-stopped
+
+volumes:
+  twenty-db:
+  twenty-storage:

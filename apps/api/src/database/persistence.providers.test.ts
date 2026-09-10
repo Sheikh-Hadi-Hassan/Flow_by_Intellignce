@@ -16,6 +16,8 @@ describe("persistence stack", () => {
     const stack = createPersistenceStack();
     expect(stack.identityRepository).toBeTruthy();
     expect(stack.commercialRepository).toBeTruthy();
+    expect(stack.reliabilityStore).toBeInstanceOf(Object);
+    expect(stack.auditSink).toBeInstanceOf(Object);
   });
 
   it("fails closed in production without database configuration", () => {

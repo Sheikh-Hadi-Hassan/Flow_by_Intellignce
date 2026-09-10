@@ -31,6 +31,7 @@ function ProjectPage() {
     };
   } | null>(null);
   const [auditCount, setAuditCount] = useState(0);
+  const [demoProjectExists, setDemoProjectExists] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -118,7 +119,9 @@ function ProjectPage() {
         description="Generated from an executed contract. Recommendations are drafts only — assign manually."
       />
       <OpportunityNav workspace={workspace} opportunityId={opportunityId} />
-      {workspace === "northstar-creative" && <DemoLifecycleStatus />}
+      {workspace === "northstar-creative" && (
+        <DemoLifecycleStatus onProjectExists={setDemoProjectExists} />
+      )}
       {error && <p role="alert">{error}</p>}
       {project && (
         <>
@@ -162,12 +165,14 @@ function ProjectPage() {
         </>
       )}
       <div className="flow-action-row">
-        <Button
-          disabled={!api || Boolean(project)}
-          onClick={() => void createProject()}
-        >
-          Create project
-        </Button>
+        {!demoProjectExists && (
+          <Button
+            disabled={!api || Boolean(project)}
+            onClick={() => void createProject()}
+          >
+            Create project
+          </Button>
+        )}
         {project?.status === "draft" && (
           <Button onClick={() => void submitForReview()}>
             Submit for review

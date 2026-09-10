@@ -15,6 +15,7 @@
     "@flow/auth": "workspace:*",
     "@flow/contracts": "workspace:*",
     "@flow/database": "workspace:*",
+    "@flow/observability": "workspace:*",
     "@flow/commercial": "workspace:*",
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",

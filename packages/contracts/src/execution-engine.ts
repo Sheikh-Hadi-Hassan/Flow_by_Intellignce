@@ -16,6 +16,7 @@ import type {
 } from "./evidence.js";
 import { DefaultEvidenceValidator } from "./evidence.js";
 import type { ToolDefinition, ToolRegistry } from "./tool-registry.js";
+import { createUniversalToolExecutionContext } from "./tool-registry.js";
 
 export type ExecutionStatus =
   "EXECUTED" | "DENIED" | "AWAITING_APPROVAL" | "FAILED";
@@ -27,6 +28,7 @@ export interface ActionExecutionResult<TOutput = unknown> {
   readonly actorId: string;
   readonly workspaceId: string;
   readonly correlationId: string;
+  readonly traceparent?: string;
   readonly authorization?: AuthorizationDecision;
   readonly approval?: ApprovalPolicyResult;
   readonly evidence?: EvidenceValidationResult;
@@ -144,7 +146,25 @@ export class ActionExecutionEngine {
     }
 
     try {
-      const output = tool.outputSchema.parse(await tool.execute(parsedInput));
+      const executionContext = createUniversalToolExecutionContext({
+        actor: request.actor,
+        workspaceId: request.workspace.workspaceId,
+        correlationId: request.correlationId,
+        ...(request.traceparent ? { traceparent: request.traceparent } : {}),
+        action: tool.requiredAction,
+        authorization: authorization as AuthorizationDecision & {
+          readonly outcome: "ALLOW";
+        },
+        approval: approval as ApprovalPolicyResult & {
+          readonly decision: "NO_APPROVAL_REQUIRED";
+        },
+        evidence: evidence as EvidenceValidationResult & {
+          readonly valid: true;
+        },
+      });
+      const output = tool.outputSchema.parse(
+        await tool.execute(parsedInput, executionContext),
+      );
       return this.auditAndReturn<TOutput>({
         request,
         tool,
@@ -198,6 +218,9 @@ export class ActionExecutionEngine {
         actor: input.request.actor,
         workspace: input.request.workspace,
         correlationId: input.request.correlationId,
+        ...(input.request.traceparent
+          ? { traceparent: input.request.traceparent }
+          : {}),
         reason: input.reason,
         evidence: input.request.evidence,
         ...(input.tool ? { approval: input.tool.approvalPolicy } : {}),
@@ -227,6 +250,9 @@ export class ActionExecutionEngine {
       actorId: input.request.actor.actorId,
       workspaceId: input.request.workspace.workspaceId,
       correlationId: input.request.correlationId,
+      ...(input.request.traceparent
+        ? { traceparent: input.request.traceparent }
+        : {}),
       authorization: input.decision,
       auditEvent: event,
       ...(input.approval ? { approval: input.approval } : {}),

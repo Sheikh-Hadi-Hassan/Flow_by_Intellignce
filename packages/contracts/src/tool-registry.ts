@@ -1,4 +1,4 @@
-import type { ApprovalRequirement } from "./approval.js";
+import type { ApprovalPolicyResult, ApprovalRequirement } from "./approval.js";
 import type {
   ActionRequest,
   ActionRiskLevel,
@@ -7,7 +7,53 @@ import type {
 } from "./action-wall.js";
 import type { AuditEvent } from "./audit.js";
 import { createAuditEvent } from "./audit.js";
-import type { EvidencePolicy } from "./evidence.js";
+import type { EvidencePolicy, EvidenceValidationResult } from "./evidence.js";
+import type { ActorContext, CorrelationId, WorkspaceId } from "./identity.js";
+
+export interface UniversalToolExecutionContext {
+  readonly executionPath: "UNIVERSAL_EXECUTION_SPINE";
+  readonly actor: ActorContext;
+  readonly workspaceId: WorkspaceId;
+  readonly correlationId: CorrelationId;
+  readonly traceparent?: string;
+  readonly action: string;
+  readonly authorization: AuthorizationDecision & { readonly outcome: "ALLOW" };
+  readonly approval: ApprovalPolicyResult & {
+    readonly decision: "NO_APPROVAL_REQUIRED";
+  };
+  readonly evidence: EvidenceValidationResult & { readonly valid: true };
+}
+
+export interface LegacyToolExecutionContext {
+  readonly executionPath: "LEGACY_TOOL_REGISTRY";
+  readonly workspaceId: WorkspaceId;
+  readonly correlationId: CorrelationId;
+  readonly traceparent?: string;
+  readonly action: string;
+  readonly authorization: AuthorizationDecision & { readonly outcome: "ALLOW" };
+}
+
+export type ToolExecutionContext =
+  UniversalToolExecutionContext | LegacyToolExecutionContext;
+
+const issuedUniversalExecutionContexts = new WeakSet<object>();
+
+export function createUniversalToolExecutionContext(
+  input: Omit<UniversalToolExecutionContext, "executionPath">,
+): UniversalToolExecutionContext {
+  const context: UniversalToolExecutionContext = {
+    executionPath: "UNIVERSAL_EXECUTION_SPINE",
+    ...input,
+  };
+  issuedUniversalExecutionContexts.add(context);
+  return context;
+}
+
+export function isUniversalToolExecutionContext(
+  context: ToolExecutionContext,
+): context is UniversalToolExecutionContext {
+  return issuedUniversalExecutionContexts.has(context);
+}
 
 export interface InputSchema<TInput> {
   readonly description: string;
@@ -29,7 +75,10 @@ export interface ToolDefinition<TInput = unknown, TOutput = unknown> {
   readonly requiredAction: string;
   readonly evidencePolicy: EvidencePolicy;
   readonly approvalPolicy: ApprovalRequirement;
-  readonly execute: (input: unknown) => Promise<TOutput>;
+  readonly execute: (
+    input: unknown,
+    context: ToolExecutionContext,
+  ) => Promise<TOutput>;
 }
 
 export class ToolRegistry {
@@ -77,13 +126,23 @@ export class ToolRegistry {
       throw new Error(`Tool execution blocked: ${authorization.outcome}`);
     }
 
-    const output = await tool.execute(request.input);
+    const output = await tool.execute(request.input, {
+      executionPath: "LEGACY_TOOL_REGISTRY",
+      workspaceId: request.workspace.workspaceId,
+      correlationId: request.correlationId,
+      ...(request.traceparent ? { traceparent: request.traceparent } : {}),
+      action: request.action,
+      authorization: authorization as AuthorizationDecision & {
+        readonly outcome: "ALLOW";
+      },
+    });
     const auditInput = {
       id: `${request.correlationId}:${toolId}`,
       context: {
         actor: request.actor,
         workspace: request.workspace,
         correlationId: request.correlationId,
+        ...(request.traceparent ? { traceparent: request.traceparent } : {}),
         reason: `Executed tool ${toolId}`,
         evidence: request.evidence,
         approval: tool.approvalPolicy,

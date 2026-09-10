@@ -11,6 +11,7 @@ export interface AuditContext {
   readonly actor: ActorContext;
   readonly workspace: WorkspaceContext;
   readonly correlationId: CorrelationId;
+  readonly traceparent?: string;
   readonly reason: string;
   readonly evidence: readonly EvidenceReference[];
   readonly approval?: ApprovalRequirement;
@@ -36,6 +37,7 @@ export interface AuditEvent<TBefore = unknown, TAfter = unknown> {
   readonly after?: TAfter;
   readonly error?: string;
   readonly correlationId: CorrelationId;
+  readonly traceparent?: string;
 }
 
 export function createAuditEvent<TBefore, TAfter>(input: {
@@ -54,7 +56,7 @@ export function createAuditEvent<TBefore, TAfter>(input: {
 }): AuditEvent<TBefore, TAfter> {
   return {
     id: input.id,
-    occurredAt: input.occurredAt ?? new Date(0).toISOString(),
+    occurredAt: input.occurredAt ?? new Date().toISOString(),
     actorId: input.context.actor.actorId,
     workspaceId: input.context.workspace.workspaceId,
     resourceType: input.resourceType,
@@ -64,6 +66,9 @@ export function createAuditEvent<TBefore, TAfter>(input: {
     reason: input.context.reason,
     evidence: input.context.evidence,
     correlationId: input.context.correlationId,
+    ...(input.context.traceparent
+      ? { traceparent: input.context.traceparent }
+      : {}),
     ...(input.resourceId ? { resourceId: input.resourceId } : {}),
     ...(input.toolId ? { toolId: input.toolId } : {}),
     ...(input.context.approval ? { approval: input.context.approval } : {}),

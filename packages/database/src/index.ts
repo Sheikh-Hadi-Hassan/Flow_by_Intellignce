@@ -15,6 +15,7 @@ export * from "./workspace-phase1.js";
 export * from "./workspace-phase1-persistence.js";
 export * from "./workspace-provisioning.js";
 export * from "./building-block-persistence.js";
+export * from "./reliability-persistence.js";
 
 export type WorkspaceMembershipStatus = "ACTIVE" | "SUSPENDED";
 

@@ -14,6 +14,8 @@ import {
   PROJECT_ENGINE_REPOSITORY,
   RESOURCE_CAPACITY_REPOSITORY,
   BUILDING_BLOCK_STORE,
+  RELIABILITY_STORE,
+  AUDIT_SINK,
   createPersistenceStack,
 } from "../database/persistence.providers.js";
 
@@ -54,6 +56,14 @@ const authStack = createAuthenticationStack(
       useValue: persistenceStack.buildingBlockStore,
     },
     {
+      provide: RELIABILITY_STORE,
+      useValue: persistenceStack.reliabilityStore,
+    },
+    {
+      provide: AUDIT_SINK,
+      useValue: persistenceStack.auditSink,
+    },
+    {
       provide: FlowRequestIdentityResolver,
       useValue: authStack.identityResolver,
     },
@@ -72,6 +82,8 @@ const authStack = createAuthenticationStack(
     PROJECT_ENGINE_REPOSITORY,
     RESOURCE_CAPACITY_REPOSITORY,
     BUILDING_BLOCK_STORE,
+    RELIABILITY_STORE,
+    AUDIT_SINK,
     FlowRequestIdentityResolver,
     RepositoryAuthorizationProvider,
     WorkspaceService,

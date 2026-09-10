@@ -1,5 +1,5 @@
 .flow-bb {
-  max-width: 920px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 24px 24px 160px;
 }
@@ -129,8 +129,10 @@
 .flow-bb-directory a,
 .flow-bb-directory__head {
   display: grid;
-  grid-template-columns: 1.4fr 0.8fr auto 0.8fr;
-  gap: 12px;
+  grid-template-columns:
+    minmax(220px, 1.5fr) minmax(110px, 0.75fr) minmax(110px, 0.75fr)
+    minmax(140px, 0.9fr) minmax(110px, 0.7fr) 20px;
+  gap: 16px;
   align-items: center;
   min-height: 52px;
   padding: 8px 0;
@@ -176,6 +178,384 @@
   border-top: 1px solid var(--color-border);
 }
 
+.flow-crm-heading,
+.flow-crm-record__heading,
+.flow-crm-record__identity,
+.flow-crm-record__section > header,
+.flow-crm-back,
+.flow-crm-company,
+.flow-crm-owner,
+.flow-crm-health,
+.flow-crm-search {
+  display: flex;
+  align-items: center;
+}
+
+.flow-crm-heading,
+.flow-crm-record__heading {
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.flow-crm-heading .flow-section-header,
+.flow-crm-record__heading .flow-section-header {
+  margin-bottom: 0;
+}
+
+.flow-crm-heading__status {
+  color: var(--color-success);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.flow-crm-heading__status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--color-success);
+}
+
+.flow-crm-nav {
+  display: flex;
+  gap: 24px;
+  margin: 28px 0 0;
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.flow-crm-nav a {
+  flex: 0 0 auto;
+  padding: 0 0 12px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.flow-crm-nav a[aria-current="page"] {
+  color: var(--color-text-primary);
+  box-shadow: inset 0 -2px var(--color-brand);
+}
+
+.flow-crm-summary,
+.flow-crm-record__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.flow-crm-summary > div,
+.flow-crm-record__facts > div {
+  padding: 0 20px;
+  border-right: 1px solid var(--color-border);
+}
+
+.flow-crm-summary > div:first-child,
+.flow-crm-record__facts > div:first-child {
+  padding-left: 0;
+}
+
+.flow-crm-summary > div:last-child,
+.flow-crm-record__facts > div:last-child {
+  border-right: 0;
+}
+
+.flow-crm-summary dt,
+.flow-crm-record__facts dt {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.flow-crm-summary dd,
+.flow-crm-record__facts dd {
+  margin: 3px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-crm-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto auto;
+  gap: 12px;
+  align-items: end;
+  padding: 20px 0 12px;
+}
+
+.flow-crm-search {
+  min-height: 40px;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+.flow-crm-search:focus-within {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand) 20%, transparent);
+}
+
+.flow-crm-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.flow-crm-select {
+  display: grid;
+  gap: 4px;
+}
+
+.flow-crm-select span {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.flow-crm-select select {
+  min-height: 40px;
+  padding: 0 32px 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.flow-crm-result-count {
+  padding: 0 0 8px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.flow-crm-company,
+.flow-crm-owner {
+  min-width: 0;
+  gap: 10px;
+}
+
+.flow-crm-company__mark,
+.flow-crm-record__mark,
+.flow-crm-contact-list__mark,
+.flow-crm-owner > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.flow-crm-company__mark {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.flow-crm-company > span:last-child,
+.flow-crm-contact-list li > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+}
+
+.flow-crm-company strong,
+.flow-crm-company small,
+.flow-crm-contact-list strong,
+.flow-crm-contact-list small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-crm-company strong,
+.flow-crm-contact-list strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.flow-crm-company small,
+.flow-crm-contact-list small {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.flow-crm-owner > span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+.flow-crm-health {
+  gap: 8px;
+  font-size: 12px;
+}
+
+.flow-crm-health > span {
+  width: 56px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-inset);
+}
+
+.flow-crm-health i {
+  display: block;
+  height: 100%;
+  background: var(--color-success);
+}
+
+.flow-crm-health b {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-crm-last-contact {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.flow-crm-no-results,
+.flow-crm-empty {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.flow-crm-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.flow-crm-empty h2 {
+  color: var(--color-text-primary);
+}
+
+.flow-crm-back {
+  width: fit-content;
+  gap: 7px;
+  margin-bottom: 28px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.flow-crm-record__identity {
+  gap: 16px;
+}
+
+.flow-crm-record__mark {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 20px;
+}
+
+.flow-crm-record__facts dd {
+  font-size: 15px;
+}
+
+.flow-crm-record__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.flow-crm-record__section {
+  padding: 28px 0;
+}
+
+.flow-crm-record__section > header {
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.flow-crm-record__section > header h2 {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.flow-crm-record__section > header p,
+.flow-crm-record__empty {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.flow-crm-contact-list li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 32px;
+  gap: 10px;
+  align-items: center;
+}
+
+.flow-crm-contact-list__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+.flow-crm-contact-list a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+.flow-crm-activity-list li {
+  display: grid;
+  gap: 3px;
+}
+
+.flow-crm-activity-list span,
+.flow-crm-activity-list small,
+.flow-crm-related-list small {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.flow-crm-activity-list strong,
+.flow-crm-related-list strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.flow-crm-record__section--related {
+  border-top: 1px solid var(--color-border);
+}
+
+.flow-crm-related-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.flow-crm-related-list a > span {
+  display: grid;
+}
+
 @media (max-width: 720px) {
   .flow-bb {
     padding: 16px 16px 140px;
@@ -183,11 +563,79 @@
 
   .flow-bb-directory a,
   .flow-bb-directory__head {
-    grid-template-columns: 1fr;
-    min-height: 44px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    min-height: 60px;
+  }
+
+  .flow-bb-directory a > :not(.flow-crm-company):not(svg) {
+    display: none;
+  }
+
+  .flow-bb-directory__head {
+    display: none;
   }
 
   .flow-bb-compare {
     grid-template-columns: 1fr;
+  }
+
+  .flow-crm-heading,
+  .flow-crm-record__heading {
+    align-items: flex-start;
+  }
+
+  .flow-crm-heading__status {
+    display: none;
+  }
+
+  .flow-crm-nav {
+    margin-top: 20px;
+  }
+
+  .flow-crm-summary,
+  .flow-crm-record__facts {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+  }
+
+  .flow-crm-summary > div,
+  .flow-crm-record__facts > div {
+    padding: 0 12px 0 0;
+  }
+
+  .flow-crm-summary > div:nth-child(2),
+  .flow-crm-record__facts > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .flow-crm-summary dd {
+    font-size: 18px;
+  }
+
+  .flow-crm-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .flow-crm-search {
+    grid-column: 1 / -1;
+  }
+
+  .flow-crm-select select {
+    width: 100%;
+  }
+
+  .flow-crm-record__identity {
+    align-items: flex-start;
+  }
+
+  .flow-crm-record__mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .flow-crm-record__grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }

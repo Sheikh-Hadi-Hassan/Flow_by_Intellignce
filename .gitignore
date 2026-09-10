@@ -61,6 +61,7 @@ logs/
 playwright-report/
 test-results/
 artifacts/blm-evals/
+artifacts/hackathon/
 packages/blm-evaluation/artifacts/blm-evals/
 
 # Python helper services, if introduced later

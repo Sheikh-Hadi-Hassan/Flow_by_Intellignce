@@ -97,8 +97,10 @@ describe("hackathon demo lifecycle", () => {
       request("Create an Acme proposal from the approved intake."),
     );
     expect(
-      repeatedProposal!.parts.find((part) => part.type === "text"),
-    ).toMatchObject({ delta: expect.stringContaining("existing record") });
+      repeatedProposal!.parts
+        .map((part) => (part.type === "text" ? part.delta : ""))
+        .join(""),
+    ).toContain("existing record");
 
     acceptProposalAndExecuteContract();
     await runDemoLifecycleAsk(

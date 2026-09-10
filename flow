@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+
+import { execFileSync, spawnSync } from "node:child_process";
+import { chmodSync, existsSync, statfsSync, writeFileSync } from "node:fs";
+import { randomBytes } from "node:crypto";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = dirname(fileURLToPath(import.meta.url));
+const compose = join(root, "infra/oss/twenty/compose.yml");
+const environment = join(root, "infra/oss/twenty/.env");
+const minimumFreeBytes = 8 * 1024 ** 3;
+const [command, profile] = process.argv.slice(2);
+
+function dockerReady() {
+  return spawnSync("docker", ["info"], { stdio: "ignore" }).status === 0;
+}
+
+function freeBytes() {
+  const disk = statfsSync(root);
+  return disk.bavail * disk.bsize;
+}
+
+function doctor() {
+  const free = freeBytes();
+  const docker = dockerReady();
+  console.log(`DOCKER_READY=${docker}`);
+  console.log(`DISK_FREE_GIB=${(free / 1024 ** 3).toFixed(1)}`);
+  console.log(`CRM_ENV_PRESENT=${existsSync(environment)}`);
+  return docker && free >= minimumFreeBytes;
+}
+
+function bootstrap() {
+  if (!existsSync(environment)) {
+    writeFileSync(
+      environment,
+      [
+        "TWENTY_PORT=3020",
+        `TWENTY_POSTGRES_PASSWORD=${randomBytes(24).toString("hex")}`,
+        `TWENTY_ENCRYPTION_KEY=${randomBytes(32).toString("hex")}`,
+        "",
+      ].join("\n"),
+      { mode: 0o600 },
+    );
+    chmodSync(environment, 0o600);
+  }
+  console.log("CRM_BOOTSTRAP=READY");
+}
+
+function composeArgs(...args) {
+  if (!existsSync(environment)) {
+    throw new Error("Run ./flow bootstrap before using the CRM profile.");
+  }
+  return [
+    "compose",
+    "--env-file",
+    environment,
+    "-f",
+    compose,
+    "--profile",
+    "crm",
+    ...args,
+  ];
+}
+
+function runCompose(...args) {
+  const result = spawnSync("docker", composeArgs(...args), {
+    cwd: root,
+    stdio: "inherit",
+  });
+  process.exitCode = result.status ?? 1;
+}
+
+try {
+  if (command === "bootstrap") {
+    bootstrap();
+  } else if (command === "doctor") {
+    if (!doctor()) process.exitCode = 1;
+  } else if (command === "dev" && profile === "crm") {
+    if (!doctor()) {
+      throw new Error(
+        "CRM startup requires Docker and at least 8 GiB free disk space.",
+      );
+    }
+    runCompose("up", "-d", "--wait");
+  } else if (command === "status") {
+    runCompose("ps");
+  } else if (command === "stop") {
+    runCompose("down");
+  } else if (command === "version" && profile === "crm") {
+    console.log(
+      execFileSync(
+        "git",
+        ["-C", join(root, "../Flow Twenty"), "rev-parse", "HEAD"],
+        {
+          encoding: "utf8",
+        },
+      ).trim(),
+    );
+  } else {
+    console.error(
+      "Usage: ./flow bootstrap|doctor|dev crm|status|stop|version crm",
+    );
+    process.exitCode = 2;
+  }
+} catch (error) {
+  console.error(
+    error instanceof Error ? error.message : "Flow command failed.",
+  );
+  process.exitCode = 1;
+}
